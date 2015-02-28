@@ -1,3 +1,6 @@
+//Camera class used for rendering
+//All camera objects should be managed by the camera_manager
+
 #ifndef CAMERA_H
 #define CAMERA_H
 

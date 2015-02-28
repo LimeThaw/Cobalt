@@ -1,3 +1,6 @@
+//Class used to refer to OpenGL programs for rendering
+//All shader objects should be handled by the shader_manager
+
 #ifndef SHADER_H
 #define SHADER_H
 

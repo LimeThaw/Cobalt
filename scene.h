@@ -1,3 +1,7 @@
+//Class describing the whole scene to be rendered
+//parent_node should be the topmost node of the scene graph
+//TODO: add skybox, lights, etc
+
 #ifndef SCENE_H
 #define SCENE_H
 

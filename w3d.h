@@ -1,3 +1,5 @@
+//Main header used to include all functions of the engine
+
 #ifndef W3D_H_INCLUDED
 #define W3D_H_INCLUDED
 

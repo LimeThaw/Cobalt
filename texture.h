@@ -1,3 +1,6 @@
+//Class used to refer to an OpenGL texture for rendering
+//All texture objects should be handled by the texture_manager
+
 #ifndef TEXTURE_H
 #define TEXTURE_H
 

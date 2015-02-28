@@ -1,3 +1,5 @@
+//Singleton-class managing all material objects
+
 #ifndef MATERIAL_MANAGER_H
 #define MATERIAL_MANAGER_H
 

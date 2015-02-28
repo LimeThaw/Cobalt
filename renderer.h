@@ -1,3 +1,5 @@
+//Not used yet
+
 #ifndef RENDERER_H_INCLUDED
 #define RENDERER_H_INCLUDED
 

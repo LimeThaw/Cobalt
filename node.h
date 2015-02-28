@@ -1,3 +1,6 @@
+//Class containing a group of mesh objects that can be transformed and rendered as a group
+//Can have other node objects as children or parents
+
 #ifndef NODE_H
 #define NODE_H
 

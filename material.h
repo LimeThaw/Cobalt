@@ -1,3 +1,7 @@
+//Class defining the material of a mesh
+//Combines a shader and a texture (if needed)
+//All material objects should be handled by the material_manager
+
 #ifndef MATERIAL_H
 #define MATERIAL_H
 

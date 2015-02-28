@@ -1,3 +1,5 @@
+//Singleton-class managing all camera objects
+
 #ifndef CAMERA_MANAGER_H
 #define CAMERA_MANAGER_H
 

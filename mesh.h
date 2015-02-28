@@ -1,3 +1,6 @@
+//Class defining an object to be rendered
+//Should be rendered as a part of the scene graph
+
 #ifndef MESH_H
 #define MESH_H
 

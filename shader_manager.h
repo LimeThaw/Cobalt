@@ -1,3 +1,5 @@
+//Singleton-class managing all shader objects
+
 #ifndef SHADER_MANAGER_H
 #define SHADER_MANAGER_H
 

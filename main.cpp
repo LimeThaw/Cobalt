@@ -1,3 +1,5 @@
+//Sample program for Project Cobalt
+
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -21,7 +23,8 @@ int main(){
         std::cout << "-Initialized GLFW\n";
     }
 
-    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasingglfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+    //Give GLFW some info
+    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
@@ -45,50 +48,30 @@ int main(){
 
      glGetError();
 
-    //init ZBuffer and textures
+    //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
 
-    //load mesh
-    /*mesh monkey;
-    monkey.load("example.obj", "marble.tga");*/
-
-    //load node
-    /*mesh desk;
-    desk.load_model("Schreibtisch.obj");*/
-
-    //Load texture shader
-    /*shader texture_shader;
-    texture_shader.load_shader("vertexShader.glsl", "solidFragmentShader.glsl");
-    texture_shader.use();*/
-
+    //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
     unsigned int solidShader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
     unsigned int mapMat = create_material(shader, load_global_texture("testmapTex_small.png"));
-    //unsigned int houseMat = create_material(shader, load_global_texture("houseTex.png"));
     unsigned int robotMat = create_material(solidShader);
 
+    //Load objects, give them materials and place them in world
     scene my_world;
     node* map_node = new node("testmap.obj");
     map_node->set_material(mapMat);
     my_world.append_node(map_node);
-    /*node* house_node = new node("smallHouse.obj");
-    house_node->set_material(houseMat);
-    my_world.append_node(house_node);*/
     node* robot_node = new node("Robot.obj");
     robot_node->set_material(robotMat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
 
+    //Unused zoom function
     float zoom = 2.0f;
-    //my_world.get_parent_node()->set_material(solidShader);
     my_world.get_parent_node()->set_scale(zoom);
 
-    //Load solid shader
-    /*shader solid_shader;
-    solid_shader.load_shader("vertexShader.glsl", "solidFragmentShader.glsl");
-*/
     //load camera
     set_active_camera(create_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)));
 
@@ -118,10 +101,6 @@ int main(){
         //Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //rotate triangle
-        //roty += 0.05f;
-        rotx += 0.025f;
-
         //move world
         if(glfwGetKey(window, GLFW_KEY_A)==GLFW_PRESS)posx+=0.01;
         if(glfwGetKey(window, GLFW_KEY_D)==GLFW_PRESS)posx-=0.01;
@@ -129,25 +108,16 @@ int main(){
         if(glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS)posz-=0.01;
         if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS);
 
-
-        //house_node->set_scale(rotx/100);
-
-        /*monkey.place(0, 3, 0);
-        monkey.set_orientation(0, roty, 0);
-        monkey.set_scale(0.5f);
-        monkey.render();*/
-
-        /*desk.place(rotx/20-10, 0, 0);
-        desk.set_orientation(0, rotx*2, 0);
-        desk.render();*/
-
+        //Position and render world
         my_world.get_parent_node()->set_orientation(0, roty, 0);
         my_world.get_parent_node()->place(posx, -5, posz);
         my_world.render();
 
+        //Update window and events
         glfwSwapBuffers(window);
         glfwPollEvents();
 
+        //check for OpenGL errors
         GLenum error = glGetError();
         if(error != 0){
             std::cerr << "! Detected GL Error: " << error << '\n';
@@ -155,7 +125,7 @@ int main(){
         }
     }
 
-        // Close OpenGL window and terminate GLFW
-        glfwTerminate();
+    // Close OpenGL window and terminate GLFW
+    glfwTerminate();
 
 }
