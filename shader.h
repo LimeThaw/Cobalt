@@ -26,4 +26,8 @@ class shader {
         unsigned int instances;
 };
 
+const int shader_vertex_location = 0;
+const int shader_uv_location = 1;
+const int shader_normal_location = 2;
+
 #endif // SHADER_H

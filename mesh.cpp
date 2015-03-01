@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include "gl_exception.h"
 
 mesh::mesh() {
     model = location = rotation = scale = glm::mat4(1.0f);
@@ -82,7 +83,6 @@ void mesh::set_scale(float new_scale) {
 }
 
 void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
-
     if(material_id != -1) {
         set_active_material(material_id);
     } else {
@@ -95,14 +95,14 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     model = location * rotation * scale;        //Calculate and register the model and rotation matrices
     glm::mat4 render_rotation = parent_rotation_matrix * rotation;
     glm::mat4 render_model = parent_matrix * location * rotation * scale;
-    GLint shaderID;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
-    GLuint matrixID = glGetUniformLocation(shaderID, "model");
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &render_model[0][0]);
-    matrixID = glGetUniformLocation(shaderID, "rotation");
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &render_rotation[0][0]);
+    GLint shader_id;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
+    GLuint matrix_location = glGetUniformLocation(shader_id, "model");
+    glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_model[0][0]);
+    matrix_location = glGetUniformLocation(shader_id, "rotation");
+    glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_rotation[0][0]);
 
-    glEnableVertexAttribArray(0);       //Give vertices to OGL (location = 0)
+    glEnableVertexAttribArray(shader_vertex_location);       //Give vertices to OGL (location = 0)
     glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
     glVertexAttribPointer(
         0,
@@ -114,7 +114,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     );
 
     if(has_uvs) {
-        glEnableVertexAttribArray(1);       //Give uvs to OGL (location = 1)
+        glEnableVertexAttribArray(shader_uv_location);       //Give uvs to OGL (location = 1)
         glBindBuffer(GL_ARRAY_BUFFER, uv_id);
         glVertexAttribPointer(
             1,
@@ -126,7 +126,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
         );
     }
 
-    glEnableVertexAttribArray(2);       //Give normals to OGL (location = 2)
+    glEnableVertexAttribArray(shader_normal_location);       //Give normals to OGL (location = 2)
     glBindBuffer(GL_ARRAY_BUFFER, normal_id);
     glVertexAttribPointer(
         2,
@@ -138,7 +138,8 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     );
 
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
-
+    
+    
     glDisableVertexAttribArray(2);
     if(has_uvs) glDisableVertexAttribArray(1);      //Clean up
     glDisableVertexAttribArray(0);
