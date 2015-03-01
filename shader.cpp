@@ -37,7 +37,7 @@ void shader::load_shader(const char *vertex_path, const char *fragment_path) {
         fragment_shader_stream.close();
     }
 
-    GLint Result = GL_FALSE;
+    GLint result = GL_FALSE;
     int info_log_length;
 
     // Compile Vertex Shader
@@ -47,8 +47,8 @@ void shader::load_shader(const char *vertex_path, const char *fragment_path) {
     glCompileShader(vertex_shader_id);
 
     // Check Vertex Shader
-    glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &Result);
-    if(Result != GL_TRUE) {
+    glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &result);
+    if(result != GL_TRUE) {
         glGetShaderiv(vertex_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
         std::vector<char> VertexShaderErrorMessage(info_log_length);
         glGetShaderInfoLog(vertex_shader_id, info_log_length, NULL, &VertexShaderErrorMessage[0]);
@@ -62,8 +62,8 @@ void shader::load_shader(const char *vertex_path, const char *fragment_path) {
     glCompileShader(fragment_shader_id);
 
     // Check Fragment Shader
-    glGetShaderiv(fragment_shader_id, GL_COMPILE_STATUS, &Result);
-    if(Result != GL_TRUE) {
+    glGetShaderiv(fragment_shader_id, GL_COMPILE_STATUS, &result);
+    if(result != GL_TRUE) {
         glGetShaderiv(fragment_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
         std::vector<char> FragmentShaderErrorMessage(info_log_length);
         glGetShaderInfoLog(fragment_shader_id, info_log_length, NULL, &FragmentShaderErrorMessage[0]);
@@ -78,8 +78,8 @@ void shader::load_shader(const char *vertex_path, const char *fragment_path) {
     glLinkProgram(program_id);
 
     // Check the program
-    glGetProgramiv(program_id, GL_LINK_STATUS, &Result);
-    if(Result != GL_TRUE) {
+    glGetProgramiv(program_id, GL_LINK_STATUS, &result);
+    if(result != GL_TRUE) {
         glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &info_log_length);
         std::vector<char> ProgramErrorMessage(std::max(info_log_length, int(1)));
         glGetProgramInfoLog(program_id, info_log_length, NULL, &ProgramErrorMessage[0]);

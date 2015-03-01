@@ -42,6 +42,7 @@ class mesh {
         unsigned int vertex_count;
         unsigned int uv_count;
         unsigned int normal_count;
+        GLuint vertex_array_object_id;
         GLuint vertex_id;
         GLuint uv_id;
         GLuint normal_id;

@@ -7,18 +7,20 @@ mesh::mesh() {
     uv_data = NULL;
     normal_data = NULL;
     vertex_id = uv_id = normal_id = NULL;
+    vertex_array_object_id = 0;
     material_id = -1;
     has_uvs = false;
 }
 
 mesh::~mesh() {
-    if(vertex_data != NULL)delete[] vertex_data;
-    if(uv_data != NULL)delete[] uv_data;
-    if(normal_data != NULL)delete[] normal_data;
-    if(vertex_id != NULL)glDeleteBuffers(1, &vertex_id);
-    if(uv_id != NULL)glDeleteBuffers(1, &uv_id);
-    if(normal_id != NULL)glDeleteBuffers(1, &normal_id);
-    if(material_id != -1)remove_material_instance(material_id);
+    if(vertex_data != NULL) delete[] vertex_data;
+    if(uv_data != NULL) delete[] uv_data;
+    if(normal_data != NULL) delete[] normal_data;
+    if(vertex_array_object_id != 0) glDeleteVertexArrays(1, &vertex_array_object_id);
+    if(vertex_id != NULL) glDeleteBuffers(1, &vertex_id);
+    if(uv_id != NULL) glDeleteBuffers(1, &uv_id);
+    if(normal_id != NULL) glDeleteBuffers(1, &normal_id);
+    if(material_id != -1) remove_material_instance(material_id);
 }
 
 bool mesh::load_model(const char *model_path) {
@@ -59,7 +61,47 @@ bool mesh::load_model(const char *scene_path, int model_index) {
     glBufferData(GL_ARRAY_BUFFER, normal_count * sizeof(GLfloat), normal_data, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+    
+    glGenVertexArrays(1, &vertex_array_object_id);
+    glBindVertexArray(vertex_array_object_id);
+    
+    glEnableVertexAttribArray(shader_vertex_location);       //Give vertices to OGL (location = 0)
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
+    glVertexAttribPointer(
+        shader_vertex_location,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void *)0
+    );
+    
+    if(has_uvs) {
+        glEnableVertexAttribArray(shader_uv_location);       //Give uvs to OGL (location = 1)
+        glBindBuffer(GL_ARRAY_BUFFER, uv_id);
+        glVertexAttribPointer(
+            shader_uv_location,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void *)0
+        );
+    }
+    
+    glEnableVertexAttribArray(shader_normal_location);       //Give normals to OGL (location = 2)
+    glBindBuffer(GL_ARRAY_BUFFER, normal_id);
+    glVertexAttribPointer(
+        shader_normal_location,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void *)0
+    );
+    
+    glBindVertexArray(0);
+    
     std::clog << "- Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << "seconds\n\n";
 
     return true;        //Function finished properly
@@ -101,48 +143,18 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_model[0][0]);
     matrix_location = glGetUniformLocation(shader_id, "rotation");
     glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_rotation[0][0]);
-
-    glEnableVertexAttribArray(shader_vertex_location);       //Give vertices to OGL (location = 0)
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
-    glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        0,
-        (void *)0
-    );
-
-    if(has_uvs) {
-        glEnableVertexAttribArray(shader_uv_location);       //Give uvs to OGL (location = 1)
-        glBindBuffer(GL_ARRAY_BUFFER, uv_id);
-        glVertexAttribPointer(
-            1,
-            2,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void *)0
-        );
-    }
-
-    glEnableVertexAttribArray(shader_normal_location);       //Give normals to OGL (location = 2)
-    glBindBuffer(GL_ARRAY_BUFFER, normal_id);
-    glVertexAttribPointer(
-        2,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        0,
-        (void *)0
-    );
-
+    
+    glBindVertexArray(vertex_array_object_id);
+    
+    check_gl_error();
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
+    check_gl_error();
     
+    glBindVertexArray(0);
     
-    glDisableVertexAttribArray(2);
+    /*glDisableVertexAttribArray(2);
     if(has_uvs) glDisableVertexAttribArray(1);      //Clean up
-    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(0);*/
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
