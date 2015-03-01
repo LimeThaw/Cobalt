@@ -146,17 +146,10 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     
     glBindVertexArray(vertex_array_object_id);
     
-    check_gl_error();
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
-    check_gl_error();
     
     glBindVertexArray(0);
-    
-    /*glDisableVertexAttribArray(2);
-    if(has_uvs) glDisableVertexAttribArray(1);      //Clean up
-    glDisableVertexAttribArray(0);*/
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
