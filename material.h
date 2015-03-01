@@ -25,9 +25,8 @@ class material {
         void use();
 
     private:
-        int texture_id;
-        int shader_id;
-        bool texture;
+        unsigned int texture_id;
+        unsigned int shader_id;
         unsigned int instances;
 };
 

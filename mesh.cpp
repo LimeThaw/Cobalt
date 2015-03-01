@@ -8,7 +8,7 @@ mesh::mesh() {
     normal_data = nullptr;
     vertex_id = uv_id = normal_id = 0;
     vertex_array_object_id = 0;
-    material_id = -1;
+    material_id = invalid_material_id;
     has_uvs = false;
 }
 
@@ -20,7 +20,7 @@ mesh::~mesh() {
     if(vertex_id != 0) glDeleteBuffers(1, &vertex_id);
     if(uv_id != 0) glDeleteBuffers(1, &uv_id);
     if(normal_id != 0) glDeleteBuffers(1, &normal_id);
-    if(material_id != -1) remove_material_instance(material_id);
+    if(material_id != invalid_material_id) remove_material_instance(material_id);
 }
 
 bool mesh::load_model(const char *model_path) {
@@ -125,7 +125,7 @@ void mesh::set_scale(float new_scale) {
 }
 
 void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
-    if(material_id != -1) {
+    if(material_id != invalid_material_id) {
         set_active_material(material_id);
     } else {
         std::cerr << "! Tried to render model without assigned material\n";

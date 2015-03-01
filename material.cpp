@@ -1,29 +1,36 @@
 #include "material.h"
 
 material::material() {
-    texture_id = shader_id = -1;
-    texture = false;
+    texture_id = invalid_texture_id;
+    shader_id = invalid_shader_id;
     instances = 0;
 }
 
 material::~material() {
-    remove_texture_instance(texture_id);
-    remove_shader_instance(shader_id);
+    if(texture_id != invalid_texture_id) {
+        remove_texture_instance(texture_id);
+    }
+    if(shader_id != invalid_shader_id) {
+        remove_shader_instance(shader_id);
+    }
 }
 
 bool material::has_texture() {
-    return texture;
+    return texture_id != invalid_texture_id;
 }
 
 void material::set_texture(unsigned int new_texture) {
-    if(texture_id != -1)remove_texture_instance(texture_id);
+    if(texture_id != invalid_texture_id) {
+        remove_texture_instance(texture_id);
+    }
     texture_id = new_texture;
     add_texture_instance(texture_id);
-    texture = true;
 }
 
 void material::set_shader(unsigned int new_shader) {
-    if(shader_id != -1)remove_shader_instance(shader_id);
+    if(shader_id != invalid_shader_id) {
+        remove_shader_instance(shader_id);
+    }
     shader_id = new_shader;
     add_shader_instance(shader_id);
 }
@@ -41,12 +48,12 @@ void material::remove_instance() {
 }
 
 void material::use() {
-    if(shader_id != -1) {
+    if(shader_id != invalid_shader_id) {
         shader_manager::get_instance().use_shader(shader_id);
     } else {
         std::cerr << "! Tried to use a material withoud shader\n";
     }
-    if(texture_id != -1 && texture != false) {
+    if(texture_id != invalid_texture_id) {
         texture_manager::get_instance().bind_texture(texture_id);
     }
 }

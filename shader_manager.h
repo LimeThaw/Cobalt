@@ -7,6 +7,8 @@
 
 #include "shader.h"
 
+const unsigned int invalid_shader_id = (unsigned int) -1;
+
 class shader_manager {
     public:
         static shader_manager &get_instance();

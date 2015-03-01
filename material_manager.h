@@ -10,6 +10,8 @@
 #include "shader_manager.h"
 #include "material.h"
 
+const unsigned int invalid_material_id = (unsigned int) -1;
+
 class material_manager {
     public:
         static material_manager &get_instance();

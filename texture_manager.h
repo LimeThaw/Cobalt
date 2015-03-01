@@ -7,6 +7,8 @@
 
 #include "texture.h"
 
+const unsigned int invalid_texture_id = (unsigned int) -1;
+
 class texture_manager {
     public:
         static texture_manager &get_instance();

@@ -50,7 +50,7 @@ class mesh {
         glm::mat4 rotation;
         glm::mat4 scale;
         glm::mat4 model;
-        int material_id;
+        unsigned int material_id;
         bool has_uvs;
 };
 
