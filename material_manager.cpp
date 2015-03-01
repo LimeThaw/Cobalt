@@ -37,7 +37,7 @@ void material_manager::remove_material_instance(unsigned int id) {
 }
 
 material_manager::~material_manager() {
-    for(int i = 0; i < materials.size(); i++) {
+    for(unsigned int i = 0; i < materials.size(); i++) {
         delete materials[i];
     }
     materials.clear();
@@ -48,11 +48,11 @@ material_manager::material_manager() {
 }
 
 unsigned int create_material(unsigned int arg_shader_id, unsigned int arg_texture_id) {
-    material_manager::get_instance().create_material(arg_shader_id, arg_texture_id);
+    return material_manager::get_instance().create_material(arg_shader_id, arg_texture_id);
 }
 
 unsigned int create_material(unsigned int arg_shader_id) {
-    material_manager::get_instance().create_material(arg_shader_id);
+    return material_manager::get_instance().create_material(arg_shader_id);
 }
 
 void set_active_material(unsigned int activeID) {

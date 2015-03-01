@@ -3,10 +3,10 @@
 
 mesh::mesh() {
     model = location = rotation = scale = glm::mat4(1.0f);
-    vertex_data = NULL;
-    uv_data = NULL;
-    normal_data = NULL;
-    vertex_id = uv_id = normal_id = NULL;
+    vertex_data = nullptr;
+    uv_data = nullptr;
+    normal_data = nullptr;
+    vertex_id = uv_id = normal_id = 0;
     vertex_array_object_id = 0;
     material_id = -1;
     has_uvs = false;
@@ -17,14 +17,14 @@ mesh::~mesh() {
     if(uv_data != NULL) delete[] uv_data;
     if(normal_data != NULL) delete[] normal_data;
     if(vertex_array_object_id != 0) glDeleteVertexArrays(1, &vertex_array_object_id);
-    if(vertex_id != NULL) glDeleteBuffers(1, &vertex_id);
-    if(uv_id != NULL) glDeleteBuffers(1, &uv_id);
-    if(normal_id != NULL) glDeleteBuffers(1, &normal_id);
+    if(vertex_id != 0) glDeleteBuffers(1, &vertex_id);
+    if(uv_id != 0) glDeleteBuffers(1, &uv_id);
+    if(normal_id != 0) glDeleteBuffers(1, &normal_id);
     if(material_id != -1) remove_material_instance(material_id);
 }
 
 bool mesh::load_model(const char *model_path) {
-    load_model(model_path, 0);
+    return load_model(model_path, 0);
 }
 
 bool mesh::load_model(const char *scene_path, int model_index) {
@@ -154,7 +154,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
 }
 
 //Private
-bool mesh::load_model(aiMesh *inmesh) {
+void mesh::load_model(aiMesh *inmesh) {
 
     std::clog << "- Loading model\n";
 
@@ -163,7 +163,7 @@ bool mesh::load_model(aiMesh *inmesh) {
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> faces;
 
-    for(int i = 0; i < inmesh->mNumVertices; i++) { //Get vertices
+    for(unsigned int i = 0; i < inmesh->mNumVertices; i++) { //Get vertices
         glm::vec3 vertex = glm::vec3(inmesh->mVertices[i].x, inmesh->mVertices[i].y, inmesh->mVertices[i].z);     //Get vertices and push them into vector
         vertices.push_back(vertex);
         if(MESH_INFO)std::clog << "- Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
@@ -171,7 +171,7 @@ bool mesh::load_model(aiMesh *inmesh) {
 
     if(inmesh->HasTextureCoords(0)) {    //Get uvs
         has_uvs = true;
-        for(int i = 0; i < inmesh->mNumVertices; i++) {
+        for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec2 uv = glm::vec2(inmesh->mTextureCoords[0][i].x, inmesh->mTextureCoords[0][i].y);
             uvs.push_back(uv);
             if(MESH_INFO)std::clog << "- Read UV [" << i << "] at " << uv.x << ", " << uv.y << '\n';
@@ -182,7 +182,7 @@ bool mesh::load_model(aiMesh *inmesh) {
     }
 
     if(inmesh->HasNormals()) {      //Get normals
-        for(int i = 0; i < inmesh->mNumVertices; i++) {
+        for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec3 normal = glm::vec3(inmesh->mNormals[i].x, inmesh->mNormals[i].y, inmesh->mNormals[i].z);
             normals.push_back(normal);
             if(MESH_INFO)std::clog << "- Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
@@ -191,7 +191,7 @@ bool mesh::load_model(aiMesh *inmesh) {
         std::cerr << "- Could not find normals\n";
     }
 
-    for(int i = 0; i < inmesh->mNumFaces; i++) { //Get faces
+    for(unsigned int i = 0; i < inmesh->mNumFaces; i++) { //Get faces
         aiFace face = inmesh->mFaces[i];
         glm::vec3 vec = glm::vec3(face.mIndices[0], face.mIndices[1], face.mIndices[2]);    //Get faces and put them into vector
         faces.push_back(vec);
@@ -202,7 +202,7 @@ bool mesh::load_model(aiMesh *inmesh) {
     std::vector<GLfloat> vdata;     //vertices
     std::vector<GLfloat> udata;     //uvs
     std::vector<GLfloat> ndata;     //normals
-    for(int i = 0; i < faces.size(); i++) {
+    for(unsigned int i = 0; i < faces.size(); i++) {
         glm::vec3 face = faces[i];
         vdata.push_back(vertices[face.x].x);
         vdata.push_back(vertices[face.x].y);

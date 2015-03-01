@@ -2,7 +2,7 @@
 #include "gl_exception.h"
 
 texture::texture() {
-    openGL_id = NULL;
+    openGL_id = 0;
 }
 
 texture::~texture() {
@@ -19,9 +19,8 @@ bool texture::load(const char *path) {
     
     clear_gl_error();
     
-    if(openGL_id == NULL) {
+    if(openGL_id == 0) {
         std::cerr << "- SOIL loading error: " << SOIL_last_result() << '\n';
-        openGL_id = NULL;
         return false;
     }
 

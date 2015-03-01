@@ -33,7 +33,7 @@ void texture_manager::unbind_texture() {
 }
 
 texture_manager::~texture_manager() {
-    for(int i = 0; i < textures.size(); i++) {
+    for(unsigned int i = 0; i < textures.size(); i++) {
         delete textures[i];
     }
     textures.clear();

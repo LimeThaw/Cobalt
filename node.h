@@ -35,7 +35,7 @@ class node {
 
     private:
         node *parent_node;
-        bool load_model(const char *path, int model_index);
+        void load_model(const char *path, int model_index);
         glm::mat4 location;
         glm::mat4 rotation;
         glm::mat4 scale;

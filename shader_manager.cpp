@@ -21,7 +21,7 @@ void shader_manager::add_shader_instance(unsigned int id) {
 }
 
 void shader_manager::remove_shader_instance(unsigned int id) {
-    for(int i = 0; i < shaders.size(); i++) {
+    for(unsigned int i = 0; i < shaders.size(); i++) {
         if(shaders[i]->get_shader_id() == id) {
             shaders[i]->remove_instance();
             break;

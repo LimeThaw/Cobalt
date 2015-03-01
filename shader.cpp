@@ -1,7 +1,7 @@
 #include "shader.h"
 
 shader::shader() {
-    shader_id = NULL;
+    shader_id = 0;
     instances = 0;
 }
 

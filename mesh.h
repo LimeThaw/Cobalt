@@ -35,7 +35,7 @@ class mesh {
         void render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix);
 
     private:
-        bool load_model(aiMesh *inmesh);
+        void load_model(aiMesh *inmesh);
         GLfloat *vertex_data;
         GLfloat *uv_data;
         GLfloat *normal_data;

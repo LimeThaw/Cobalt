@@ -29,7 +29,7 @@ void camera_manager::update_camera() {
 }
 
 camera_manager::~camera_manager() {
-    for(int i = 0; i < cameras.size(); i++) {
+    for(unsigned int i = 0; i < cameras.size(); i++) {
         delete cameras[i];
     }
     cameras.clear();
@@ -40,7 +40,7 @@ camera_manager::camera_manager() {
 }
 
 unsigned int create_camera(glm::vec3 new_place, glm::vec3 new_point) {
-    camera_manager::get_instance().create_camera(new_place, new_point);
+    return camera_manager::get_instance().create_camera(new_place, new_point);
 }
 
 void set_active_camera(unsigned int camera_id) {
