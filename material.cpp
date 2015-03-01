@@ -1,52 +1,52 @@
 #include "material.h"
 
-material::material(){
-    textureID = shaderID = -1;
+material::material() {
+    texture_id = shader_id = -1;
     texture = false;
     instances = 0;
 }
 
-material::~material(){
-    remove_texture_instance(textureID);
-    remove_shader_instance(shaderID);
+material::~material() {
+    remove_texture_instance(texture_id);
+    remove_shader_instance(shader_id);
 }
 
-bool material::has_texture(){
+bool material::has_texture() {
     return texture;
 }
 
-void material::set_texture(unsigned int new_texture){
-    if(textureID != -1)remove_texture_instance(textureID);
-    textureID = new_texture;
-    add_texture_instance(textureID);
+void material::set_texture(unsigned int new_texture) {
+    if(texture_id != -1)remove_texture_instance(texture_id);
+    texture_id = new_texture;
+    add_texture_instance(texture_id);
     texture = true;
 }
 
-void material::set_shader(unsigned int new_shader){
-    if(shaderID !=-1)remove_shader_instance(shaderID);
-    shaderID = new_shader;
-    add_shader_instance(shaderID);
+void material::set_shader(unsigned int new_shader) {
+    if(shader_id != -1)remove_shader_instance(shader_id);
+    shader_id = new_shader;
+    add_shader_instance(shader_id);
 }
 
-unsigned int material::get_instance_count(){
+unsigned int material::get_instance_count() {
     return instances;
 }
 
-void material::add_instance(){
+void material::add_instance() {
     instances++;
 }
 
-void material::remove_instance(){
+void material::remove_instance() {
     instances--;
 }
 
-void material::use(){
-    if(shaderID != -1){
-        shader_manager::get_instance().use_shader(shaderID);
-    }else{
+void material::use() {
+    if(shader_id != -1) {
+        shader_manager::get_instance().use_shader(shader_id);
+    } else {
         std::cerr << "! Tried to use a material withoud shader\n";
     }
-    if(textureID != -1 && texture != false){
-        texture_manager::get_instance().bind_texture(textureID);
+    if(texture_id != -1 && texture != false) {
+        texture_manager::get_instance().bind_texture(texture_id);
     }
 }

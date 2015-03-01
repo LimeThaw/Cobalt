@@ -12,7 +12,7 @@
 #include "texture_manager.h"
 #include "shader_manager.h"
 
-class material{
+class material {
     public:
         material();
         ~material();
@@ -25,8 +25,8 @@ class material{
         void use();
 
     private:
-        int textureID;
-        int shaderID;
+        int texture_id;
+        int shader_id;
         bool texture;
         unsigned int instances;
 };

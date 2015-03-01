@@ -13,8 +13,8 @@ find_package(GLM REQUIRED)
 find_package(Assimp REQUIRED)
 find_package(GLEW REQUIRED)
 
-add_library(Cobalt Shaderloader.cpp camera.cpp camera_manager.cpp material.cpp material_manager.cpp mesh.cpp node.cpp
-	    renderer.cpp scene.cpp shader.cpp shader_manager.cpp Shaderloader.cpp texture.cpp texture_manager.cpp)
+add_library(Cobalt shader_loader.cpp camera.cpp camera_manager.cpp material.cpp material_manager.cpp mesh.cpp node.cpp
+	    renderer.cpp scene.cpp shader.cpp shader_manager.cpp shader_loader.cpp texture.cpp texture_manager.cpp)
 target_include_directories(Cobalt PUBLIC ${SOIL_INCLUDE_DIRS})
 target_include_directories(Cobalt PRIVATE ${GLFW_INCLUDE_DIRS})
 target_link_libraries(Cobalt ${GLFW_LIBRARIES})

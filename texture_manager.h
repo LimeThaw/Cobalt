@@ -7,10 +7,10 @@
 
 #include "texture.h"
 
-class texture_manager{
+class texture_manager {
     public:
-        static texture_manager& get_instance();
-        unsigned int load_texture(const char* texture_path);
+        static texture_manager &get_instance();
+        unsigned int load_texture(const char *texture_path);
         void add_texture_instance(unsigned int id);
         void remove_texture_instance(unsigned int id);
         void bind_texture(unsigned int id);
@@ -19,10 +19,10 @@ class texture_manager{
 
     private:
         texture_manager();
-        std::vector<texture*> textures;
+        std::vector<texture *> textures;
 };
 
-unsigned int load_global_texture(const char* path);
+unsigned int load_global_texture(const char *path);
 void add_texture_instance(unsigned int id);
 void remove_texture_instance(unsigned int id);
 

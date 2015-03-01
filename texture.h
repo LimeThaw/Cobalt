@@ -9,11 +9,11 @@
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 
-class texture{
+class texture {
     public:
         texture();
         ~texture();
-        bool load(const char* path);
+        bool load(const char *path);
         void bind_texture();
         unsigned int get_instance_count();
         void add_instance();

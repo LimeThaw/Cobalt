@@ -8,22 +8,22 @@
 
 #include "camera.h"
 
-class camera_manager{
+class camera_manager {
     public:
-        static camera_manager& get_instance();
+        static camera_manager &get_instance();
         unsigned int create_camera(glm::vec3 new_place, glm::vec3 new_point);
-        void set_active_camera(unsigned int cameraID);
+        void set_active_camera(unsigned int camera_id);
         void update_camera();
         ~camera_manager();
 
     private:
         camera_manager();
         unsigned int active_camera;
-        std::vector<camera*> cameras;
+        std::vector<camera *> cameras;
 };
 
 unsigned int create_camera(glm::vec3 new_place, glm::vec3 new_point);
-void set_active_camera(unsigned int cameraID);
+void set_active_camera(unsigned int camera_id);
 void update_camera();
 
 #endif // CAMERA_MANAGER_H

@@ -10,16 +10,16 @@
 
 #include "w3d.h"
 
-int main(){
+int main() {
 
     //init framerate counting
-    int fps=0, fpsc=glfwGetTime();
+    int fps = 0, fpsc = glfwGetTime();
 
     //init GLFW
-    if(!glfwInit()){
+    if(!glfwInit()) {
         std::cerr << "-Failed to initialize GLFW\n";
         return -1;
-    }else{
+    } else {
         std::cout << "-Initialized GLFW\n";
     }
 
@@ -29,24 +29,24 @@ int main(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     //init window
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "OpenGLTest", NULL, 0);
-    if(window==NULL){
+    GLFWwindow *window = glfwCreateWindow(1280, 720, "OpenGLTest", NULL, 0);
+    if(window == NULL) {
         std::cerr << "-Failed to open window\n";
         return -1;
-    }else{
+    } else {
         std::cout << "-Opened window\n";
     }
     glfwMakeContextCurrent(window);
 
     //init GLEW
-    if(glewInit()!=GLEW_OK){
+    if(glewInit() != GLEW_OK) {
         std::cerr << "-Failed to initialize GLEW\n";
         return -1;
-    }else{
+    } else {
         std::cout << "-Initialized GLEW\n\n";
     }
 
-     glGetError();
+    glGetError();
 
     //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);
@@ -60,10 +60,10 @@ int main(){
 
     //Load objects, give them materials and place them in world
     scene my_world;
-    node* map_node = new node("testmap.obj");
+    node *map_node = new node("testmap.obj");
     map_node->set_material(mapMat);
     my_world.append_node(map_node);
-    node* robot_node = new node("Robot.obj");
+    node *robot_node = new node("Robot.obj");
     robot_node->set_material(robotMat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
@@ -87,26 +87,26 @@ int main(){
 
     //loop
     bool quit = false;
-    while(!quit && glfwGetKey(window, GLFW_KEY_ESCAPE)!=GLFW_PRESS){
+    while(!quit && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS) {
 
         //count framerate
-        if(glfwGetTime()-fpsc>=1.0f){
+        if(glfwGetTime() - fpsc >= 1.0f) {
             std::clog << "-FPS: " << fps << '\n';
-            fps=0;
-            fpsc=glfwGetTime();
-        }else{
-            fps+=1;
+            fps = 0;
+            fpsc = glfwGetTime();
+        } else {
+            fps += 1;
         }
 
         //Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //move world
-        if(glfwGetKey(window, GLFW_KEY_A)==GLFW_PRESS)posx+=0.01;
-        if(glfwGetKey(window, GLFW_KEY_D)==GLFW_PRESS)posx-=0.01;
-        if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS)posz+=0.01;
-        if(glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS)posz-=0.01;
-        if(glfwGetKey(window, GLFW_KEY_UP)==GLFW_PRESS);
+        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)posx += 0.01;
+        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)posx -= 0.01;
+        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)posz += 0.01;
+        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)posz -= 0.01;
+        if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
 
         //Position and render world
         my_world.get_parent_node()->set_orientation(0, roty, 0);
@@ -119,7 +119,7 @@ int main(){
 
         //check for OpenGL errors
         GLenum error = glGetError();
-        if(error != 0){
+        if(error != 0) {
             std::cerr << "! Detected GL Error: " << error << '\n';
             quit = true;
         }

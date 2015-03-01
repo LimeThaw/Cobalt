@@ -7,10 +7,10 @@
 
 #include "shader.h"
 
-class shader_manager{
+class shader_manager {
     public:
-        static shader_manager& get_instance();
-        unsigned int load_shader(const char* vertex_path, const char* fragment_path);
+        static shader_manager &get_instance();
+        unsigned int load_shader(const char *vertex_path, const char *fragment_path);
         void add_shader_instance(unsigned int id);
         void remove_shader_instance(unsigned int id);
         void use_shader(unsigned int id);
@@ -18,10 +18,10 @@ class shader_manager{
 
     private:
         shader_manager();
-        std::vector<shader*> shaders;
+        std::vector<shader *> shaders;
 };
 
-int load_global_shader(const char* vertex_path, const char* fragment_path);
+int load_global_shader(const char *vertex_path, const char *fragment_path);
 void add_shader_instance(unsigned int id);
 void remove_shader_instance(unsigned int id);
 
