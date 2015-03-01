@@ -9,6 +9,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include "w3d.h"
+#include "gl_exception.h"
 
 int main() {
 
@@ -22,12 +23,12 @@ int main() {
     } else {
         std::cout << "-Initialized GLFW\n";
     }
-
+    
     //Give GLFW some info
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
+        
     //init window
     GLFWwindow *window = glfwCreateWindow(1280, 720, "OpenGLTest", NULL, 0);
     if(window == NULL) {
@@ -37,7 +38,7 @@ int main() {
         std::cout << "-Opened window\n";
     }
     glfwMakeContextCurrent(window);
-
+        
     //init GLEW
     if(glewInit() != GLEW_OK) {
         std::cerr << "-Failed to initialize GLEW\n";
@@ -45,8 +46,7 @@ int main() {
     } else {
         std::cout << "-Initialized GLEW\n\n";
     }
-
-    glGetError();
+    clear_gl_error();
 
     //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);
@@ -118,11 +118,13 @@ int main() {
         glfwPollEvents();
 
         //check for OpenGL errors
-        GLenum error = glGetError();
-        if(error != 0) {
-            std::cerr << "! Detected GL Error: " << error << '\n';
+        try {
+            check_gl_error();
+        } catch(gl_exception &e) {
+            std::cerr << "! Detected GL Error: " << e.what() << '\n';
             quit = true;
         }
+
     }
 
     // Close OpenGL window and terminate GLFW

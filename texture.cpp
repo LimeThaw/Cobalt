@@ -1,4 +1,5 @@
 #include "texture.h"
+#include "gl_exception.h"
 
 texture::texture() {
     openGL_id = NULL;
@@ -15,9 +16,9 @@ bool texture::load(const char *path) {
     // Create one OpenGL texture
     openGL_id = SOIL_load_OGL_texture(path, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
                                       SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-
-    glGetError();
-
+    
+    clear_gl_error();
+    
     if(openGL_id == NULL) {
         std::cerr << "- SOIL loading error: " << SOIL_last_result() << '\n';
         openGL_id = NULL;

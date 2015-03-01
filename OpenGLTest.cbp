@@ -39,6 +39,7 @@
 		<Unit filename="camera.h" />
 		<Unit filename="camera_manager.cpp" />
 		<Unit filename="camera_manager.h" />
+                <Unit filename="gl_exception.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="material.cpp" />
 		<Unit filename="material.h" />
