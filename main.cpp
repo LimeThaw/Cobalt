@@ -23,12 +23,12 @@ int main() {
     } else {
         std::cout << "-Initialized GLFW\n";
     }
-    
+
     //Give GLFW some info
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        
+
     //init window
     GLFWwindow *window = glfwCreateWindow(1280, 720, "OpenGLTest", NULL, 0);
     if(window == NULL) {
@@ -38,7 +38,7 @@ int main() {
         std::cout << "-Opened window\n";
     }
     glfwMakeContextCurrent(window);
-        
+
     //init GLEW
     if(glewInit() != GLEW_OK) {
         std::cerr << "-Failed to initialize GLEW\n";
@@ -55,7 +55,10 @@ int main() {
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
     unsigned int solidShader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
-    unsigned int mapMat = create_material(shader, load_global_texture("testmapTex_small.png"));
+
+    shader_manager::get_instance().use_shader(shader);          //TODO: enable user to create texture_link without
+                                                                //      having to call shdaer::use() first
+    unsigned int mapMat = create_material(shader, new texture_link("testmapTex_small.png", "color_map"));
     unsigned int robotMat = create_material(solidShader);
 
     //Load objects, give them materials and place them in world

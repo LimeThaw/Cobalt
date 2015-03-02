@@ -5,10 +5,10 @@ material_manager &material_manager::get_instance() {
     return instance;
 }
 
-unsigned int material_manager::create_material(unsigned int arg_shader_id, unsigned int arg_texture_id) {
+unsigned int material_manager::create_material(unsigned int arg_shader_id, texture_link* new_texture) {
     material *new_material = new material();
     new_material->set_shader(arg_shader_id);
-    new_material->set_texture(arg_texture_id);
+    new_material->set_texture(new_texture);
     materials.push_back(new_material);
     return materials.size() - 1;
 }
@@ -47,8 +47,8 @@ material_manager::material_manager() {
     //ctor
 }
 
-unsigned int create_material(unsigned int arg_shader_id, unsigned int arg_texture_id) {
-    return material_manager::get_instance().create_material(arg_shader_id, arg_texture_id);
+unsigned int create_material(unsigned int arg_shader_id, texture_link* new_texture) {
+    return material_manager::get_instance().create_material(arg_shader_id, new_texture);
 }
 
 unsigned int create_material(unsigned int arg_shader_id) {

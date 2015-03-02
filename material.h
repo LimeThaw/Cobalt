@@ -9,7 +9,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "texture_manager.h"
+#include "texture_link.h"
 #include "shader_manager.h"
 
 class material {
@@ -17,7 +17,7 @@ class material {
         material();
         ~material();
         bool has_texture();
-        void set_texture(unsigned int new_texture);
+        void set_texture(texture_link* new_texture);
         void set_shader(unsigned int new_shader);
         unsigned int get_instance_count();
         void add_instance();
@@ -25,7 +25,7 @@ class material {
         void use();
 
     private:
-        unsigned int texture_id;
+        std::vector<texture_link*> textures;
         unsigned int shader_id;
         unsigned int instances;
 };

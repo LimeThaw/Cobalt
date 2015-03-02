@@ -61,10 +61,10 @@ bool mesh::load_model(const char *scene_path, int model_index) {
     glBufferData(GL_ARRAY_BUFFER, normal_count * sizeof(GLfloat), normal_data, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
+
     glGenVertexArrays(1, &vertex_array_object_id);
     glBindVertexArray(vertex_array_object_id);
-    
+
     glEnableVertexAttribArray(shader_vertex_location);       //Give vertices to OGL (location = 0)
     glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
     glVertexAttribPointer(
@@ -75,7 +75,7 @@ bool mesh::load_model(const char *scene_path, int model_index) {
         0,
         (void *)0
     );
-    
+
     if(has_uvs) {
         glEnableVertexAttribArray(shader_uv_location);       //Give uvs to OGL (location = 1)
         glBindBuffer(GL_ARRAY_BUFFER, uv_id);
@@ -88,7 +88,7 @@ bool mesh::load_model(const char *scene_path, int model_index) {
             (void *)0
         );
     }
-    
+
     glEnableVertexAttribArray(shader_normal_location);       //Give normals to OGL (location = 2)
     glBindBuffer(GL_ARRAY_BUFFER, normal_id);
     glVertexAttribPointer(
@@ -99,9 +99,9 @@ bool mesh::load_model(const char *scene_path, int model_index) {
         0,
         (void *)0
     );
-    
+
     glBindVertexArray(0);
-    
+
     std::clog << "- Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << "seconds\n\n";
 
     return true;        //Function finished properly
@@ -143,14 +143,14 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_model[0][0]);
     matrix_location = glGetUniformLocation(shader_id, "rotation");
     glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_rotation[0][0]);
-    
+
     glBindVertexArray(vertex_array_object_id);
-    
+
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
-    
+
     glBindVertexArray(0);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 //Private
