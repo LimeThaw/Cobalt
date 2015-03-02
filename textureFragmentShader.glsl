@@ -3,7 +3,6 @@ in vec2 uv;
 in vec3 normal;
 out vec3 color;
 uniform sampler2D color_map;
-uniform sampler2D normal_map;
 
 void main(){
 	vec3 light = vec3(-2, 0.5, 0.2);

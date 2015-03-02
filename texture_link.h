@@ -20,7 +20,7 @@ class texture_link {
 
     private:
         unsigned int texture_id;
-        GLuint uniform_location;
+        const char* uniform_location;
 };
 
 #endif // TEXTURE_LINK_H

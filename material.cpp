@@ -20,7 +20,7 @@ bool material::has_texture() {
     }
 }
 
-void material::set_texture(texture_link* new_texture) {
+void material::add_texture(texture_link* new_texture) {
     textures.push_back(new_texture);
 }
 

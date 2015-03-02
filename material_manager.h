@@ -17,6 +17,7 @@ class material_manager {
         static material_manager &get_instance();
         unsigned int create_material(unsigned int arg_shader_id, texture_link* new_texture);
         unsigned int create_material(unsigned int arg_shader_id);
+        void add_texture(unsigned int target_material, texture_link* new_texture);
         void set_active_material(unsigned int active_id);
         bool material_has_texture(unsigned int request_id);
         void add_material_instance(unsigned int id);
@@ -30,6 +31,7 @@ class material_manager {
 
 unsigned int create_material(unsigned int arg_shader_id, texture_link* new_texture);
 unsigned int create_material(unsigned int arg_shader_id);
+void add_texture(unsigned int target_material, texture_link* new_texture);
 void set_active_material(unsigned int active_id);
 bool material_has_texture(unsigned int request_id);
 void add_material_instance(unsigned int id);

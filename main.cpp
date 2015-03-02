@@ -54,12 +54,14 @@ int main() {
 
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
-    unsigned int solidShader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
+    unsigned int solid_shader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
+    unsigned int normal_shader = load_global_shader("vertexShader.glsl", "normalFragmentShader.glsl");
 
-    shader_manager::get_instance().use_shader(shader);          //TODO: enable user to create texture_link without
-                                                                //      having to call shdaer::use() first
     unsigned int mapMat = create_material(shader, new texture_link("testmapTex_small.png", "color_map"));
-    unsigned int robotMat = create_material(solidShader);
+    unsigned int robotMat = create_material(solid_shader);
+    unsigned int monkey_mat = create_material(normal_shader);
+    add_texture(monkey_mat, new texture_link("dirt.jpeg", "color_map"));
+    add_texture(monkey_mat, new texture_link("dirt_normal.png", "normal_map"));
 
     //Load objects, give them materials and place them in world
     scene my_world;
@@ -70,6 +72,10 @@ int main() {
     robot_node->set_material(robotMat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
+    node* monkey_node = new node("NormalExample.obj");
+    monkey_node->set_material(monkey_mat);
+    monkey_node->place(2, 0, 0);
+    my_world.append_node(monkey_node);
 
     //Unused zoom function
     float zoom = 2.0f;

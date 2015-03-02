@@ -17,7 +17,7 @@ class material {
         material();
         ~material();
         bool has_texture();
-        void set_texture(texture_link* new_texture);
+        void add_texture(texture_link* new_texture);
         void set_shader(unsigned int new_shader);
         unsigned int get_instance_count();
         void add_instance();

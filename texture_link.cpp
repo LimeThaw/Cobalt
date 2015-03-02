@@ -30,17 +30,18 @@ void texture_link::set_texture(unsigned int new_texture) {
 }
 
 void texture_link::set_uniform(const char* uniform_name) {
-    GLint shader_id;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);      //PROBLEM: User has to use() shader first
-    uniform_location = glGetUniformLocation(shader_id, uniform_name);
+    uniform_location = uniform_name;
 }
 
 
 void texture_link::apply(unsigned int place) {
     if(place <= GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS) {
+        GLint shader_id;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
+
         glActiveTexture(GL_TEXTURE0 + place);
         texture_manager::get_instance().bind_texture(texture_id);
-        glUniform1i(uniform_location, place);
+        glUniform1i(glGetUniformLocation(shader_id, uniform_location), place);
     }else {
         std::cerr << "! Tried to load more textures than can be handled\n";
         return;
