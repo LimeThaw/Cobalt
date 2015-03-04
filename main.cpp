@@ -118,7 +118,7 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
 
         //Position and render world
-        my_world.get_parent_node()->set_orientation(0, roty, 0);
+        //my_world.get_parent_node()->set_orientation(0, roty, 0);
         my_world.get_parent_node()->place(posx, -5, posz);
         my_world.render();
 

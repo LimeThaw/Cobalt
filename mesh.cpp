@@ -5,20 +5,23 @@ mesh::mesh() {
     model = location = rotation = scale = glm::mat4(1.0f);
     vertex_data = nullptr;
     uv_data = nullptr;
+    tangent_data = nullptr;
     normal_data = nullptr;
-    vertex_id = uv_id = normal_id = 0;
+    vertex_id = uv_id = tangent_id = normal_id = 0;
     vertex_array_object_id = 0;
     material_id = invalid_material_id;
     has_uvs = false;
 }
 
 mesh::~mesh() {
-    if(vertex_data != NULL) delete[] vertex_data;
-    if(uv_data != NULL) delete[] uv_data;
-    if(normal_data != NULL) delete[] normal_data;
+    if(vertex_data != nullptr) delete[] vertex_data;
+    if(uv_data != nullptr) delete[] uv_data;
+    if(tangent_data != nullptr) delete[] tangent_data;
+    if(normal_data != nullptr) delete[] normal_data;
     if(vertex_array_object_id != 0) glDeleteVertexArrays(1, &vertex_array_object_id);
     if(vertex_id != 0) glDeleteBuffers(1, &vertex_id);
     if(uv_id != 0) glDeleteBuffers(1, &uv_id);
+    if(tangent_id != 0)glDeleteBuffers(1, &tangent_id);
     if(normal_id != 0) glDeleteBuffers(1, &normal_id);
     if(material_id != invalid_material_id) remove_material_instance(material_id);
 }
@@ -54,6 +57,10 @@ bool mesh::load_model(const char *scene_path, int model_index) {
         glGenBuffers(1, &uv_id);      //Buffer uvs
         glBindBuffer(GL_ARRAY_BUFFER, uv_id);
         glBufferData(GL_ARRAY_BUFFER, uv_count * sizeof(GLfloat), uv_data, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &tangent_id);       //Buffer tangents
+        glBindBuffer(GL_ARRAY_BUFFER, tangent_id);
+        glBufferData(GL_ARRAY_BUFFER, tangent_count * sizeof(GLfloat), tangent_data, GL_STATIC_DRAW);
     }
 
     glGenBuffers(1, &normal_id);      //Buffer normals
@@ -82,6 +89,17 @@ bool mesh::load_model(const char *scene_path, int model_index) {
         glVertexAttribPointer(
             shader_uv_location,
             2,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void *)0
+        );
+
+        glEnableVertexAttribArray(shader_tangent_location);       //Give tangents to OGL (location = 3)
+        glBindBuffer(GL_ARRAY_BUFFER, tangent_id);
+        glVertexAttribPointer(
+            shader_tangent_location,
+            3,
             GL_FLOAT,
             GL_FALSE,
             0,
@@ -160,6 +178,7 @@ void mesh::load_model(aiMesh *inmesh) {
 
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> tangents;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec3> faces;
 
@@ -188,7 +207,17 @@ void mesh::load_model(aiMesh *inmesh) {
             if(MESH_INFO)std::clog << "- Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
         }
     } else {
-        std::cerr << "- Could not find normals\n";
+        std::cerr << "! Could not find normals\n";
+    }
+
+    if(inmesh->HasTangentsAndBitangents()) {      //Get tangents
+        for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
+            glm::vec3 tangent = glm::vec3(inmesh->mTangents[i].x, inmesh->mTangents[i].y, inmesh->mTangents[i].z);
+            tangents.push_back(tangent);
+            if(MESH_INFO)std::clog << "- Read Tangent [" << i << "] at " << tangent.x << ", " <<  tangent.y << ", " << tangent.z << '\n';
+        }
+    } else {
+        std::cerr << "! Could not generate tangents\n";
     }
 
     for(unsigned int i = 0; i < inmesh->mNumFaces; i++) { //Get faces
@@ -201,9 +230,11 @@ void mesh::load_model(aiMesh *inmesh) {
     //Put data into float arrays
     std::vector<GLfloat> vdata;     //vertices
     std::vector<GLfloat> udata;     //uvs
+    std::vector<GLfloat> tdata;     //tangents
     std::vector<GLfloat> ndata;     //normals
     for(unsigned int i = 0; i < faces.size(); i++) {
         glm::vec3 face = faces[i];
+
         vdata.push_back(vertices[face.x].x);
         vdata.push_back(vertices[face.x].y);
         vdata.push_back(vertices[face.x].z);
@@ -213,6 +244,7 @@ void mesh::load_model(aiMesh *inmesh) {
         vdata.push_back(vertices[face.z].x);
         vdata.push_back(vertices[face.z].y);
         vdata.push_back(vertices[face.z].z);
+
         if(has_uvs) {
             udata.push_back(uvs[face.x].x);
             udata.push_back(uvs[face.x].y);
@@ -220,7 +252,18 @@ void mesh::load_model(aiMesh *inmesh) {
             udata.push_back(uvs[face.y].y);
             udata.push_back(uvs[face.z].x);
             udata.push_back(uvs[face.z].y);
+
+            tdata.push_back(tangents[face.x].x);
+            tdata.push_back(tangents[face.x].y);
+            tdata.push_back(tangents[face.x].z);
+            tdata.push_back(tangents[face.y].x);
+            tdata.push_back(tangents[face.y].y);
+            tdata.push_back(tangents[face.y].z);
+            tdata.push_back(tangents[face.z].x);
+            tdata.push_back(tangents[face.z].y);
+            tdata.push_back(tangents[face.z].z);
         }
+
         ndata.push_back(normals[face.x].x);
         ndata.push_back(normals[face.x].y);
         ndata.push_back(normals[face.x].z);
@@ -232,23 +275,30 @@ void mesh::load_model(aiMesh *inmesh) {
         ndata.push_back(normals[face.z].z);
     }
 
-    if(vertex_data != NULL)delete[] vertex_data;    //Put vertices in object memory
+    if(vertex_data != nullptr)delete[] vertex_data;    //Put vertices in object memory
     vertex_data = new GLfloat[vdata.size()];
     std::copy(vdata.begin(), vdata.end(), vertex_data);
     vertex_count = vdata.size();
     vdata.clear();
 
-    if(uv_data != NULL)delete[] uv_data;    //Put uvs in object memory if present
     if(has_uvs) {
+        if(uv_data != nullptr)delete[] uv_data;    //Put uvs in object memory if present
         uv_data = new GLfloat[udata.size()];
         std::copy(udata.begin(), udata.end(), uv_data);
         uv_count = udata.size();
+
+        if(tangent_data != nullptr)delete[] tangent_data;    //Put tangents in object memory
+        tangent_data = new GLfloat[tdata.size()];
+        std::copy(tdata.begin(), tdata.end(), tangent_data);
+        tangent_count = tdata.size();
     } else {
-        uv_data = NULL;
+        uv_data = nullptr;
+        tangent_data = nullptr;
     }
     udata.clear();
+    tdata.clear();
 
-    if(normal_data != NULL)delete[] normal_data;    //Put normals in object memory
+    if(normal_data != nullptr)delete[] normal_data;    //Put normals in object memory
     normal_data = new GLfloat[ndata.size()];
     std::copy(ndata.begin(), ndata.end(), normal_data);
     normal_count = ndata.size();
@@ -256,6 +306,7 @@ void mesh::load_model(aiMesh *inmesh) {
 
     vertices.clear();   //Tidy up
     uvs.clear();
+    tangents.clear();
     normals.clear();
     faces.clear();
 }

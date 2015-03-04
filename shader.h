@@ -29,5 +29,6 @@ class shader {
 const int shader_vertex_location = 0;
 const int shader_uv_location = 1;
 const int shader_normal_location = 2;
+const int shader_tangent_location = 3;
 
 #endif // SHADER_H
