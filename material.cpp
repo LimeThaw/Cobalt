@@ -6,7 +6,7 @@ material::material() {
 }
 
 material::~material() {
-    for(int i=0; i<textures.size(); i++){
+    for(unsigned int i = 0; i < textures.size(); i++) {
         delete textures[i];
     }
     textures.clear();
@@ -15,12 +15,12 @@ material::~material() {
 bool material::has_texture() {
     if(textures.size() == 0) {
         return false;
-    }else {
+    } else {
         return true;
     }
 }
 
-void material::add_texture(texture_link* new_texture) {
+void material::add_texture(texture_link *new_texture) {
     textures.push_back(new_texture);
 }
 
@@ -53,7 +53,7 @@ void material::use() {
     }
 
     if(has_texture()) {
-        for(int i=0; i<textures.size(); i++) {
+        for(unsigned int i = 0; i < textures.size(); i++) {
             textures[i]->apply(i);
         }
     }
