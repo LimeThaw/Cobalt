@@ -1,10 +1,5 @@
 #include "texture_link.h"
 
-texture_link::texture_link() {
-    texture_id = invalid_texture_id;
-    texture_id = invalid_uniform_id;
-}
-
 texture_link::texture_link(const char* texture_path, const char* uniform_name) {
     set_texture(texture_path);
     set_uniform(uniform_name);

@@ -72,7 +72,7 @@ int main() {
     robot_node->set_material(robotMat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
-    node* monkey_node = new node("NormalExample.obj");
+    node *monkey_node = new node("NormalExample.obj");
     monkey_node->set_material(monkey_mat);
     monkey_node->place(2, 0, 0);
     my_world.append_node(monkey_node);

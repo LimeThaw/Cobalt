@@ -5,11 +5,8 @@
 
 #include "texture_manager.h"
 
-const GLuint invalid_uniform_id = (GLuint) -1;
-
 class texture_link {
     public:
-        texture_link();
         texture_link(const char* texture_path, const char* uniform_name);
         texture_link(unsigned int new_texture, const char* uniform_name);
         ~texture_link();
