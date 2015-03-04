@@ -7,3 +7,6 @@ Simple OpenGL Image Library/
 .kdev4/
 cobalt.kdev4
 *.trace
+*~
+*.cbp
+wiki/

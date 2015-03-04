@@ -1,30 +1,27 @@
 #include "material.h"
 
 material::material() {
-    texture_id = invalid_texture_id;
     shader_id = invalid_shader_id;
     instances = 0;
 }
 
 material::~material() {
-    if(texture_id != invalid_texture_id) {
-        remove_texture_instance(texture_id);
+    for(unsigned int i = 0; i < textures.size(); i++) {
+        delete textures[i];
     }
-    if(shader_id != invalid_shader_id) {
-        remove_shader_instance(shader_id);
-    }
+    textures.clear();
 }
 
 bool material::has_texture() {
-    return texture_id != invalid_texture_id;
+    if(textures.size() == 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
-void material::set_texture(unsigned int new_texture) {
-    if(texture_id != invalid_texture_id) {
-        remove_texture_instance(texture_id);
-    }
-    texture_id = new_texture;
-    add_texture_instance(texture_id);
+void material::add_texture(texture_link *new_texture) {
+    textures.push_back(new_texture);
 }
 
 void material::set_shader(unsigned int new_shader) {
@@ -52,8 +49,12 @@ void material::use() {
         shader_manager::get_instance().use_shader(shader_id);
     } else {
         std::cerr << "! Tried to use a material withoud shader\n";
+        return;
     }
-    if(texture_id != invalid_texture_id) {
-        texture_manager::get_instance().bind_texture(texture_id);
+
+    if(has_texture()) {
+        for(unsigned int i = 0; i < textures.size(); i++) {
+            textures[i]->apply(i);
+        }
     }
 }

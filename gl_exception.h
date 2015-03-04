@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <GL/gl.h>
+#include <iostream>
 
 class gl_exception :
     public std::runtime_error {

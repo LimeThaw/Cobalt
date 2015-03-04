@@ -39,13 +39,16 @@ class mesh {
         GLfloat *vertex_data;
         GLfloat *uv_data;
         GLfloat *normal_data;
+        GLfloat *tangent_data;
         unsigned int vertex_count;
         unsigned int uv_count;
         unsigned int normal_count;
+        unsigned int tangent_count;
         GLuint vertex_array_object_id;
         GLuint vertex_id;
         GLuint uv_id;
         GLuint normal_id;
+        GLuint tangent_id;
         glm::mat4 location;
         glm::mat4 rotation;
         glm::mat4 scale;
