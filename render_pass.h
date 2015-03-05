@@ -3,10 +3,10 @@
 
 #include <vector>
 
-template<typename scene_render_parameters_container, typename node_type>
+template<typename scene_type>
 class render_pass {
 public:
-    virtual void render(const scene_render_parameters_container &scene_parameters, const std::vector<node_type> &nodes);
+    virtual void render(const scene_type &scene) = 0;
 };
 
 #endif

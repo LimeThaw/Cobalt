@@ -10,6 +10,7 @@
 
 #include "w3d.h"
 #include "gl_exception.h"
+#include "simple_render_pass.h"
 
 int main() {
 
@@ -51,6 +52,8 @@ int main() {
     //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    
+    simple_render_pass render_pass;
 
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
@@ -120,8 +123,8 @@ int main() {
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
         my_world.get_parent_node()->place(posx, -5, posz);
-        my_world.render();
-
+        render_pass.render(my_world);
+        
         //Update window and events
         glfwSwapBuffers(window);
         glfwPollEvents();

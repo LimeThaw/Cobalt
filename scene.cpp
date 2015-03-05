@@ -20,7 +20,7 @@ node *scene::get_parent_node() {
     return &parent_node;
 }
 
-void scene::render() {
+void scene::render() const {
     parent_node.render();
 }
 

@@ -28,9 +28,9 @@ class node {
         void append_node(node *new_child);
         void set_parent(node *new_parent);
         bool remove_child(node *child);
-        glm::mat4 get_node_matrix();
-        glm::mat4 get_rotation_matrix();
-        void render();
+        glm::mat4 get_node_matrix() const;
+        glm::mat4 get_rotation_matrix() const;
+        void render() const;
         void render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix);
 
     private:
