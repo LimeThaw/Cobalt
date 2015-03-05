@@ -32,6 +32,8 @@ class node {
         glm::mat4 get_rotation_matrix() const;
         void render() const;
         void render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix);
+        std::vector< node*> enumerate();
+        const std::vector< mesh *> &get_models();
 
     private:
         node *parent_node;

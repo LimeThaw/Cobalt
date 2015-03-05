@@ -53,26 +53,30 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
-    simple_render_pass render_pass;
+    
 
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
     unsigned int solid_shader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
     unsigned int normal_shader = load_global_shader("vertexShader.glsl", "normalFragmentShader.glsl");
 
-    unsigned int mapMat = create_material(shader, new texture_link("testmapTex_small.png", "color_map"));
-    unsigned int robotMat = create_material(solid_shader);
-    unsigned int monkey_mat = create_material(normal_shader);
+    unsigned int map_mat = create_material(new texture_link("testmapTex_small.png", "color_map"));
+    unsigned int robot_mat = create_material();
+    unsigned int monkey_mat = create_material();
     add_texture(monkey_mat, new texture_link("dirt.jpeg", "color_map"));
     add_texture(monkey_mat, new texture_link("dirt_normal.png", "normal_map"));
+    
+    simple_render_pass render_pass(shader, std::vector<unsigned int> { map_mat });
+    simple_render_pass solid_render_pass(solid_shader, std::vector<unsigned int> { robot_mat });
+    simple_render_pass normal_render_pass(normal_shader, std::vector<unsigned int> { monkey_mat });
 
     //Load objects, give them materials and place them in world
     scene my_world;
     node *map_node = new node("testmap.obj");
-    map_node->set_material(mapMat);
+    map_node->set_material(map_mat);
     my_world.append_node(map_node);
     node *robot_node = new node("Robot.obj");
-    robot_node->set_material(robotMat);
+    robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
     node *monkey_node = new node("NormalExample.obj");
@@ -124,6 +128,8 @@ int main() {
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
         my_world.get_parent_node()->place(posx, -5, posz);
         render_pass.render(my_world);
+        solid_render_pass.render(my_world);
+        normal_render_pass.render(my_world);
         
         //Update window and events
         glfwSwapBuffers(window);

@@ -18,7 +18,6 @@ class material {
         ~material();
         bool has_texture();
         void add_texture(texture_link* new_texture);
-        void set_shader(unsigned int new_shader);
         unsigned int get_instance_count();
         void add_instance();
         void remove_instance();
@@ -26,7 +25,6 @@ class material {
 
     private:
         std::vector<texture_link*> textures;
-        unsigned int shader_id;
         unsigned int instances;
 };
 

@@ -7,8 +7,12 @@
 
 class simple_render_pass :
     public render_pass<scene> {
+    private:
+        std::vector<unsigned int> render_material_ids;
     public:
-        void render(const scene &the_scene) override;
+        simple_render_pass(unsigned int shader_id, std::vector<unsigned int> render_material_ids);
+        
+        void render(scene &the_scene) override;
 };
 
 #endif

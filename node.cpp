@@ -144,6 +144,21 @@ void node::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     }
 }
 
+std::vector< node * > node::enumerate() {
+    std::vector< node * > rst;
+    rst.push_back(this);
+    for(auto i : children) {
+        auto ie = i->enumerate();
+        rst.insert(rst.end(), ie.begin(), ie.end());
+    }
+    return rst;
+}
+
+const std::vector< mesh * > &node::get_models() {
+    return models;
+}
+
+
 //Private
 void node::load_model(const char *path, int model_index) {
     mesh *temp_mesh = new mesh();

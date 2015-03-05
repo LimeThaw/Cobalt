@@ -310,3 +310,8 @@ void mesh::load_model(aiMesh *inmesh) {
     normals.clear();
     faces.clear();
 }
+
+unsigned int mesh::get_material_id() const {
+    return material_id;
+}
+
