@@ -9,5 +9,6 @@
 #include "material_manager.h"
 #include "shader.h"
 #include "camera_manager.h"
+#include "util.h"
 
 #endif // W3D_H_INCLUDED

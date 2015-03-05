@@ -134,7 +134,7 @@ void mesh::place(float x, float y, float z) {
 }
 
 void mesh::set_orientation(float x, float y, float z) {
-    glm::quat rot = glm::quat(glm::vec3(x * 0.017453294, y * 0.017453294, z * 0.017453294));
+    glm::quat rot = glm::quat(glm::vec3(x, y, z));
     rotation = glm::mat4_cast(rot);
 }
 
