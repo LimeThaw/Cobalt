@@ -16,7 +16,6 @@
 #include <assimp/postprocess.h> // Post processing flags
 
 #include "material_manager.h"
-#include "camera_manager.h"
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes

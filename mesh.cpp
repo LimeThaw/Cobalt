@@ -150,8 +150,6 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
         return;
     }
 
-    update_camera();
-
     model = location * rotation * scale;        //Calculate and register the model and rotation matrices
     glm::mat4 render_rotation = parent_rotation_matrix * rotation;
     glm::mat4 render_model = parent_matrix * location * rotation * scale;

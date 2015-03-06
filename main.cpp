@@ -11,6 +11,7 @@
 #include "w3d.h"
 #include "gl_exception.h"
 #include "simple_render_pass.h"
+#include "camera.h"
 
 int main() {
 
@@ -89,7 +90,7 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //load camera
-    set_active_camera(create_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)));
+    simple_render_pass_additional_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)));
 
     //Setup rotation and location
     float roty = 0.0f;
@@ -127,9 +128,9 @@ int main() {
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
         my_world.get_parent_node()->place(posx, -5, posz);
-        render_pass.render(my_world);
-        solid_render_pass.render(my_world);
-        normal_render_pass.render(my_world);
+        render_pass.render(my_world, render_parameters);
+        solid_render_pass.render(my_world, render_parameters);
+        normal_render_pass.render(my_world, render_parameters);
         
         //Update window and events
         glfwSwapBuffers(window);

@@ -5,7 +5,7 @@
 
 #include "shader_manager.h"
 
-template<typename scene_type>
+template<typename scene_type, typename additional_render_parameters_type>
 class render_pass {
 private:
     unsigned int shader_id;
@@ -18,7 +18,7 @@ public:
     }
     
     
-    virtual void render(scene_type &scene) = 0;
+    virtual void render(scene_type &scene, additional_render_parameters_type &additional_render_parameters) = 0;
 };
 
 #endif
