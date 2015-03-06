@@ -22,7 +22,9 @@ class camera {
         void setup(glm::vec3 arg_pos, glm::vec3 arg_point);
         void set_first_person(bool arg);
         void update_motion();
-        void update();
+        
+        const glm::mat4 &get_view() const;
+        const glm::mat4 &get_projection() const;
 
     private:
         glm::vec3 position;
