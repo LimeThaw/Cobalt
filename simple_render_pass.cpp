@@ -3,12 +3,15 @@
 #include "simple_render_pass.h"
 #include "camera.h"
 
-simple_render_pass::simple_render_pass(unsigned int shader_id, std::vector< unsigned int > render_material_ids): render_pass< scene, simple_render_pass_additional_parameters >(shader_id), render_material_ids(render_material_ids) {
-
+simple_render_pass::simple_render_pass(unsigned int shader_id, std::vector< unsigned int > render_material_ids) : render_pass< scene, simple_render_pass_parameters >(shader_id), render_material_ids(render_material_ids) {
 }
 
 
-void simple_render_pass::render(scene &the_scene, simple_render_pass_additional_parameters &additional_parameters) {
+simple_render_pass::simple_render_pass(unsigned int shader_id, unsigned int render_material_id) : render_pass< scene, simple_render_pass_parameters >(shader_id), render_material_ids(std::vector<unsigned int> {render_material_id}) {
+}
+
+
+void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters &additional_parameters) {
     prepare_render();
     additional_parameters.the_camera.update();
     for(auto in : the_scene.enumerate_nodes()) {

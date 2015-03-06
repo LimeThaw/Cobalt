@@ -6,20 +6,20 @@
 #include "node.h"
 #include "camera.h"
 
-struct simple_render_pass_additional_parameters {
+struct simple_render_pass_parameters {
     camera the_camera;
-    simple_render_pass_additional_parameters(camera the_camera) : the_camera(the_camera) {
+    simple_render_pass_parameters(camera the_camera) : the_camera(the_camera) {
     }
 };
 
 class simple_render_pass :
-    public render_pass<scene, simple_render_pass_additional_parameters> {
+    public render_pass<scene, simple_render_pass_parameters> {
     private:
         std::vector<unsigned int> render_material_ids;
     public:
         simple_render_pass(unsigned int shader_id, std::vector<unsigned int> render_material_ids);
-        
-        void render(scene &the_scene, simple_render_pass_additional_parameters &additional_parameters) override;
+        simple_render_pass(unsigned int shader_id, unsigned int render_material_id);
+        void render(scene &the_scene, simple_render_pass_parameters &additional_parameters) override;
 };
 
 #endif

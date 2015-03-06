@@ -9,9 +9,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include "w3d.h"
-#include "gl_exception.h"
-#include "simple_render_pass.h"
-#include "camera.h"
 
 int main() {
 
@@ -53,8 +50,8 @@ int main() {
     //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    
-    
+
+
 
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
@@ -66,10 +63,10 @@ int main() {
     unsigned int monkey_mat = create_material();
     add_texture(monkey_mat, new texture_link("dirt.jpeg", "color_map"));
     add_texture(monkey_mat, new texture_link("dirt_normal.png", "normal_map"));
-    
-    simple_render_pass render_pass(shader, std::vector<unsigned int> { map_mat });
-    simple_render_pass solid_render_pass(solid_shader, std::vector<unsigned int> { robot_mat });
-    simple_render_pass normal_render_pass(normal_shader, std::vector<unsigned int> { monkey_mat });
+
+    simple_render_pass render_pass(shader, map_mat);
+    simple_render_pass solid_render_pass(solid_shader, robot_mat);
+    simple_render_pass normal_render_pass(normal_shader, monkey_mat);
 
     //Load objects, give them materials and place them in world
     scene my_world;
@@ -90,7 +87,7 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //load camera
-    simple_render_pass_additional_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)));
+    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)));
 
     //Setup rotation and location
     float roty = 0.0f;
@@ -131,7 +128,7 @@ int main() {
         render_pass.render(my_world, render_parameters);
         solid_render_pass.render(my_world, render_parameters);
         normal_render_pass.render(my_world, render_parameters);
-        
+
         //Update window and events
         glfwSwapBuffers(window);
         glfwPollEvents();
