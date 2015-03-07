@@ -34,16 +34,6 @@ void camera::setup(glm::vec3 arg_pos, glm::vec3 arg_point) {
     view = glm::lookAt(position, look_at, glm::vec3(0, 1, 0));
 }
 
-void camera::set_first_person(bool arg) {
-    first_person = arg;
-}
-
-void camera::update_motion() {
-    if(first_person) {
-
-    }
-}
-
 const glm::mat4 &camera::get_view() const {
     return view;
 }

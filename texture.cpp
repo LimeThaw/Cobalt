@@ -38,7 +38,6 @@ bool texture::load(const char *path) {
 }
 
 void texture::bind_texture() {
-    //glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, openGL_id);
 }
 
