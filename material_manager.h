@@ -15,8 +15,8 @@ const unsigned int invalid_material_id = (unsigned int) -1;
 class material_manager {
     public:
         static material_manager &get_instance();
-        unsigned int create_material(unsigned int arg_shader_id, texture_link* new_texture);
-        unsigned int create_material(unsigned int arg_shader_id);
+        unsigned int create_material(texture_link* new_texture);
+        unsigned int create_material();
         void add_texture(unsigned int target_material, texture_link* new_texture);
         void set_active_material(unsigned int active_id);
         bool material_has_texture(unsigned int request_id);
@@ -29,8 +29,8 @@ class material_manager {
         std::vector<material *> materials;
 };
 
-unsigned int create_material(unsigned int arg_shader_id, texture_link* new_texture);
-unsigned int create_material(unsigned int arg_shader_id);
+unsigned int create_material(texture_link* new_texture);
+unsigned int create_material();
 void add_texture(unsigned int target_material, texture_link* new_texture);
 void set_active_material(unsigned int active_id);
 bool material_has_texture(unsigned int request_id);

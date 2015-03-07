@@ -1,11 +1,7 @@
 #include "camera.h"
 
-camera::camera() {
-    position = glm::vec3(0.0f);
-    look_at = glm::vec3(0.0f, 0.0f, -1.0f);
+camera::camera(glm::vec3 position, glm::vec3 look_at, glm::mat4 projection) : position(position), look_at(look_at), projection(projection) {
     view = glm::lookAt(position, look_at, glm::vec3(0, 1, 0));
-    projection = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 100.0f);
-    first_person = false;
 }
 
 camera::~camera() {
@@ -48,11 +44,10 @@ void camera::update_motion() {
     }
 }
 
-void camera::update() {
-    GLint shader_id;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
-    GLuint view_id = glGetUniformLocation(shader_id, "view");
-    glUniformMatrix4fv(view_id, 1, GL_FALSE, &view[0][0]);
-    GLuint projection_id = glGetUniformLocation(shader_id, "projection");
-    glUniformMatrix4fv(projection_id, 1, GL_FALSE, &projection[0][0]);
+const glm::mat4 &camera::get_view() const {
+    return view;
+}
+
+const glm::mat4 &camera::get_projection() const {
+    return projection;
 }

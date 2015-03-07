@@ -12,7 +12,8 @@
 
 class camera {
     public:
-        camera();
+        camera(glm::vec3 position = glm::vec3(0.0f), glm::vec3 look_at = glm::vec3(0.0f, 0.0f, -1.0f),
+               glm::mat4 projection = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 100.0f));
         ~camera();
         void place(float arg_x, float arg_y, float arg_z);
         void place(glm::vec3 arg);
@@ -21,7 +22,9 @@ class camera {
         void setup(glm::vec3 arg_pos, glm::vec3 arg_point);
         void set_first_person(bool arg);
         void update_motion();
-        void update();
+        
+        const glm::mat4 &get_view() const;
+        const glm::mat4 &get_projection() const;
 
     private:
         glm::vec3 position;

@@ -20,8 +20,8 @@ node *scene::get_parent_node() {
     return &parent_node;
 }
 
-void scene::render() {
-    parent_node.render();
+std::vector< node * > scene::enumerate_nodes() {
+    return parent_node.enumerate();
 }
 
 //private

@@ -16,7 +16,6 @@
 #include <assimp/postprocess.h> // Post processing flags
 
 #include "material_manager.h"
-#include "camera_manager.h"
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
@@ -33,6 +32,7 @@ class mesh {
         void set_orientation(float x, float y, float z);
         void set_scale(float new_scale);
         void render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix);
+        unsigned int get_material_id() const;
 
     private:
         void load_model(aiMesh *inmesh);

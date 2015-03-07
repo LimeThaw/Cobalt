@@ -107,14 +107,14 @@ bool node::remove_child(node *child) {
     return false;
 }
 
-glm::mat4 node::get_node_matrix() {
+glm::mat4 node::get_node_matrix() const {
     glm::mat4 temp_matrix;
     temp_matrix = location * rotation * scale;
     if(parent_node != nullptr)temp_matrix = parent_node->get_node_matrix() * temp_matrix;
     return temp_matrix;
 }
 
-glm::mat4 node::get_rotation_matrix() {
+glm::mat4 node::get_rotation_matrix() const {
     if(parent_node != nullptr) {
         return parent_node->get_rotation_matrix() * rotation;
     } else {
@@ -122,7 +122,7 @@ glm::mat4 node::get_rotation_matrix() {
     }
 }
 
-void node::render() {
+void node::render() const {
     for(unsigned int i = 0; i < models.size(); i++) {
         models[i]->render(get_node_matrix(), get_rotation_matrix());
     }
@@ -143,6 +143,21 @@ void node::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
         children[i]->render(sum_matrix, sum_rotation_matrix);
     }
 }
+
+std::vector< node * > node::enumerate() {
+    std::vector< node * > rst;
+    rst.push_back(this);
+    for(auto i : children) {
+        auto ie = i->enumerate();
+        rst.insert(rst.end(), ie.begin(), ie.end());
+    }
+    return rst;
+}
+
+const std::vector< mesh * > &node::get_models() {
+    return models;
+}
+
 
 //Private
 void node::load_model(const char *path, int model_index) {
