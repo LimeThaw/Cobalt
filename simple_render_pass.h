@@ -9,14 +9,12 @@ Example class implementing render_pass used to render the example scene.
 #ifndef SIMPLE_RENDER_PASS_INCLUDED
 #define SIMPLE_RENDER_PASS_INCLUDED
 
-#include "render_pass.h"
-#include "scene.h"
-#include "node.h"
-#include "camera.h"
+#include "cobalt.h"
 
 struct simple_render_pass_parameters {
     camera the_camera;///< Camera used by the render pass to render the scene.
-    simple_render_pass_parameters(camera the_camera) : the_camera(the_camera) {
+    sun_light light;///< Directional light used to render the scene.
+    simple_render_pass_parameters(camera the_camera, sun_light light) : the_camera(the_camera), light(light) {
     }
 };
 

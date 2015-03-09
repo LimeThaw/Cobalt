@@ -312,4 +312,3 @@ void mesh::load_model(aiMesh *inmesh) {
 unsigned int mesh::get_material_id() const {
     return material_id;
 }
-

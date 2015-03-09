@@ -10,6 +10,7 @@ simple_render_pass::simple_render_pass(shader_id new_shader_id, unsigned int ren
 
 void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters &additional_parameters) {
     camera the_camera = additional_parameters.the_camera;
+    sun_light light = additional_parameters.light;
 
     prepare_render();
 
@@ -20,6 +21,8 @@ void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters 
     glUniformMatrix4fv(view_id, 1, GL_FALSE, &the_camera.get_view()[0][0]);
     GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
+
+    light.apply();
 
     for(auto nodes : the_scene.enumerate_nodes()) {
         glm::mat4 node_matrix = nodes->get_node_matrix();
