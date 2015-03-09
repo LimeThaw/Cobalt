@@ -13,8 +13,8 @@ Example class implementing render_pass used to render the example scene.
 
 struct simple_render_pass_parameters {
     camera the_camera;///< Camera used by the render pass to render the scene.
-    sun_light light;///< Directional light used to render the scene.
-    simple_render_pass_parameters(camera the_camera, sun_light light) : the_camera(the_camera), light(light) {
+    directional_light light;///< Directional light used to render the scene.
+    simple_render_pass_parameters(camera the_camera, directional_light light) : the_camera(the_camera), light(light) {
     }
 };
 

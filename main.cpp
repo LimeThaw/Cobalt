@@ -88,7 +88,7 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //load camera
-    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), sun_light(glm::vec3(200, 200, 100), 1, glm::vec3(-2, 0.5, 0.2), "light_color"));
+    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), directional_light(glm::vec3(200, 200, 100), 1, glm::vec3(-2, 0.5, 0.2), "light_color"));
 
     //Setup rotation and location
 

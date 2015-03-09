@@ -50,17 +50,17 @@ void light::apply_color() {
     }
 }
 
-//sun_light
-sun_light::sun_light() : light() {
+//directional_light
+directional_light::directional_light() : light() {
     set_direction(glm::vec3(0, 0, -1));
 }
 
-sun_light::sun_light(glm::vec3 new_color, float new_intensity, glm::vec3 new_direction, std::string new_color_uniform) {
+directional_light::directional_light(glm::vec3 new_color, float new_intensity, glm::vec3 new_direction, std::string new_color_uniform) {
     light(new_color, new_intensity, new_color_uniform);
     set_direction(new_direction);
 }
 
-void sun_light::set_direction(glm::vec3 new_direction) {
+void directional_light::set_direction(glm::vec3 new_direction) {
     if(glm::length(new_direction) != 0) {
         direction = new_direction;
     } else {
@@ -69,10 +69,10 @@ void sun_light::set_direction(glm::vec3 new_direction) {
     }
 }
 
-const glm::vec3 &sun_light::get_direction() {
+const glm::vec3 &directional_light::get_direction() {
     return direction;
 }
 
-void sun_light::apply() {
+void directional_light::apply() {
     apply_color();
 }

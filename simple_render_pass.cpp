@@ -10,7 +10,7 @@ simple_render_pass::simple_render_pass(shader_id new_shader_id, unsigned int ren
 
 void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters &additional_parameters) {
     camera the_camera = additional_parameters.the_camera;
-    sun_light light = additional_parameters.light;
+    directional_light light = additional_parameters.light;
 
     prepare_render();
 
