@@ -8,8 +8,7 @@
 
 class light {
     public:
-        light();
-        light(glm::vec3 color, float intensity);
+        light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f);
         virtual ~light();
         void set_color(glm::vec3 new_color);
         const glm::vec3 &get_color();
@@ -23,8 +22,7 @@ class light {
 
 class directional_light : public light {
     public:
-        directional_light();
-        directional_light(glm::vec3 color, float intensity, glm::vec3 direction);
+        directional_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 direction = glm::vec3(0, 0, -1));
         void set_direction(glm::vec3 new_direction);
         const glm::vec3 &get_direction();
 

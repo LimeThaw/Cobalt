@@ -1,11 +1,5 @@
 #include "lights.h"
 
-//light
-light::light() {
-    set_color(glm::vec3(255, 255, 255));
-    set_intensity(1.0f);
-}
-
 light::light(glm::vec3 new_color, float new_intensity) {
     set_color(new_color);
     set_intensity(new_intensity);
@@ -32,10 +26,6 @@ float light::get_intensity() {
 }
 
 //directional_light
-directional_light::directional_light() : light() {
-    set_direction(glm::vec3(0, 0, -1));
-}
-
 directional_light::directional_light(glm::vec3 color, float intensity, glm::vec3 direction) : light(color, intensity) {
     set_direction(direction);
 }
