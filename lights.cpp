@@ -4,14 +4,11 @@
 light::light() {
     set_color(glm::vec3(255, 255, 255));
     set_intensity(1.0f);
-    color_uniform = "";
 }
 
-light::light(glm::vec3 new_color, float new_intensity, std::string new_color_uniform) {
+light::light(glm::vec3 new_color, float new_intensity) {
     set_color(new_color);
     set_intensity(new_intensity);
-    set_color_uniform(new_color_uniform);
-    if(color_uniform == "") std::cerr << "! Created light with empty color uniform\n\n";
 }
 
 light::~light() {}
@@ -34,30 +31,13 @@ float light::get_intensity() {
     return intensity;
 }
 
-void light::set_color_uniform(std::string new_color_uniform) {
-    color_uniform = new_color_uniform;
-}
-
-void light::apply_color() {
-    if(color_uniform != "") {
-        GLint shader_id;
-        glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
-        glm::vec3 out_vec = color * intensity / 255.0f;
-        glUniform3f(glGetUniformLocation(shader_id, color_uniform.c_str()), out_vec.x, out_vec.y, out_vec.z);
-    } else {
-        //std::cerr << "! Tried to apply light without color uniform\n";
-        return;
-    }
-}
-
 //directional_light
 directional_light::directional_light() : light() {
     set_direction(glm::vec3(0, 0, -1));
 }
 
-directional_light::directional_light(glm::vec3 new_color, float new_intensity, glm::vec3 new_direction, std::string new_color_uniform) {
-    light(new_color, new_intensity, new_color_uniform);
-    set_direction(new_direction);
+directional_light::directional_light(glm::vec3 color, float intensity, glm::vec3 direction) : light(color, intensity) {
+    set_direction(direction);
 }
 
 void directional_light::set_direction(glm::vec3 new_direction) {
@@ -71,8 +51,4 @@ void directional_light::set_direction(glm::vec3 new_direction) {
 
 const glm::vec3 &directional_light::get_direction() {
     return direction;
-}
-
-void directional_light::apply() {
-    apply_color();
 }

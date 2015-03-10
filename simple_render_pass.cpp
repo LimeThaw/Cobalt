@@ -22,7 +22,9 @@ void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters 
     GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
 
-    light.apply();
+    glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
+    glm::vec3 out_vec = light.get_color() * light.get_intensity() / 255.0f;
+    glUniform3f(glGetUniformLocation(active_shader_id, "light_color"), out_vec.x, out_vec.y, out_vec.z);
 
     for(auto nodes : the_scene.enumerate_nodes()) {
         glm::mat4 node_matrix = nodes->get_node_matrix();
