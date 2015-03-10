@@ -1,11 +1,10 @@
 #include "lights.h"
 
+//light
 light::light(glm::vec3 new_color, float new_intensity) {
     set_color(new_color);
     set_intensity(new_intensity);
 }
-
-light::~light() {}
 
 void light::set_color(glm::vec3 new_color) {
     color.x = clamp(new_color.x, 0.0f, 255.0f);
@@ -41,4 +40,17 @@ void directional_light::set_direction(glm::vec3 new_direction) {
 
 const glm::vec3 &directional_light::get_direction() {
     return direction;
+}
+
+//point_light
+point_light::point_light(glm::vec3 color, float intensity, glm::vec3 position) : light(color, intensity) {
+    set_position(position);
+}
+
+void point_light::set_position(glm::vec3 new_position) {
+    position = new_position;
+}
+
+const glm::vec3 &point_light::get_position() {
+    return position;
 }

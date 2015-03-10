@@ -9,7 +9,6 @@
 class light {
     public:
         light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f);
-        virtual ~light();
         void set_color(glm::vec3 new_color);
         const glm::vec3 &get_color();
         void set_intensity(float new_intensity);
@@ -28,6 +27,16 @@ class directional_light : public light {
 
     private:
         glm::vec3 direction;
+};
+
+class point_light : public light {
+    public:
+        point_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 position = glm::vec3(0, 0, 1));
+        void set_position(glm::vec3 new_position);
+        const glm::vec3 &get_position();
+
+    private:
+        glm::vec3 position;
 };
 
 #endif // LIGHT_H

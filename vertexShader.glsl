@@ -7,13 +7,19 @@ uniform mat4 rotation;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec3 point_light_position;
 out vec2 uv;
 out vec3 normal;
 out mat3 tangent_space_matrix;
+out vec3 point_light_distance;
 
 void main(){
 	mat4 MVP = projection * view * model;
 	gl_Position = MVP * vec4(vertex_position, 1.0);
+
+	point_light_distance = point_light_position - (vec4(vertex_position, 1.0) * model).xyz;
+	
+
 	uv = vertex_UV;
 	vec3 temp_normal = (model * vec4(vertex_normal, 0.0)).xyz;
 	vec3 tangent = (model * vec4(vertex_tangent, 0.0)).xyz;

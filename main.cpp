@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
+#include <math.h>
 
 #include "cobalt.h"
 #include "simple_render_pass.h"
@@ -88,12 +89,13 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //load camera
-    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), directional_light(glm::vec3(255, 0, 255), 1, glm::vec3(-2, 0.5, 0.2)));
+    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), directional_light(glm::vec3(255, 255, 255), 1, glm::vec3(-2, 0.5, 2)), point_light(glm::vec3(255, 255, 255), 5, glm::vec3(1.5, 1.5, 1.5)));
 
     //Setup rotation and location
 
     float posx = 0.0f;
     float posz = 0.0f;
+    float intensity = 0.0f;
 
     //Setup key capturing
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -106,6 +108,7 @@ int main() {
         //count framerate
         if(glfwGetTime() - fpsc >= 1.0f) {
             std::clog << "-FPS: " << fps << '\n';
+
             fps = 0;
             fpsc = glfwGetTime();
         } else {
@@ -121,6 +124,10 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)posz += 0.01;
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)posz -= 0.01;
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
+
+        //change light intensity
+        intensity += 0.001;
+        render_parameters.d_light.set_intensity(std::abs(sin(intensity)));
 
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);

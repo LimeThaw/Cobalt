@@ -10,7 +10,8 @@ simple_render_pass::simple_render_pass(shader_id new_shader_id, unsigned int ren
 
 void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters &additional_parameters) {
     camera the_camera = additional_parameters.the_camera;
-    directional_light light = additional_parameters.light;
+    directional_light d_light = additional_parameters.d_light;
+    point_light p_light = additional_parameters.p_light;
 
     prepare_render();
 
@@ -22,9 +23,15 @@ void simple_render_pass::render(scene &the_scene, simple_render_pass_parameters 
     GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
 
-    glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
-    glm::vec3 out_vec = light.get_color() * light.get_intensity() / 255.0f;
-    glUniform3f(glGetUniformLocation(active_shader_id, "light_color"), out_vec.x, out_vec.y, out_vec.z);
+    glm::vec3 color_vec = d_light.get_color() * d_light.get_intensity() / 255.0f;
+    glm::vec3 direction_vec = d_light.get_direction();
+    glUniform3f(glGetUniformLocation(active_shader_id, "light_color"), color_vec.x, color_vec.y, color_vec.z);
+    glUniform3f(glGetUniformLocation(active_shader_id, "light_direction"), direction_vec.x, direction_vec.y, direction_vec.z);
+
+    glm::vec3 point_color_vec = p_light.get_color() * p_light.get_intensity() / 255.0f;
+    glm::vec3 point_position_vec = p_light.get_position();
+    glUniform3f(glGetUniformLocation(active_shader_id, "point_light_color"), point_color_vec.x, point_color_vec.y, point_color_vec.z);
+    glUniform3f(glGetUniformLocation(active_shader_id, "point_light_position"), point_position_vec.x, point_position_vec.y, point_position_vec.z);
 
     for(auto nodes : the_scene.enumerate_nodes()) {
         glm::mat4 node_matrix = nodes->get_node_matrix();
