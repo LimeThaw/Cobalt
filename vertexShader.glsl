@@ -17,9 +17,8 @@ void main(){
 	mat4 MVP = projection * view * model;
 	gl_Position = MVP * vec4(vertex_position, 1.0);
 
-	point_light_distance = point_light_position - (vec4(vertex_position, 1.0) * model).xyz;
+	point_light_distance = point_light_position - (model * vec4(vertex_position, 1.0)).xyz;
 	
-
 	uv = vertex_UV;
 	vec3 temp_normal = (model * vec4(vertex_normal, 0.0)).xyz;
 	vec3 tangent = (model * vec4(vertex_tangent, 0.0)).xyz;

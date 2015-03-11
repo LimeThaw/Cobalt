@@ -1,5 +1,6 @@
 #version 400
 in vec2 uv;
+in vec3 normal;
 in mat3 tangent_space_matrix;
 in vec3 point_light_distance;
 uniform sampler2D color_map;

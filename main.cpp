@@ -89,7 +89,7 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //load camera
-    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), directional_light(glm::vec3(255, 255, 255), 1, glm::vec3(-2, 0.5, 2)), point_light(glm::vec3(255, 255, 255), 5, glm::vec3(1.5, 1.5, 1.5)));
+    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), directional_light(glm::vec3(255, 255, 255), 3, glm::vec3(-2, 0.5, 2)), point_light(glm::vec3(255, 255, 255), 3, glm::vec3(0, 0.5, 1.5)));
 
     //Setup rotation and location
 
@@ -132,6 +132,7 @@ int main() {
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
         my_world.get_parent_node()->place(posx, -5, posz);
+        render_parameters.p_light.set_position(glm::vec3(posx + 2, -3, posz + 2));
         render_pass.render(my_world, render_parameters);
         solid_render_pass.render(my_world, render_parameters);
         normal_render_pass.render(my_world, render_parameters);
