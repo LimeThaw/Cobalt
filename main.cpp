@@ -88,12 +88,13 @@ int main() {
     float zoom = 2.0f;
     my_world.get_parent_node()->set_scale(zoom);
 
-    //load camera
-    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)),
-                                                    directional_light(glm::vec3(255, 255, 255), 3, glm::vec3(-2, 0.5, 2)),
-                                                    point_light(glm::vec3(255, 255, 255), 3, glm::vec3(0, 0.5, 1.5)),
-                                                    glm::vec3(0.3)
-                                                   );
+    camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
+    std::vector<directional_light> directional_lights = { directional_light(glm::vec3(100, 200, 50), 3, glm::vec3(-2, 0.5, 2)) };
+    std::vector<point_light> point_lights = { point_light(glm::vec3(255, 0, 0), 3, glm::vec3(0, 0.5, 1.5)),
+                                              point_light(glm::vec3(0, 255, 0), 3, glm::vec3(0, -0.5, -1.5)),
+                                              point_light(glm::vec3(0, 0, 255), 3, glm::vec3(1.0, 0, 0.5)),
+    };
+    glm::vec3 ambient_light_color = glm::vec3(0.3);
 
     //Setup rotation and location
 
@@ -131,15 +132,16 @@ int main() {
 
         //change light intensity
         intensity += 0.001;
-        render_parameters.d_light.set_intensity(std::abs(sin(intensity)));
+        directional_lights[0].set_intensity(std::abs(sin(intensity)));
 
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
-        my_world.get_parent_node()->place(posx, -5, posz);
-        render_parameters.p_light.set_position(glm::vec3(posx + 2, -3, posz + 2));
-        render_pass.render(my_world, render_parameters);
-        solid_render_pass.render(my_world, render_parameters);
-        normal_render_pass.render(my_world, render_parameters);
+        //my_world.get_parent_node()->place(posx, -5, posz);
+        the_camera.place(posx, 10, posz);
+        //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
+        render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
 
         //Update window and events
         glfwSwapBuffers(window);

@@ -20,6 +20,6 @@ void main(){
 	vec3 temp_normal = normal_matrix * vertex_normal;
 	vec3 tangent = (model * vec4(vertex_tangent, 0.0)).xyz;
 	tangent_space_matrix = mat3(tangent, cross(tangent, temp_normal), temp_normal);
-	normal = vertex_normal;
+	normal = temp_normal;
 	world_position = (model * vec4(vertex_position, 1.0)).xyz;
 }

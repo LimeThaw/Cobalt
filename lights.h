@@ -31,12 +31,13 @@ class directional_light : public light {
 
 class point_light : public light {
     public:
-        point_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 position = glm::vec3(0, 0, 1));
+        point_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 position = glm::vec3(0, 0, 1), float radius = 10.0f);
         void set_position(glm::vec3 new_position);
         const glm::vec3 &get_position();
-
+        float get_radius();
     private:
         glm::vec3 position;
+        float radius;
 };
 
 #endif // LIGHT_H

@@ -43,7 +43,7 @@ const glm::vec3 &directional_light::get_direction() {
 }
 
 //point_light
-point_light::point_light(glm::vec3 color, float intensity, glm::vec3 position) : light(color, intensity) {
+point_light::point_light(glm::vec3 color, float intensity, glm::vec3 position, float radius) : light(color, intensity), radius(radius) {
     set_position(position);
 }
 
@@ -54,3 +54,8 @@ void point_light::set_position(glm::vec3 new_position) {
 const glm::vec3 &point_light::get_position() {
     return position;
 }
+
+float point_light::get_radius() {
+    return radius;
+}
+

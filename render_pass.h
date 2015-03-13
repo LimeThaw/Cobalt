@@ -9,7 +9,7 @@ Template used as  a basis for custom render passes.
 
 #include "shader_manager.h"
 
-template<typename scene_type, typename additional_render_parameters_type>
+template<typename scene_type, typename... additional_render_parameter_types>
 class render_pass {
 private:
     shader_id render_pass_shader_id;
@@ -22,7 +22,7 @@ public:
     }///< Function binding the shader associated with the render pass.
 
 
-    virtual void render(scene_type &scene, additional_render_parameters_type &additional_render_parameters) = 0;///< Render function that needs to be defined individually for every render pass.
+    virtual void render(scene_type &scene, additional_render_parameter_types... additional_render_parameters) = 0;///< Render function that needs to be defined individually for every render pass.
 };
 
 #endif
