@@ -142,7 +142,7 @@ void mesh::set_scale(float new_scale) {
     scale = glm::scale(glm::vec3(new_scale));
 }
 
-void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
+void mesh::render(glm::mat4 parent_matrix) {
     if(material_id != invalid_material_id) {
         set_active_material(material_id);
     } else {
@@ -151,14 +151,14 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
     }
 
     model = location * rotation * scale;        //Calculate and register the model and rotation matrices
-    glm::mat4 render_rotation = parent_rotation_matrix * rotation;
     glm::mat4 render_model = parent_matrix * location * rotation * scale;
+    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(render_model)));
     GLint shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
     GLuint matrix_location = glGetUniformLocation(shader_id, "model");
     glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_model[0][0]);
-    matrix_location = glGetUniformLocation(shader_id, "rotation");
-    glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_rotation[0][0]);
+    matrix_location = glGetUniformLocation(shader_id, "normal_matrix");
+    glUniformMatrix3fv(matrix_location, 1, GL_FALSE, &normal_matrix[0][0]);
 
     glBindVertexArray(vertex_array_object_id);
 

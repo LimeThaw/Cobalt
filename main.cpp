@@ -57,7 +57,7 @@ int main() {
 
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
-    unsigned int solid_shader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
+    unsigned int untextured_shader = load_global_shader("vertexShader.glsl", "untexturedFragmentShader.glsl");
     unsigned int normal_shader = load_global_shader("vertexShader.glsl", "normalFragmentShader.glsl");
 
     unsigned int map_mat = create_material(new texture_link("testmapTex_small.png", "color_map"));
@@ -67,7 +67,7 @@ int main() {
     add_texture(monkey_mat, new texture_link("dirt_normal.png", "normal_map"));
 
     simple_render_pass render_pass(shader, map_mat);
-    simple_render_pass solid_render_pass(solid_shader, robot_mat);
+    simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
 
     //Load objects, give them materials and place them in world
@@ -89,7 +89,11 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //load camera
-    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)), directional_light(glm::vec3(255, 255, 255), 3, glm::vec3(-2, 0.5, 2)), point_light(glm::vec3(255, 255, 255), 3, glm::vec3(0, 0.5, 1.5)));
+    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)),
+                                                    directional_light(glm::vec3(255, 255, 255), 3, glm::vec3(-2, 0.5, 2)),
+                                                    point_light(glm::vec3(255, 255, 255), 3, glm::vec3(0, 0.5, 1.5)),
+                                                    glm::vec3(0.3)
+                                                   );
 
     //Setup rotation and location
 
