@@ -35,7 +35,8 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
         std::string is = std::to_string(i);
         glUniform3f(glGetUniformLocation(active_shader_id, ("point_light_colors[" + is + "]").c_str()), point_color_vec.x, point_color_vec.y, point_color_vec.z);
         glUniform3f(glGetUniformLocation(active_shader_id, ("point_light_positions[" + is + "]").c_str()), point_position_vec.x, point_position_vec.y, point_position_vec.z);
-        glUniform1f(glGetUniformLocation(active_shader_id, ("point_light_radii[" + is + "]").c_str()), p_light.get_radius());
+        float r = p_light.get_radius();
+        glUniform1f(glGetUniformLocation(active_shader_id, ("point_light_radii_sq[" + is + "]").c_str()), r * r);
     }
     
     glUniform3f(glGetUniformLocation(active_shader_id, "ambient_light_color"),  ambient_light_color.r, ambient_light_color.g, ambient_light_color.b);
