@@ -7,8 +7,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
+#include <math.h>
 
 #include "cobalt.h"
+#include "simple_render_pass.h"
 
 int main() {
 
@@ -55,7 +57,7 @@ int main() {
 
     //Load shaders and textures
     unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
-    unsigned int solid_shader = load_global_shader("vertexShader.glsl", "solidFragmentShader.glsl");
+    unsigned int untextured_shader = load_global_shader("vertexShader.glsl", "untexturedFragmentShader.glsl");
     unsigned int normal_shader = load_global_shader("vertexShader.glsl", "normalFragmentShader.glsl");
 
     unsigned int map_mat = create_material(new texture_link("testmapTex_small.png", "color_map"));
@@ -65,7 +67,7 @@ int main() {
     add_texture(monkey_mat, new texture_link("dirt_normal.png", "normal_map"));
 
     simple_render_pass render_pass(shader, map_mat);
-    simple_render_pass solid_render_pass(solid_shader, robot_mat);
+    simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
 
     //Load objects, give them materials and place them in world
@@ -86,14 +88,19 @@ int main() {
     float zoom = 2.0f;
     my_world.get_parent_node()->set_scale(zoom);
 
-    //load camera
-    simple_render_pass_parameters render_parameters(camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0)));
+    camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
+    std::vector<directional_light> directional_lights = { directional_light(glm::vec3(100, 200, 50), 3, glm::vec3(-2, 0.5, 2)) };
+    std::vector<point_light> point_lights = { point_light(glm::vec3(255, 0, 0), 3, glm::vec3(0, 0.5, 1.5)),
+                                              point_light(glm::vec3(0, 255, 0), 3, glm::vec3(0, -0.5, -1.5)),
+                                              point_light(glm::vec3(0, 0, 255), 3, glm::vec3(1.0, 0, 0.5)),
+    };
+    glm::vec3 ambient_light_color = glm::vec3(0.3);
 
     //Setup rotation and location
-    float roty = 0.0f;
-    float rotx = 0.0f;
+
     float posx = 0.0f;
     float posz = 0.0f;
+    float intensity = 0.0f;
 
     //Setup key capturing
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -106,6 +113,7 @@ int main() {
         //count framerate
         if(glfwGetTime() - fpsc >= 1.0f) {
             std::clog << "-FPS: " << fps << '\n';
+
             fps = 0;
             fpsc = glfwGetTime();
         } else {
@@ -122,12 +130,18 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)posz -= 0.01;
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
 
+        //change light intensity
+        intensity += 0.001;
+        directional_lights[0].set_intensity(std::abs(sin(intensity)));
+
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
-        my_world.get_parent_node()->place(posx, -5, posz);
-        render_pass.render(my_world, render_parameters);
-        solid_render_pass.render(my_world, render_parameters);
-        normal_render_pass.render(my_world, render_parameters);
+        //my_world.get_parent_node()->place(posx, -5, posz);
+        the_camera.place(posx, 10, posz);
+        //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
+        render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
 
         //Update window and events
         glfwSwapBuffers(window);

@@ -10,7 +10,9 @@
 #include "shader.h"
 #include "util.h"
 #include "gl_exception.h"
-#include "simple_render_pass.h"
+#include "render_pass.h"
 #include "camera.h"
+#include "lights.h"
+#include "render_pass.h"
 
 #endif // W3D_H_INCLUDED

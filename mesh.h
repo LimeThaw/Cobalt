@@ -31,7 +31,7 @@ class mesh {
         void place(float x, float y, float z);
         void set_orientation(float x, float y, float z);
         void set_scale(float new_scale);
-        void render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix);
+        void render(glm::mat4 parent_matrix);
         unsigned int get_material_id() const;
 
     private:

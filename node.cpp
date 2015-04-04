@@ -114,33 +114,24 @@ glm::mat4 node::get_node_matrix() const {
     return temp_matrix;
 }
 
-glm::mat4 node::get_rotation_matrix() const {
-    if(parent_node != nullptr) {
-        return parent_node->get_rotation_matrix() * rotation;
-    } else {
-        return rotation;
-    }
-}
-
 void node::render() const {
     for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(get_node_matrix(), get_rotation_matrix());
+        models[i]->render(get_node_matrix());
     }
     for(unsigned int i = 0; i < children.size(); i++) {
         children[i]->render();
     }
 }
 
-void node::render(glm::mat4 parent_matrix, glm::mat4 parent_rotation_matrix) {
+void node::render(glm::mat4 parent_matrix) {
     node_matrix = location * rotation * scale;        //Calculate the node matrix
     glm::mat4 sum_matrix = parent_matrix * node_matrix;
-    glm::mat4 sum_rotation_matrix = parent_rotation_matrix * rotation;
 
     for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(sum_matrix, sum_rotation_matrix);
+        models[i]->render(sum_matrix);
     }
     for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(sum_matrix, sum_rotation_matrix);
+        children[i]->render(sum_matrix);
     }
 }
 
