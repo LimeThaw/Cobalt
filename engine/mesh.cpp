@@ -26,11 +26,11 @@ mesh::~mesh() {
     if(material_id != invalid_material_id) remove_material_instance(material_id);
 }
 
-bool mesh::load_model(const char *model_path) {
+bool mesh::load_model(const std::string &model_path) {
     return load_model(model_path, 0);
 }
 
-bool mesh::load_model(const char *scene_path, int model_index) {
+bool mesh::load_model(const std::string &scene_path, int model_index) {
     std::clog << "-Loading mesh " << scene_path << " [" << model_index << "]\n";
     float start_time = glfwGetTime();
 

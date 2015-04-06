@@ -8,7 +8,7 @@ scene::~scene() {
     //dtor
 }
 
-void scene::append_node(const char *file_path) {
+void scene::append_node(const std::string &file_path) {
     parent_node.append_node(file_path);
 }
 

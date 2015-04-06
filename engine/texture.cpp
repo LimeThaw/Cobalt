@@ -9,12 +9,12 @@ texture::~texture() {
     glDeleteTextures(1, &openGL_id);
 }
 
-bool texture::load(const char *path) {
+bool texture::load(const std::string &path) {
     std::clog << "-Loading texture " << path << '\n';
     float start_time = glfwGetTime();
 
     // Create one OpenGL texture
-    openGL_id = SOIL_load_OGL_texture(path, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
+    openGL_id = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
                                       SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
     clear_gl_error();

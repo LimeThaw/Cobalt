@@ -13,7 +13,7 @@ const unsigned int invalid_shader_id = (unsigned int) -1;
 class shader_manager {
     public:
         static shader_manager &get_instance();
-        shader_id load_shader(const char *vertex_path, const char *fragment_path);
+        shader_id load_shader(const std::string &vertex_path, const std::string &fragment_path);
         void add_shader_instance(shader_id id);
         void remove_shader_instance(shader_id id);
         void use_shader(shader_id id);
@@ -24,7 +24,7 @@ class shader_manager {
         std::vector<shader *> shaders;
 };
 
-shader_id load_global_shader(const char *vertex_path, const char *fragment_path);
+shader_id load_global_shader(const std::string &vertex_path, const std::string &fragment_path);
 void add_shader_instance(shader_id id);
 void remove_shader_instance(shader_id id);
 

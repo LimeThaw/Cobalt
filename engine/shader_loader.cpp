@@ -6,7 +6,7 @@
 #include <cstring>
 #include <vector>
 
-GLuint load_shaders(const char *vertex_file_path, const char *fragment_file_path) {
+GLuint load_shaders(const std::string &vertex_file_path, const std::string &fragment_file_path) {
 
     // Create the shaders
     GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
@@ -36,7 +36,7 @@ GLuint load_shaders(const char *vertex_file_path, const char *fragment_file_path
     int info_log_length;
 
     // Compile Vertex Shader
-    printf("Compiling shader : %s\n", vertex_file_path);
+    printf("Compiling shader : %s\n", vertex_file_path.c_str());
     char const *vertex_source_pointer = vertex_shader_code.c_str();
     glShaderSource(vertex_shader_id, 1, &vertex_source_pointer , NULL);
     glCompileShader(vertex_shader_id);
@@ -49,7 +49,7 @@ GLuint load_shaders(const char *vertex_file_path, const char *fragment_file_path
     fprintf(stdout, "%s\n", &vertex_shader_error_message[0]);
 
     // Compile Fragment Shader
-    printf("Compiling shader : %s\n", fragment_file_path);
+    printf("Compiling shader : %s\n", fragment_file_path.c_str());
     char const *fragment_source_pointer = fragment_shader_code.c_str();
     glShaderSource(fragment_shader_id, 1, &fragment_source_pointer , NULL);
     glCompileShader(fragment_shader_id);

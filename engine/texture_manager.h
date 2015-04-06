@@ -15,7 +15,7 @@ const unsigned int invalid_texture_id = (unsigned int) -1;
 class texture_manager {
     public:
         static texture_manager &get_instance();///< Returns a reference to the texture_manager object.
-        texture_id load_texture(const char *texture_path);///< Loads a texture from an image file and returns the texture's texture_id.
+        texture_id load_texture(const std::string &texture_path);///< Loads a texture from an image file and returns the texture's texture_id.
         void add_texture_instance(texture_id id);
         void remove_texture_instance(texture_id id);
         void bind_texture(texture_id id);///<Tells OpenGL to bind the specified texture.
@@ -27,7 +27,7 @@ class texture_manager {
         std::vector<texture *> textures;
 };
 
-texture_id load_global_texture(const char *path);
+texture_id load_global_texture(const std::string &path);
 void add_texture_instance(texture_id id);
 void remove_texture_instance(texture_id id);
 

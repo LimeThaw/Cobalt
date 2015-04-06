@@ -5,7 +5,7 @@ shader_manager &shader_manager::get_instance() {
     return instance;
 }
 
-shader_id shader_manager::load_shader(const char *vertex_path, const char *fragment_path) {
+shader_id shader_manager::load_shader(const std::string &vertex_path, const std::string &fragment_path) {
     shader *new_shader = new shader();
     new_shader->load_shader(vertex_path, fragment_path);
     shaders.push_back(new_shader);
@@ -41,7 +41,7 @@ shader_manager::shader_manager() {
     //ctor
 }
 
-shader_id load_global_shader(const char *vertex_path, const char *fragment_path) {
+shader_id load_global_shader(const std::string &vertex_path, const std::string &fragment_path) {
     return shader_manager::get_instance().load_shader(vertex_path, fragment_path);
 }
 

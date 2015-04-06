@@ -25,8 +25,8 @@ class mesh {
     public:
         mesh();
         ~mesh();
-        bool load_model(const char *model_path);
-        bool load_model(const char *scene_path, int model_index);
+        bool load_model(const std::string &model_path);
+        bool load_model(const std::string &scene_path, int model_index);
         void set_material(unsigned int new_material_id);
         void place(float x, float y, float z);
         void set_orientation(float x, float y, float z);
