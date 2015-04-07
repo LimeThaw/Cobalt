@@ -65,6 +65,10 @@ int main() {
     unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "normalFragmentShader.glsl");
 
     unsigned int map_mat = create_material(new texture_link(texture_dir + "testmapTex_small.png", "color_map"));
+    unsigned int room_mat = create_material(std::vector<texture_link*> {
+        new texture_link(texture_dir + "rockwall.jpg", "color_map"),
+        new texture_link(texture_manager::get_instance().load_normalmap_from_heightmap(texture_dir + "rockwall_height.bmp"), "normal_map")
+    });
     unsigned int robot_mat = create_material();
     unsigned int monkey_mat = create_material();
     add_texture(monkey_mat, new texture_link(texture_dir + "dirt.jpeg", "color_map"));
@@ -72,13 +76,16 @@ int main() {
 
     simple_render_pass render_pass(shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
-    simple_render_pass normal_render_pass(normal_shader, monkey_mat);
+    simple_render_pass normal_render_pass(normal_shader, std::vector<material_id> { monkey_mat, room_mat });
 
     //Load objects, give them materials and place them in world
     scene my_world;
     node *map_node = new node(model_dir + "testmap.obj");
     map_node->set_material(map_mat);
     my_world.append_node(map_node);
+    node *room_node = new node(model_dir + "room.obj", room_mat);
+    room_node->set_scale(1.0f);
+    my_world.append_node(room_node);
     node *robot_node = new node(model_dir + "Robot.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
@@ -98,7 +105,7 @@ int main() {
                                               point_light(glm::vec3(0, 255, 0), 3, glm::vec3(0, -0.5, -1.5)),
                                               point_light(glm::vec3(0, 0, 255), 3, glm::vec3(1.0, 0, 0.5)),
     };
-    glm::vec3 ambient_light_color = glm::vec3(0.3);
+    glm::vec3 ambient_light_color = glm::vec3(0.1);
 
     //Setup rotation and location
 

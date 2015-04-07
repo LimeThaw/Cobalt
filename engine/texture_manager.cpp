@@ -12,6 +12,14 @@ texture_id texture_manager::load_texture(const std::string &texture_path) {
     return textures.size() - 1;
 }
 
+texture_id texture_manager::load_normalmap_from_heightmap(const std::string &texture_path) {
+    texture *tex = new texture();
+    tex->load_normalmap_from_heightmap(texture_path);
+    textures.push_back(tex);
+    return textures.size() - 1;
+}
+
+
 void texture_manager::add_texture_instance(texture_id id) {
     if(textures.size() <= id || textures[id] == NULL) {
         std::cerr << "! Can't add instance of texture [" << id << "] - texture doesn't exist\n";

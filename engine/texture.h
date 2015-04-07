@@ -14,6 +14,7 @@ class texture {
         texture();
         ~texture();
         bool load(const std::string &path);
+        void load_normalmap_from_heightmap(const std::string &path);
         void bind_texture();
         unsigned int get_instance_count();
         void add_instance();
@@ -22,6 +23,8 @@ class texture {
     private:
         GLuint openGL_id;
         unsigned int instances;
+        
+        static int get_num_mipmap_levels(int width, int height);
 };
 
 #endif // TEXTURE_H

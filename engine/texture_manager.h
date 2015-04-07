@@ -16,6 +16,7 @@ class texture_manager {
     public:
         static texture_manager &get_instance();///< Returns a reference to the texture_manager object.
         texture_id load_texture(const std::string &texture_path);///< Loads a texture from an image file and returns the texture's texture_id.
+        texture_id load_normalmap_from_heightmap(const std::string &texture_path);
         void add_texture_instance(texture_id id);
         void remove_texture_instance(texture_id id);
         void bind_texture(texture_id id);///<Tells OpenGL to bind the specified texture.

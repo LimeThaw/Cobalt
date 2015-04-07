@@ -11,6 +11,13 @@ node::node(const std::string &scene_path) {
     load_scene(scene_path);
 }
 
+node::node(const std::string &scene_path, material_id material) {
+    location = rotation = scale = node_matrix = glm::mat4(1.0f);
+    parent_node = nullptr;
+    load_scene(scene_path);
+    set_material(material);
+}
+
 node::~node() {
     for(unsigned int i = 0; i < models.size(); i++) {
         delete models[i];

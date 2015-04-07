@@ -16,6 +16,7 @@ class node {
     public:
         node();
         node(const std::string &scene_path);
+        node(const std::string &scene_path, material_id material);
         ~node();
         void load_model(const std::string &path);
         bool load_scene(const std::string &path);
