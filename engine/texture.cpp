@@ -68,8 +68,13 @@ void texture::load_normalmap_from_heightmap(const std::string &path) {
                 glm::vec3 b(0, dy, read_height(ix, iy + dy));
                 glm::vec3 c(0, 0, read_height(ix, iy));
                 glm::vec3 rst = glm::cross(a - c, b - c);
-                //Turn around normals that go into the plane
-                return rst * rst.z;
+                
+                if(rst != glm::vec3(0)) {
+                  //Turn around normals that go into the plane  
+                    return glm::normalize(rst * rst.z);
+                } else {
+                    return glm::vec3(0);
+                }
             };
             glm::vec3 normal;
             if (ix > 0 && iy > 0) {
