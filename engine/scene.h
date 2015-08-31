@@ -16,7 +16,7 @@ class scene {
     public:
         scene();
         ~scene();
-        void append_node(const char *file_path);
+        void append_node(const std::string &file_path);
         void append_node(node *new_child);
         node *get_parent_node();
         std::vector< node * > enumerate_nodes();

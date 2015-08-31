@@ -16,6 +16,10 @@ int main() {
 
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
+    
+    const std::string model_dir = "./demo/res/models/";
+    const std::string shader_dir = "./demo/res/shaders/";
+    const std::string texture_dir = "./demo/res/textures/";
 
     //init GLFW
     if(!glfwInit()) {
@@ -56,15 +60,15 @@ int main() {
 
 
     //Load shaders and textures
-    unsigned int shader = load_global_shader("vertexShader.glsl", "textureFragmentShader.glsl");
-    unsigned int untextured_shader = load_global_shader("vertexShader.glsl", "untexturedFragmentShader.glsl");
-    unsigned int normal_shader = load_global_shader("vertexShader.glsl", "normalFragmentShader.glsl");
+    unsigned int shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir +  "textureFragmentShader.glsl");
+    unsigned int untextured_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "untexturedFragmentShader.glsl");
+    unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "normalFragmentShader.glsl");
 
-    unsigned int map_mat = create_material(new texture_link("testmapTex_small.png", "color_map"));
+    unsigned int map_mat = create_material(new texture_link(texture_dir + "testmapTex_small.png", "color_map"));
     unsigned int robot_mat = create_material();
     unsigned int monkey_mat = create_material();
-    add_texture(monkey_mat, new texture_link("dirt.jpeg", "color_map"));
-    add_texture(monkey_mat, new texture_link("dirt_normal.png", "normal_map"));
+    add_texture(monkey_mat, new texture_link(texture_dir + "dirt.jpeg", "color_map"));
+    add_texture(monkey_mat, new texture_link(texture_dir + "dirt_normal.png", "normal_map"));
 
     simple_render_pass render_pass(shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
@@ -72,14 +76,14 @@ int main() {
 
     //Load objects, give them materials and place them in world
     scene my_world;
-    node *map_node = new node("testmap.obj");
+    node *map_node = new node(model_dir + "testmap.obj");
     map_node->set_material(map_mat);
     my_world.append_node(map_node);
-    node *robot_node = new node("Robot.obj");
+    node *robot_node = new node(model_dir + "Robot.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
-    node *monkey_node = new node("NormalExample.obj");
+    node *monkey_node = new node(model_dir + "NormalExample.obj");
     monkey_node->set_material(monkey_mat);
     monkey_node->place(2, 0, 0);
     my_world.append_node(monkey_node);

@@ -13,7 +13,7 @@ class texture {
     public:
         texture();
         ~texture();
-        bool load(const char *path);
+        bool load(const std::string &path);
         void bind_texture();
         unsigned int get_instance_count();
         void add_instance();

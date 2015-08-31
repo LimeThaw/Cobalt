@@ -5,7 +5,7 @@ node::node() {
     parent_node = nullptr;
 }
 
-node::node(const char *scene_path) {
+node::node(const std::string &scene_path) {
     location = rotation = scale = node_matrix = glm::mat4(1.0f);
     parent_node = nullptr;
     load_scene(scene_path);
@@ -22,13 +22,13 @@ node::~node() {
     children.clear();
 }
 
-void node::load_model(const char *path) {
+void node::load_model(const std::string &path) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path);
     models.push_back(temp_mesh);
 }
 
-bool node::load_scene(const char *path) {
+bool node::load_scene(const std::string &path) {
     std::clog << "-Loading scene " << path << "\n\n";
     float start_time = glfwGetTime();
 
@@ -78,7 +78,7 @@ void node::set_scale(float new_scale) {
     scale = glm::scale(glm::vec3(new_scale));
 }
 
-void node::append_node(const char *file_path) {
+void node::append_node(const std::string &file_path) {
     node *temp_node = new node();
     temp_node->load_scene(file_path);
     temp_node->set_parent(this);
@@ -151,7 +151,7 @@ const std::vector< mesh * > &node::get_models() {
 
 
 //Private
-void node::load_model(const char *path, int model_index) {
+void node::load_model(const std::string &path, int model_index) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path, model_index);
     models.push_back(temp_mesh);

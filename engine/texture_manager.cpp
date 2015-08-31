@@ -5,7 +5,7 @@ texture_manager &texture_manager::get_instance() {
     return instance;
 }
 
-texture_id texture_manager::load_texture(const char *texture_path) {
+texture_id texture_manager::load_texture(const std::string &texture_path) {
     texture *tex = new texture();
     tex->load(texture_path);
     textures.push_back(tex);
@@ -43,7 +43,7 @@ texture_manager::texture_manager() {
     //ctor
 }
 
-texture_id load_global_texture(const char *path) {
+texture_id load_global_texture(const std::string &path) {
     return texture_manager::get_instance().load_texture(path);
 }
 

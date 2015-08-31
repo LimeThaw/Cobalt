@@ -14,7 +14,7 @@ class shader {
     public:
         shader();
         ~shader();
-        void load_shader(const char *vertex_path, const char *fragment_path);
+        void load_shader(const std::string &vertex_path, const std::string &fragment_path);
         void use();
         GLuint get_shader_id();
         unsigned int get_instance_count();

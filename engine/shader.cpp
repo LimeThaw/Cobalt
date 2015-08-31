@@ -9,7 +9,7 @@ shader::~shader() {
     glDeleteProgram(shader_id);
 }
 
-void shader::load_shader(const char *vertex_path, const char *fragment_path) {
+void shader::load_shader(const std::string &vertex_path, const std::string &fragment_path) {
     std::clog << "-Loading shader\n";
     float start_time = glfwGetTime();
 
@@ -41,7 +41,7 @@ void shader::load_shader(const char *vertex_path, const char *fragment_path) {
     int info_log_length;
 
     // Compile Vertex Shader
-    printf("- Compiling shader : %s\n", vertex_path);
+    printf("- Compiling shader : %s\n", vertex_path.c_str());
     char const *vertex_source_counter = vertex_shader_code.c_str();
     glShaderSource(vertex_shader_id, 1, &vertex_source_counter , NULL);
     glCompileShader(vertex_shader_id);
@@ -56,7 +56,7 @@ void shader::load_shader(const char *vertex_path, const char *fragment_path) {
     }
 
     // Compile Fragment Shader
-    printf("- Compiling shader : %s\n", fragment_path);
+    printf("- Compiling shader : %s\n", fragment_path.c_str());
     char const *fragment_source_pointer = fragment_shader_source.c_str();
     glShaderSource(fragment_shader_id, 1, &fragment_source_pointer , NULL);
     glCompileShader(fragment_shader_id);
