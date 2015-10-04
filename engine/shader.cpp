@@ -50,9 +50,9 @@ void shader::load_shader(const std::string &vertex_path, const std::string &frag
     glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &result);
     if(result != GL_TRUE) {
         glGetShaderiv(vertex_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        std::vector<char> VertexShaderErrorMessage(info_log_length);
-        glGetShaderInfoLog(vertex_shader_id, info_log_length, NULL, &VertexShaderErrorMessage[0]);
-        fprintf(stdout, "-  %s\n", &VertexShaderErrorMessage[0]);
+        std::vector<char> vertex_shader_error_message(info_log_length);
+        glGetShaderInfoLog(vertex_shader_id, info_log_length, NULL, &vertex_shader_error_message[0]);
+        fprintf(stdout, "-  %s\n", &vertex_shader_error_message[0]);
     }
 
     // Compile Fragment Shader
@@ -65,9 +65,9 @@ void shader::load_shader(const std::string &vertex_path, const std::string &frag
     glGetShaderiv(fragment_shader_id, GL_COMPILE_STATUS, &result);
     if(result != GL_TRUE) {
         glGetShaderiv(fragment_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        std::vector<char> FragmentShaderErrorMessage(info_log_length);
-        glGetShaderInfoLog(fragment_shader_id, info_log_length, NULL, &FragmentShaderErrorMessage[0]);
-        fprintf(stdout, "-  %s\n", &FragmentShaderErrorMessage[0]);
+        std::vector<char> fragment_shader_error_message(info_log_length);
+        glGetShaderInfoLog(fragment_shader_id, info_log_length, NULL, &fragment_shader_error_message[0]);
+        fprintf(stdout, "-  %s\n", &fragment_shader_error_message[0]);
     }
 
     // Link the program
@@ -75,19 +75,19 @@ void shader::load_shader(const std::string &vertex_path, const std::string &frag
     GLuint program_id = glCreateProgram();
     glAttachShader(program_id, vertex_shader_id);
     glAttachShader(program_id, fragment_shader_id);
-	glBindAttribLocation(program_id, 0, "vertex_position");
-	glBindAttribLocation(program_id, 1, "vertex_UV");
-	glBindAttribLocation(program_id, 2, "vertex_normal");
-	glBindAttribLocation(program_id, 3, "vertex_tangent");
+	glBindAttribLocation(program_id, shader_vertex_location, "vertex_position");
+	glBindAttribLocation(program_id, shader_uv_location, "vertex_UV");
+	glBindAttribLocation(program_id, shader_normal_location, "vertex_normal");
+	glBindAttribLocation(program_id, shader_tangent_location, "vertex_tangent");
     glLinkProgram(program_id);
 
     // Check the program
     glGetProgramiv(program_id, GL_LINK_STATUS, &result);
     if(result != GL_TRUE) {
         glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        std::vector<char> ProgramErrorMessage(std::max(info_log_length, int(1)));
-        glGetProgramInfoLog(program_id, info_log_length, NULL, &ProgramErrorMessage[0]);
-        fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
+        std::vector<char> program_error_message(std::max(info_log_length, int(1)));
+        glGetProgramInfoLog(program_id, info_log_length, NULL, &program_error_message[0]);
+        fprintf(stdout, "%s\n", &program_error_message[0]);
     }
 
     glDeleteShader(vertex_shader_id);
