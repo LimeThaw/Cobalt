@@ -75,6 +75,10 @@ void shader::load_shader(const std::string &vertex_path, const std::string &frag
     GLuint program_id = glCreateProgram();
     glAttachShader(program_id, vertex_shader_id);
     glAttachShader(program_id, fragment_shader_id);
+	glBindAttribLocation(program_id, 0, "vertex_position");
+	glBindAttribLocation(program_id, 1, "vertex_UV");
+	glBindAttribLocation(program_id, 2, "vertex_normal");
+	glBindAttribLocation(program_id, 3, "vertex_tangent");
     glLinkProgram(program_id);
 
     // Check the program

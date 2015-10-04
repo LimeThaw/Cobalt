@@ -1,3 +1,10 @@
  - Version 0.1 - 
 
 Includes a sample program
+
+Libraries needed:
+- assimp
+- glew
+- glfw
+- glm
+- soil
