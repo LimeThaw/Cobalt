@@ -3,8 +3,8 @@
 #define NUM_POINT_LIGHTS 3
 in vec2 uv;
 in vec3 normal;
-in mat3 tangent_space_matrix;
-in vec3 world_position;
+in mat3 view_to_tangent_matrix;
+in vec3 view_position;
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 #if NUM_DIRECTIONAL_LIGHTS > 0
@@ -21,7 +21,7 @@ out vec3 color;
 
 void main(){
 	vec3 local_normal = (2.0 * texture(normal_map, uv).xyz) - vec3(1.0);
-	local_normal = normalize(tangent_space_matrix * local_normal);
+	local_normal = normalize(view_to_tangent_matrix * local_normal);
 	vec3 texture_color = texture(color_map, uv).xyz;
         vec3 ambient_color = texture_color * ambient_light_color;
         
@@ -38,7 +38,7 @@ void main(){
         #if NUM_POINT_LIGHTS > 0
         for(int i = 0; i < NUM_POINT_LIGHTS; ++i) {
             vec3 light_position = point_light_positions[i];
-            vec3 light_direction = point_light_positions[i] - world_position;
+            vec3 light_direction = point_light_positions[i] - view_position;
             float light_distance_sq = dot(light_direction, light_direction);
             vec3 light_color = point_light_colors[i];
             float radius_sq = point_light_radii_sq[i];

@@ -13,7 +13,6 @@
 #include "simple_render_pass.h"
 
 int main() {
-
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
     
@@ -63,8 +62,14 @@ int main() {
     unsigned int shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir +  "textureFragmentShader.glsl");
     unsigned int untextured_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "untexturedFragmentShader.glsl");
     unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "normalFragmentShader.glsl");
+    unsigned int parallax_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "parallaxMappingFragmentShader.glsl");
 
     unsigned int map_mat = create_material(new texture_link(texture_dir + "testmapTex_small.png", "color_map"));
+    unsigned int room_mat = create_material(std::vector<texture_link*> {
+        new texture_link(texture_dir + "rockwall.jpg", "color_map"),
+        new texture_link(texture_dir + "rockwall_height.bmp", "height_map"),
+        new texture_link(texture_manager::get_instance().load_normalmap_from_heightmap(texture_dir + "rockwall_height.bmp"), "normal_map")
+    });
     unsigned int robot_mat = create_material();
     unsigned int monkey_mat = create_material();
     add_texture(monkey_mat, new texture_link(texture_dir + "dirt.jpeg", "color_map"));
@@ -73,12 +78,17 @@ int main() {
     simple_render_pass render_pass(shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
-
+    simple_render_pass no_parallax_render_pass(normal_shader, room_mat);
+    simple_render_pass parallax_render_pass(parallax_shader, room_mat);
+    
     //Load objects, give them materials and place them in world
     scene my_world;
     node *map_node = new node(model_dir + "testmap.obj");
     map_node->set_material(map_mat);
     my_world.append_node(map_node);
+    node *room_node = new node(model_dir + "room.obj", room_mat);
+    room_node->set_scale(1.9f);
+    my_world.append_node(room_node);
     node *robot_node = new node(model_dir + "Robot.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
@@ -98,13 +108,16 @@ int main() {
                                               point_light(glm::vec3(0, 255, 0), 3, glm::vec3(0, -0.5, -1.5)),
                                               point_light(glm::vec3(0, 0, 255), 3, glm::vec3(1.0, 0, 0.5)),
     };
-    glm::vec3 ambient_light_color = glm::vec3(0.3);
+    glm::vec3 ambient_light_color = glm::vec3(0.5);
 
     //Setup rotation and location
 
     float posx = 0.0f;
     float posz = 0.0f;
     float intensity = 0.0f;
+    
+    bool was_key_p_pressed = false;
+    bool use_parallax = true;
 
     //Setup key capturing
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -133,10 +146,12 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)posz += 0.01;
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)posz -= 0.01;
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
-
-        //change light intensity
-        intensity += 0.001;
-        directional_lights[0].set_intensity(std::abs(sin(intensity)));
+        if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+            was_key_p_pressed = true;
+        } else if(was_key_p_pressed) {
+            was_key_p_pressed = false;
+            use_parallax = !use_parallax;
+        }
 
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
@@ -146,6 +161,11 @@ int main() {
         render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
         solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        if(use_parallax) {
+            parallax_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        } else {
+           no_parallax_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        }
 
         //Update window and events
         glfwSwapBuffers(window);
