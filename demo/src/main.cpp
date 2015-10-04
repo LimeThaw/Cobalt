@@ -35,7 +35,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     //init window
-    GLFWwindow *window = glfwCreateWindow(1280, 720, "OpenGLTest", NULL, 0);
+    GLFWwindow *window = glfwCreateWindow(1280, 640, "OpenGLTest", NULL, 0);
     if(window == NULL) {
         std::cerr << "-Failed to open window\n";
         return -1;
