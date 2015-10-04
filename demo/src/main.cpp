@@ -32,7 +32,7 @@ int main() {
     //Give GLFW some info
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     //init window
     GLFWwindow *window = glfwCreateWindow(1280, 720, "OpenGLTest", NULL, 0);

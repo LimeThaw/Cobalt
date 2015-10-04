@@ -1,8 +1,8 @@
-#version 400
-layout(location = 0) in vec3 vertex_position;
-layout(location = 1) in vec2 vertex_UV;
-layout(location = 2) in vec3 vertex_normal;
-layout(location = 3) in vec3 vertex_tangent;
+#version 130
+in vec3 vertex_position;
+in vec2 vertex_UV;
+in vec3 vertex_normal;
+in vec3 vertex_tangent;
 uniform mat3 normal_matrix;
 uniform mat4 model;
 uniform mat4 view;
