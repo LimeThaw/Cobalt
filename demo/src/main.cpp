@@ -74,6 +74,8 @@ int main() {
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
 
+    auto screen = framebuffer::get_screen();
+
     //Load objects, give them materials and place them in world
     scene my_world;
     node *map_node = new node(model_dir + "testmap.obj");
@@ -143,9 +145,9 @@ int main() {
         //my_world.get_parent_node()->place(posx, -5, posz);
         the_camera.place(posx, 10, posz);
         //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
-        render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
-        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
-        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color);
+        render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
+        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
 
         //Update window and events
         glfwSwapBuffers(window);
