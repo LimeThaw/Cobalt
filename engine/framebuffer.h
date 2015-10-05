@@ -13,10 +13,10 @@
 #include "framebuffer_attachment.h"
 
 class framebuffer {
-    private:
+    public:
         typedef std::vector<std::shared_ptr<framebuffer_attachment>> attachments;
         typedef std::experimental::optional<std::shared_ptr<framebuffer_attachment>> optional_attachment;
-
+    private:
         GLuint openGL_id;
 
         attachments color_attachments;
@@ -25,9 +25,11 @@ class framebuffer {
         static std::shared_ptr<framebuffer> screen;
     public:
         explicit framebuffer(GLuint openGL_id);
+
         framebuffer(attachments color_attachments,
                     optional_attachment depth_attachment = optional_attachment(),
                     optional_attachment stencil_attachment = optional_attachment());
+
         virtual ~framebuffer();
 
         void bind() const;

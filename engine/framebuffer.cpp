@@ -26,6 +26,10 @@ framebuffer::framebuffer(framebuffer::attachments color_attachments, framebuffer
     if((bool) stencil_attachment) {
         (*stencil_attachment)->attachAs(GL_STENCIL_ATTACHMENT);
     }
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        throw std::runtime_error("framebuffer error: " + std::to_string(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
+    }
 }
 
 framebuffer::framebuffer(GLuint openGL_id) : openGL_id(openGL_id) { }

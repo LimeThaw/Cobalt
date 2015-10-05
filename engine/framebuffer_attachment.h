@@ -10,7 +10,8 @@
 
 class framebuffer_attachment {
         friend class framebuffer;
-
+    public:
+        virtual ~framebuffer_attachment();
     private:
         virtual void attachAs(GLuint target) = 0;
 };

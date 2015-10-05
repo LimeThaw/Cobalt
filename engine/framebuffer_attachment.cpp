@@ -3,3 +3,5 @@
 //
 
 #include "framebuffer_attachment.h"
+
+framebuffer_attachment::~framebuffer_attachment() { }

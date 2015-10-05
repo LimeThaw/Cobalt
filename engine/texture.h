@@ -10,15 +10,16 @@
 #include <SOIL/SOIL.h>
 
 class texture {
+    friend class texture_framebuffer_attachment;
     public:
         texture();
         ~texture();
         bool load(const std::string &path);
+        void defineStorage(GLenum internalformat, GLsizei width, GLsizei height);
         void bind_texture();
         unsigned int get_instance_count();
         void add_instance();
         void remove_instance();
-
     private:
         GLuint openGL_id;
         unsigned int instances;

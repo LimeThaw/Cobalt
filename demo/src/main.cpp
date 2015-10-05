@@ -8,6 +8,8 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 #include <math.h>
+#include <texture_framebuffer_attachment.h>
+#include <renderbuffer_framebuffer_attachment.h>
 
 #include "cobalt.h"
 #include "simple_render_pass.h"
@@ -16,7 +18,7 @@ int main() {
 
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
-    
+
     const std::string model_dir = "./demo/res/models/";
     const std::string shader_dir = "./demo/res/shaders/";
     const std::string texture_dir = "./demo/res/textures/";
@@ -60,21 +62,36 @@ int main() {
 
 
     //Load shaders and textures
-    unsigned int shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir +  "textureFragmentShader.glsl");
-    unsigned int untextured_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "untexturedFragmentShader.glsl");
-    unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl", shader_dir + "normalFragmentShader.glsl");
+    unsigned int shader = load_global_shader(shader_dir + "vertexShader.glsl",
+                                             shader_dir + "textureFragmentShader.glsl");
+    unsigned int untextured_shader = load_global_shader(shader_dir + "vertexShader.glsl",
+                                                        shader_dir + "untexturedFragmentShader.glsl");
+    unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl",
+                                                    shader_dir + "normalFragmentShader.glsl");
 
     unsigned int map_mat = create_material(new texture_link(texture_dir + "testmapTex_small.png", "color_map"));
     unsigned int robot_mat = create_material();
     unsigned int monkey_mat = create_material();
     add_texture(monkey_mat, new texture_link(texture_dir + "dirt.jpeg", "color_map"));
     add_texture(monkey_mat, new texture_link(texture_dir + "dirt_normal.png", "normal_map"));
+    unsigned int mirror_monkey_mat = create_material();
 
     simple_render_pass render_pass(shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
+    simple_render_pass mirror_render_pass(shader, mirror_monkey_mat);
 
     auto screen = framebuffer::get_screen();
+
+    std::shared_ptr<texture> render_target_texture = std::make_shared<texture>();
+    render_target_texture->defineStorage(GL_RGBA, 1280, 640);
+    add_texture(mirror_monkey_mat,
+                new texture_link(texture_manager::get_instance().add_texture_pointer_hack(&*render_target_texture),
+                                 "color_map"));
+    framebuffer offscreen_framebuffer(framebuffer::attachments {
+        std::make_shared<texture_framebuffer_attachment>(render_target_texture)
+    }, framebuffer::optional_attachment(
+            std::make_shared<renderbuffer_framebuffer_attachment>(GL_DEPTH_COMPONENT32, 1280, 640)));
 
     //Load objects, give them materials and place them in world
     scene my_world;
@@ -89,13 +106,18 @@ int main() {
     monkey_node->set_material(monkey_mat);
     monkey_node->place(2, 0, 0);
     my_world.append_node(monkey_node);
+    node *monkey_mirror_node = new node(model_dir + "room.obj");
+    monkey_mirror_node->set_material(mirror_monkey_mat);
+    monkey_mirror_node->place(0, 2, 0);
+    my_world.append_node(monkey_mirror_node);
 
     //Unused zoom function
     float zoom = 2.0f;
     my_world.get_parent_node()->set_scale(zoom);
 
     camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
-    std::vector<directional_light> directional_lights = { directional_light(glm::vec3(100, 200, 50), 3, glm::vec3(-2, 0.5, 2)) };
+    std::vector<directional_light> directional_lights = {
+            directional_light(glm::vec3(100, 200, 50), 3, glm::vec3(-2, 0.5, 2)) };
     std::vector<point_light> point_lights = { point_light(glm::vec3(255, 0, 0), 3, glm::vec3(0, 0.5, 1.5)),
                                               point_light(glm::vec3(0, 255, 0), 3, glm::vec3(0, -0.5, -1.5)),
                                               point_light(glm::vec3(0, 0, 255), 3, glm::vec3(1.0, 0, 0.5)),
@@ -127,14 +149,20 @@ int main() {
         }
 
         //Clear screen
+        glViewport(0, 0, 1280, 640);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        offscreen_framebuffer.bind();
+        glViewport(0, 0, 1280, 640);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
         //move world
-        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)posx += 0.01;
-        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)posx -= 0.01;
-        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)posz += 0.01;
-        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)posz -= 0.01;
-        if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
+        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { posx += 0.01; }
+        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { posx -= 0.01; }
+        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { posz += 0.01; }
+        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { posz -= 0.01; }
+        if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { }
 
         //change light intensity
         intensity += 0.001;
@@ -145,9 +173,14 @@ int main() {
         //my_world.get_parent_node()->place(posx, -5, posz);
         the_camera.place(posx, 10, posz);
         //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
+        render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0), offscreen_framebuffer);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, offscreen_framebuffer);
+        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, offscreen_framebuffer);
+
         render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
+        mirror_render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0), *screen);
 
         //Update window and events
         glfwSwapBuffers(window);

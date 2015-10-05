@@ -28,6 +28,11 @@ void texture_manager::bind_texture(texture_id id) {
     textures[id]->bind_texture();
 }
 
+texture_id texture_manager::add_texture_pointer_hack(texture *tex) {
+    textures.push_back(tex);
+    return (texture_id) (textures.size() - 1);
+}
+
 void texture_manager::unbind_texture() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }

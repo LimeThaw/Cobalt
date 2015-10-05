@@ -19,6 +19,7 @@ class texture_manager {
         void add_texture_instance(texture_id id);
         void remove_texture_instance(texture_id id);
         void bind_texture(texture_id id);///<Tells OpenGL to bind the specified texture.
+        texture_id add_texture_pointer_hack(texture *tex);
         void unbind_texture();
         ~texture_manager();
 
