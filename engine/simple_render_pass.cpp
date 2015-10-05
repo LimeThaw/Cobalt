@@ -10,19 +10,20 @@ simple_render_pass::simple_render_pass(shader_id new_shader_id, unsigned int ren
 
 void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights, std::vector<point_light> p_lights, glm::vec3 ambient_light_color) {    
     prepare_render();
+    glm::mat4 view_matrix = the_camera.get_view();
 
     GLint active_shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
     
     GLuint view_id = glGetUniformLocation(active_shader_id, "view");
-    glUniformMatrix4fv(view_id, 1, GL_FALSE, &the_camera.get_view()[0][0]);
+    glUniformMatrix4fv(view_id, 1, GL_FALSE, &view_matrix[0][0]);
     GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
     
     for(unsigned int i = 0; i < d_lights.size(); ++i) {
         directional_light d_light = d_lights[i];
         glm::vec3 color_vec = d_light.get_color() * d_light.get_intensity() / 255.0f;
-        glm::vec3 direction_vec = d_light.get_direction();
+        glm::vec3 direction_vec = glm::vec3((view_matrix * glm::vec4(d_light.get_direction(), 0.0f)));
         std::string is = std::to_string(i);
         glUniform3f(glGetUniformLocation(active_shader_id, ("directional_light_colors[" + is +"]").c_str()), color_vec.x, color_vec.y, color_vec.z);
         glUniform3f(glGetUniformLocation(active_shader_id, ("directional_light_directions[" + is + "]").c_str()), direction_vec.x, direction_vec.y, direction_vec.z);
@@ -31,7 +32,7 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
     for(unsigned int i = 0; i < p_lights.size(); ++i) {
         point_light p_light = p_lights[i];
         glm::vec3 point_color_vec = p_light.get_color() * p_light.get_intensity() / 255.0f;
-        glm::vec3 point_position_vec = p_light.get_position();
+        glm::vec3 point_position_vec = glm::vec3((view_matrix * glm::vec4(p_light.get_position(), 1.0f)));
         std::string is = std::to_string(i);
         glUniform3f(glGetUniformLocation(active_shader_id, ("point_light_colors[" + is + "]").c_str()), point_color_vec.x, point_color_vec.y, point_color_vec.z);
         glUniform3f(glGetUniformLocation(active_shader_id, ("point_light_positions[" + is + "]").c_str()), point_position_vec.x, point_position_vec.y, point_position_vec.z);
@@ -45,7 +46,7 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
         glm::mat4 node_matrix = nodes->get_node_matrix();
         for(auto meshes : nodes->get_models()) {
             if(std::find(render_material_ids.begin(), render_material_ids.end(), meshes->get_material_id()) != render_material_ids.end()) {
-                meshes->render(node_matrix);
+                meshes->render(node_matrix, view_matrix);
             }
         }
     }

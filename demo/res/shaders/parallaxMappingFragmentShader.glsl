@@ -1,10 +1,12 @@
-#version 130
+#version 400
 #define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_POINT_LIGHTS 3
 in vec2 uv;
 in vec3 normal;
-in mat3 view_to_tangent_matrix;
+in mat3 tangent_space_matrix;
 in vec3 view_position;
+in vec3 tangent_view_position;
+uniform sampler2D height_map;
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 #if NUM_DIRECTIONAL_LIGHTS > 0
@@ -20,9 +22,13 @@ uniform vec3 ambient_light_color;
 out vec3 color;
 
 void main(){
-	vec3 local_normal = (2.0 * texture(normal_map, uv).xyz) - vec3(1.0);
-	local_normal = normalize(view_to_tangent_matrix * local_normal);
-	vec3 texture_color = texture(color_map, uv).xyz;
+        float height = texture(height_map, uv).r * 0.05 - 0.025;
+        vec2 uv_offset = height * normalize(tangent_view_position).xy;
+        vec2 effective_uv = uv - vec2(uv_offset.x, -uv_offset.y);
+
+        vec3 local_normal = (2.0 * texture(normal_map, effective_uv).xyz) - vec3(1.0);
+        local_normal = normalize(tangent_space_matrix * local_normal);
+        vec3 texture_color = texture(color_map, effective_uv).xyz;
         vec3 ambient_color = texture_color * ambient_light_color;
         
         color = ambient_color;
