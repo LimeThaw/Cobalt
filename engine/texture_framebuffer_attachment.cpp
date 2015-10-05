@@ -2,6 +2,7 @@
 // Created by flocke on 05.10.15.
 //
 
+#include <GL/glew.h>
 #include "texture_framebuffer_attachment.h"
 
 texture_framebuffer_attachment::texture_framebuffer_attachment(std::shared_ptr<texture> tex) : tex(tex) {

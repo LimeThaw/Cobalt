@@ -5,10 +5,6 @@ material::material() {
 }
 
 material::~material() {
-    for(unsigned int i = 0; i < textures.size(); i++) {
-        delete textures[i];
-    }
-    textures.clear();
 }
 
 bool material::has_texture() {
@@ -19,8 +15,8 @@ bool material::has_texture() {
     }
 }
 
-void material::add_texture(texture_link *new_texture) {
-    textures.push_back(new_texture);
+void material::add_texture(std::string uniform_name, std::shared_ptr<texture> tex) {
+    textures.push_back(std::pair<std::string, std::shared_ptr<texture>>(uniform_name, tex));
 }
 
 unsigned int material::get_instance_count() {
@@ -38,7 +34,8 @@ void material::remove_instance() {
 void material::use() {
     if(has_texture()) {
         for(unsigned int i = 0; i < textures.size(); i++) {
-            textures[i]->apply(i);
+            glActiveTexture(GL_TEXTURE0 + i);
+            textures[i].second->bind();
         }
     }
 }

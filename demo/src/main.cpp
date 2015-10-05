@@ -10,6 +10,7 @@
 #include <math.h>
 #include <texture_framebuffer_attachment.h>
 #include <renderbuffer_framebuffer_attachment.h>
+#include <texture_cache.h>
 
 #include "cobalt.h"
 #include "simple_render_pass.h"
@@ -69,11 +70,20 @@ int main() {
     unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl",
                                                     shader_dir + "normalFragmentShader.glsl");
 
-    unsigned int map_mat = create_material(new texture_link(texture_dir + "testmapTex_small.png", "color_map"));
+    auto map_tex = std::make_shared<texture>(
+            texture_cache::get_instance().get_texture_from_filename(texture_dir + "testmapTex_small.png"));
+    unsigned int map_mat = material_manager::get_instance().create_material("color_map", map_tex);
+
     unsigned int robot_mat = create_material();
+
     unsigned int monkey_mat = create_material();
-    add_texture(monkey_mat, new texture_link(texture_dir + "dirt.jpeg", "color_map"));
-    add_texture(monkey_mat, new texture_link(texture_dir + "dirt_normal.png", "normal_map"));
+    auto dirt_tex = std::make_shared<texture>(
+            texture_cache::get_instance().get_texture_from_filename(texture_dir + "dirt.jpeg"));
+    material_manager::get_instance().add_texture(monkey_mat, "color_map", dirt_tex);
+    auto dirt_normal_tex = std::make_shared<texture>(
+            texture_cache::get_instance().get_texture_from_filename(texture_dir + "dirt_normal.png"));
+    material_manager::get_instance().add_texture(monkey_mat, "normal_map", dirt_normal_tex);
+
     unsigned int mirror_monkey_mat = create_material();
 
     simple_render_pass render_pass(shader, map_mat);
@@ -83,15 +93,14 @@ int main() {
 
     auto screen = framebuffer::get_screen();
 
-    std::shared_ptr<texture> render_target_texture = std::make_shared<texture>();
-    render_target_texture->defineStorage(GL_RGBA, 1280, 640);
-    add_texture(mirror_monkey_mat,
-                new texture_link(texture_manager::get_instance().add_texture_pointer_hack(&*render_target_texture),
-                                 "color_map"));
+    std::shared_ptr<texture> render_target_texture = std::make_shared<texture>(128, 128, GL_R3_G3_B2, GL_REPEAT, GL_REPEAT,
+                                                                               GL_NEAREST,
+                                                                               GL_NEAREST);
+    material_manager::get_instance().add_texture(mirror_monkey_mat, "color_map", render_target_texture);
     framebuffer offscreen_framebuffer(framebuffer::attachments {
         std::make_shared<texture_framebuffer_attachment>(render_target_texture)
     }, framebuffer::optional_attachment(
-            std::make_shared<renderbuffer_framebuffer_attachment>(GL_DEPTH_COMPONENT32, 1280, 640)));
+            std::make_shared<renderbuffer_framebuffer_attachment>(GL_DEPTH_COMPONENT32, 128, 128)));
 
     //Load objects, give them materials and place them in world
     scene my_world;
@@ -173,14 +182,18 @@ int main() {
         //my_world.get_parent_node()->place(posx, -5, posz);
         the_camera.place(posx, 10, posz);
         //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
-        render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0), offscreen_framebuffer);
-        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, offscreen_framebuffer);
-        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, offscreen_framebuffer);
+        render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
+                           offscreen_framebuffer);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
+                                 offscreen_framebuffer);
+        normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
+                                  offscreen_framebuffer);
 
         render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
-        mirror_render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0), *screen);
+        mirror_render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
+                                  *screen);
 
         //Update window and events
         glfwSwapBuffers(window);

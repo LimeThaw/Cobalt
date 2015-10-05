@@ -1,74 +1,50 @@
 #include "texture.h"
 #include "gl_exception.h"
 
-texture::texture() {
-    openGL_id = 0;
+
+texture::texture(const texture_data_source &source, bool generate_mipmaps, bool compress, GLenum wrap_s, GLenum wrap_t,
+                 GLenum mag_filter, GLenum min_filter) {
+    glGenTextures(1, &openGL_id);
+    glBindTexture(GL_TEXTURE_2D, openGL_id);
+
+    if((bool) source.data) {
+        uint flags = SOIL_FLAG_INVERT_Y;
+        if(generate_mipmaps) {
+            flags |= SOIL_FLAG_MIPMAPS;
+        }
+        if(compress) {
+            flags |= SOIL_FLAG_COMPRESS_TO_DXT;
+        }
+        SOIL_create_OGL_texture((const unsigned char *) source.data.get(), source.width, source.height, source.num_channels,
+                                openGL_id, flags);
+        clear_gl_error();
+    } else {
+        glTexImage2D(GL_TEXTURE_2D, 0, source.format, source.width, source.height, 0, source.format,
+                     source.type, nullptr);
+    }
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+}
+
+texture::texture(GLsizei width, GLsizei height, GLenum internalformat, GLenum wrap_s, GLenum wrap_t, GLenum mag_filter,
+                 GLenum min_filter) {
+    glGenTextures(1, &openGL_id);
+    glBindTexture(GL_TEXTURE_2D, openGL_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
 }
 
 texture::~texture() {
     glDeleteTextures(1, &openGL_id);
 }
 
-bool texture::load(const std::string &path) {
-    std::clog << "-Loading texture " << path << '\n';
-    float start_time = glfwGetTime();
-
-    // Create one OpenGL texture
-    openGL_id = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
-                                      SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-
-    clear_gl_error();
-
-    if(openGL_id == 0) {
-        std::cerr << "- SOIL loading error: " << SOIL_last_result() << '\n';
-        return false;
-    }
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, openGL_id);        //Bind texture to set options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);       //Unbind texture
-
-    std::clog << "- Finished loading texture in " << glfwGetTime() - start_time << " seconds\n\n";
-    return true;
-}
-
-
-void texture::defineStorage(GLenum internalformat, GLsizei width, GLsizei height) {
-    glGenTextures(1, &openGL_id);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, openGL_id);        //Bind texture to set options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void texture::bind_texture() {
+void texture::bind() {
     glBindTexture(GL_TEXTURE_2D, openGL_id);
-}
-
-unsigned int texture::get_instance_count() {
-    return instances;
-}
-
-void texture::add_instance() {
-    instances++;
-}
-
-void texture::remove_instance() {
-    if(instances > 0) {
-        instances--;
-    } else {
-        std::cerr << "! Removed instance of non-used texture\n";
-    }
 }

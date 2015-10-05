@@ -10,22 +10,22 @@ Material objects are meant to be handled by the material_manager.
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "texture_link.h"
 #include "shader_manager.h"
+#include "texture.h"
 
 class material {
     public:
         material();
         ~material();
-        bool has_texture();///< Returns 'true' if the material's list of textures contains one or more texture_links, and 'false' otherwise.
-        void add_texture(texture_link* new_texture);///< Adds the given texture_link object to the material's list of textures.
         unsigned int get_instance_count();///< returns the number of references to the material.
+        bool has_texture();
+        void add_texture(std::string uniform_name, std::shared_ptr<texture> tex);
         void add_instance();
         void remove_instance();
         void use();///< Gives all associated textures to the currently active shader.
 
     private:
-        std::vector<texture_link*> textures;
+        std::vector<std::pair<std::string, std::shared_ptr<texture>>> textures;
         unsigned int instances;
 };
 

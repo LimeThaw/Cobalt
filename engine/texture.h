@@ -8,21 +8,26 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
+#include "texture_data_source.h"
 
 class texture {
-    friend class texture_framebuffer_attachment;
-    public:
-        texture();
-        ~texture();
-        bool load(const std::string &path);
-        void defineStorage(GLenum internalformat, GLsizei width, GLsizei height);
-        void bind_texture();
-        unsigned int get_instance_count();
-        void add_instance();
-        void remove_instance();
+        friend class texture_framebuffer_attachment;
+
     private:
         GLuint openGL_id;
-        unsigned int instances;
+    public:
+        texture(const texture_data_source &source, bool generate_mipmaps = true, bool compress = true,
+                GLenum wrap_s = GL_REPEAT, GLenum wrap_t = GL_REPEAT, GLenum mag_filter = GL_LINEAR,
+                GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR);
+
+        texture(GLsizei width, GLsizei height, GLenum internalformat, GLenum wrap_s = GL_REPEAT,
+                GLenum wrap_t = GL_REPEAT, GLenum mag_filter = GL_LINEAR,
+                GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR);
+
+        ~texture();
+
+        void bind();
+
 };
 
 #endif // TEXTURE_H

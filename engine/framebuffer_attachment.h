@@ -6,7 +6,7 @@
 #define COBALT_FRAMEBUFFER_ATTACHMENT_H
 
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 class framebuffer_attachment {
         friend class framebuffer;

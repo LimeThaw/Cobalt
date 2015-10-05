@@ -7,8 +7,8 @@
 
 
 #include <memory>
-#include "texture_link.h"
 #include "framebuffer_attachment.h"
+#include "texture.h"
 
 class texture_framebuffer_attachment :
     public framebuffer_attachment {

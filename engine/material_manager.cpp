@@ -5,18 +5,19 @@ material_manager &material_manager::get_instance() {
     return instance;
 }
 
-material_id material_manager::create_material(std::vector<texture_link*> new_textures){
+material_id material_manager::create_material(
+        std::vector<std::pair<std::string, std::shared_ptr<texture>>> new_textures) {
     material *new_material = new material();
-    for(int i=0; i<new_textures.size(); i++){
-        new_material->add_texture(new_textures[i]);
+    for(auto i : new_textures) {
+        new_material->add_texture(i.first, i.second);
     }
     materials.push_back(new_material);
     return materials.size() - 1;
 }
 
-material_id material_manager::create_material(texture_link* new_texture) {
+material_id material_manager::create_material(std::string uniform_name, std::shared_ptr<texture> tex) {
     material *new_material = new material();
-    new_material->add_texture(new_texture);
+    new_material->add_texture(uniform_name, tex);
     materials.push_back(new_material);
     return materials.size() - 1;
 }
@@ -27,8 +28,9 @@ material_id material_manager::create_material() {
     return materials.size() - 1;
 }
 
-void material_manager::add_texture(material_id target_material, texture_link* new_texture) {
-    materials[target_material]->add_texture(new_texture);
+void material_manager::add_texture(material_id target_material, std::string uniform_name,
+                                   std::shared_ptr<texture> tex) {
+    materials[target_material]->add_texture(uniform_name, tex);
 }
 
 void material_manager::set_active_material(material_id activeID) {
@@ -58,20 +60,8 @@ material_manager::material_manager() {
     //ctor
 }
 
-material_id create_material(std::vector<texture_link*> new_textures){
-    return material_manager::get_instance().create_material(new_textures);
-}
-
-material_id create_material(texture_link* new_texture) {
-    return material_manager::get_instance().create_material(new_texture);
-}
-
 material_id create_material() {
     return material_manager::get_instance().create_material();
-}
-
-void add_texture(material_id target_material, texture_link* new_texture) {
-    material_manager::get_instance().add_texture(target_material, new_texture);
 }
 
 void set_active_material(material_id active_id) {
