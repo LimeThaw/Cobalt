@@ -6,7 +6,6 @@
 #include "scene.h"
 #include "mesh.h"
 #include "node.h"
-#include "material_manager.h"
 #include "shader.h"
 #include "util.h"
 #include "gl_exception.h"

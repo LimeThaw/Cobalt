@@ -52,12 +52,12 @@ bool node::load_scene(const std::string &path) {
     return true;
 }
 
-void node::set_material(unsigned int new_materialID) {
+void node::set_material(std::shared_ptr<material> new_material) {
     for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->set_material(new_materialID);
+        models[i]->set_material(new_material);
     }
     for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->set_material(new_materialID);
+        children[i]->set_material(new_material);
     }
 }
 

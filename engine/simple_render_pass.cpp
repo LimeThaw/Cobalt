@@ -2,14 +2,14 @@
 
 #include "simple_render_pass.h"
 
-simple_render_pass::simple_render_pass(shader_id new_shader_id, std::vector<unsigned int> render_material_ids)
+simple_render_pass::simple_render_pass(shader_id new_shader_id, std::vector<std::shared_ptr<material>> render_materials)
         : render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer&>(
-        new_shader_id), render_material_ids(render_material_ids) {
+        new_shader_id), render_materials(render_materials) {
 }
 
-simple_render_pass::simple_render_pass(shader_id new_shader_id, unsigned int render_material_id)
+simple_render_pass::simple_render_pass(shader_id new_shader_id, std::shared_ptr<material> render_material)
         : render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer&>(
-        new_shader_id), render_material_ids(std::vector<unsigned int> { render_material_id }) {
+        new_shader_id), render_materials(std::vector<std::shared_ptr<material>> { render_material }) {
 }
 
 void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights,
@@ -56,8 +56,8 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
     for(auto nodes : the_scene.enumerate_nodes()) {
         glm::mat4 node_matrix = nodes->get_node_matrix();
         for(auto meshes : nodes->get_models()) {
-            if(std::find(render_material_ids.begin(), render_material_ids.end(), meshes->get_material_id()) !=
-               render_material_ids.end()) {
+            if(std::find(render_materials.begin(), render_materials.end(), meshes->get_material()) !=
+                    render_materials.end()) {
                 meshes->render(node_matrix);
             }
         }

@@ -72,19 +72,20 @@ int main() {
 
     auto map_tex = std::make_shared<texture>(
             texture_cache::get_instance().get_texture_from_filename(texture_dir + "testmapTex_small.png"));
-    unsigned int map_mat = material_manager::get_instance().create_material("color_map", map_tex);
+    auto map_mat = std::make_shared<material>(
+            material::texture_bindings { material::texture_binding("color_map", map_tex) });
 
-    unsigned int robot_mat = create_material();
+    auto robot_mat = std::make_shared<material>();
 
-    unsigned int monkey_mat = create_material();
     auto dirt_tex = std::make_shared<texture>(
             texture_cache::get_instance().get_texture_from_filename(texture_dir + "dirt.jpeg"));
-    material_manager::get_instance().add_texture(monkey_mat, "color_map", dirt_tex);
     auto dirt_normal_tex = std::make_shared<texture>(
             texture_cache::get_instance().get_texture_from_filename(texture_dir + "dirt_normal.png"));
-    material_manager::get_instance().add_texture(monkey_mat, "normal_map", dirt_normal_tex);
+    auto monkey_mat = std::make_shared<material>(
+            material::texture_bindings { material::texture_binding("color_map", dirt_tex),
+                                         material::texture_binding("normal_map", dirt_normal_tex) });
 
-    unsigned int mirror_monkey_mat = create_material();
+    auto mirror_monkey_mat = std::make_shared<material>();
 
     simple_render_pass render_pass(shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
@@ -93,10 +94,11 @@ int main() {
 
     auto screen = framebuffer::get_screen();
 
-    std::shared_ptr<texture> render_target_texture = std::make_shared<texture>(128, 128, GL_R3_G3_B2, GL_REPEAT, GL_REPEAT,
+    std::shared_ptr<texture> render_target_texture = std::make_shared<texture>(128, 128, GL_R3_G3_B2, GL_REPEAT,
+                                                                               GL_REPEAT,
                                                                                GL_NEAREST,
                                                                                GL_NEAREST);
-    material_manager::get_instance().add_texture(mirror_monkey_mat, "color_map", render_target_texture);
+    mirror_monkey_mat->add_texture("color_map", render_target_texture);
     framebuffer offscreen_framebuffer(framebuffer::attachments {
         std::make_shared<texture_framebuffer_attachment>(render_target_texture)
     }, framebuffer::optional_attachment(

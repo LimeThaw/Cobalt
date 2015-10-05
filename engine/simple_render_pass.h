@@ -15,12 +15,12 @@ Example class implementing render_pass used to render the example scene.
 class simple_render_pass :
         public render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer &> {
     private:
-        std::vector<unsigned int> render_material_ids;
+        std::vector<std::shared_ptr<material>> render_materials;
     public:
-        simple_render_pass(shader_id new_shader_id, std::vector<material_id> render_material_ids);
+        simple_render_pass(shader_id new_shader_id, std::vector<std::shared_ptr<material>> render_materials);
 
         ///< Creating a render pass mith multiple materials.
-        simple_render_pass(shader_id new_shader_id, material_id render_material_id);
+        simple_render_pass(shader_id new_shader_id, std::shared_ptr<material> render_materials);
 
         ///< Creating a render pass with a single material.
         void render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights,

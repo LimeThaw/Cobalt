@@ -19,7 +19,7 @@ class node {
         ~node();
         void load_model(const std::string &path);
         bool load_scene(const std::string &path);
-        void set_material(unsigned int new_material_id);
+        void set_material(std::shared_ptr<material> new_material);
         void place(float x, float y, float z);
         void set_orientation(float x, float y, float z);
         void set_scale(float x, float y, float z);

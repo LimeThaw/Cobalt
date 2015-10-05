@@ -15,18 +15,19 @@ Material objects are meant to be handled by the material_manager.
 
 class material {
     public:
+        typedef std::pair<std::string, std::shared_ptr<texture>> texture_binding;
+        typedef std::vector<texture_binding> texture_bindings;
+
         material();
-        ~material();
-        unsigned int get_instance_count();///< returns the number of references to the material.
-        bool has_texture();
+
+        material(const texture_bindings &textures);
+
         void add_texture(std::string uniform_name, std::shared_ptr<texture> tex);
-        void add_instance();
-        void remove_instance();
+
         void use();///< Gives all associated textures to the currently active shader.
 
     private:
-        std::vector<std::pair<std::string, std::shared_ptr<texture>>> textures;
-        unsigned int instances;
+        texture_bindings textures;
 };
 
 #endif // MATERIAL_H
