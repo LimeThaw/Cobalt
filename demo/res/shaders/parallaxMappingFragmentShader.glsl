@@ -1,4 +1,4 @@
-#version 400
+#version 130
 #define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_POINT_LIGHTS 3
 in vec2 uv;
