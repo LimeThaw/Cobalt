@@ -1,15 +1,6 @@
 #include "shader.h"
 
-shader::shader() {
-    shader_id = 0;
-    instances = 0;
-}
-
-shader::~shader() {
-    glDeleteProgram(shader_id);
-}
-
-void shader::load_shader(const std::string &vertex_path, const std::string &fragment_path) {
+static GLuint load_shader(const std::string &vertex_path, const std::string &fragment_path) {
     std::clog << "-Loading shader\n";
     float start_time = glfwGetTime();
 
@@ -75,10 +66,10 @@ void shader::load_shader(const std::string &vertex_path, const std::string &frag
     GLuint program_id = glCreateProgram();
     glAttachShader(program_id, vertex_shader_id);
     glAttachShader(program_id, fragment_shader_id);
-	glBindAttribLocation(program_id, shader_vertex_location, "vertex_position");
-	glBindAttribLocation(program_id, shader_uv_location, "vertex_UV");
-	glBindAttribLocation(program_id, shader_normal_location, "vertex_normal");
-	glBindAttribLocation(program_id, shader_tangent_location, "vertex_tangent");
+    glBindAttribLocation(program_id, shader_vertex_location, "vertex_position");
+    glBindAttribLocation(program_id, shader_uv_location, "vertex_UV");
+    glBindAttribLocation(program_id, shader_normal_location, "vertex_normal");
+    glBindAttribLocation(program_id, shader_tangent_location, "vertex_tangent");
     glLinkProgram(program_id);
 
     // Check the program
@@ -93,29 +84,21 @@ void shader::load_shader(const std::string &vertex_path, const std::string &frag
     glDeleteShader(vertex_shader_id);
     glDeleteShader(fragment_shader_id);
 
-    shader_id = program_id;
+    GLuint shader_id = program_id;
 
     std::clog << "- Finished loading shader in " << glfwGetTime() - start_time << " seconds\n\n";
+
+    return shader_id;
+}
+
+shader::shader(const std::string &vertex_path, const std::string &fragment_path) {
+    shader_id = load_shader(vertex_path, fragment_path);
+}
+
+shader::~shader() {
+    glDeleteProgram(shader_id);
 }
 
 void shader::use() {
     glUseProgram(shader_id);
-    /*GLint sampler = glGetUniformLocation(shader_id, "sampler");
-    glUniform1i(sampler, 0);*/
-}
-
-GLuint shader::get_shader_id() {
-    return shader_id;
-}
-
-unsigned int shader::get_instance_count() {
-    return instances;
-}
-
-void shader::add_instance() {
-    instances++;
-}
-
-void shader::remove_instance() {
-    if(instances > 0)instances--;
 }

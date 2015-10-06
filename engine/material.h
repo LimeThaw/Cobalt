@@ -6,11 +6,10 @@ Material objects are meant to be handled by the material_manager.
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <iostream>
+#include <vector>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "shader_manager.h"
 #include "texture.h"
 
 class material {

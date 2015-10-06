@@ -1,5 +1,6 @@
 #include "mesh.h"
 #include "gl_exception.h"
+#include "shader.h"
 
 mesh::mesh() {
     model = location = rotation = scale = glm::mat4(1.0f);

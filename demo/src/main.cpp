@@ -63,11 +63,11 @@ int main() {
 
 
     //Load shaders and textures
-    unsigned int shader = load_global_shader(shader_dir + "vertexShader.glsl",
+    auto textured_shader = std::make_shared<shader>(shader_dir + "vertexShader.glsl",
                                              shader_dir + "textureFragmentShader.glsl");
-    unsigned int untextured_shader = load_global_shader(shader_dir + "vertexShader.glsl",
+    auto untextured_shader = std::make_shared<shader>(shader_dir + "vertexShader.glsl",
                                                         shader_dir + "untexturedFragmentShader.glsl");
-    unsigned int normal_shader = load_global_shader(shader_dir + "vertexShader.glsl",
+    auto normal_shader = std::make_shared<shader>(shader_dir + "vertexShader.glsl",
                                                     shader_dir + "normalFragmentShader.glsl");
 
     auto map_tex = std::make_shared<texture>(
@@ -87,10 +87,10 @@ int main() {
 
     auto mirror_monkey_mat = std::make_shared<material>();
 
-    simple_render_pass render_pass(shader, map_mat);
+    simple_render_pass render_pass(textured_shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
-    simple_render_pass mirror_render_pass(shader, mirror_monkey_mat);
+    simple_render_pass mirror_render_pass(textured_shader, mirror_monkey_mat);
 
     auto screen = framebuffer::get_screen();
 

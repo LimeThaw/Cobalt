@@ -2,14 +2,14 @@
 
 #include "simple_render_pass.h"
 
-simple_render_pass::simple_render_pass(shader_id new_shader_id, std::vector<std::shared_ptr<material>> render_materials)
+simple_render_pass::simple_render_pass(std::shared_ptr<shader> new_shader, std::vector<std::shared_ptr<material>> render_materials)
         : render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer&>(
-        new_shader_id), render_materials(render_materials) {
+        new_shader), render_materials(render_materials) {
 }
 
-simple_render_pass::simple_render_pass(shader_id new_shader_id, std::shared_ptr<material> render_material)
+simple_render_pass::simple_render_pass(std::shared_ptr<shader> new_shader, std::shared_ptr<material> render_material)
         : render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer&>(
-        new_shader_id), render_materials(std::vector<std::shared_ptr<material>> { render_material }) {
+        new_shader), render_materials(std::vector<std::shared_ptr<material>> { render_material }) {
 }
 
 void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights,
