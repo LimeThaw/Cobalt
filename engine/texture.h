@@ -15,18 +15,14 @@ class texture {
 
     private:
         GLuint openGL_id;
+    protected:
+        GLuint get_openGL_id();
     public:
-        texture(const texture_data_source &source, bool generate_mipmaps = true, bool compress = true,
-                GLenum wrap_s = GL_REPEAT, GLenum wrap_t = GL_REPEAT, GLenum mag_filter = GL_LINEAR,
-                GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR);
+        texture();
 
-        texture(GLsizei width, GLsizei height, GLenum internalformat, GLenum wrap_s = GL_REPEAT,
-                GLenum wrap_t = GL_REPEAT, GLenum mag_filter = GL_LINEAR,
-                GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR);
+        virtual ~texture();
 
-        ~texture();
-
-        void bind();
+        virtual void bind() = 0;
 
 };
 

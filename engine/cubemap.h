@@ -1,0 +1,22 @@
+//
+// Created by flocke on 06.10.15.
+//
+
+#ifndef COBALT_CUBEMAP_H
+#define COBALT_CUBEMAP_H
+
+
+#include "texture.h"
+
+class cubemap :
+    public texture {
+    public:
+        cubemap(GLsizei width, GLsizei height, GLenum internalformat,
+        GLenum wrap_r = GL_CLAMP_TO_EDGE, GLenum wrap_s = GL_CLAMP_TO_EDGE, GLenum wrap_t = GL_CLAMP_TO_EDGE,
+        GLenum mag_filter = GL_LINEAR, GLenum min_filter = GL_LINEAR);
+
+        void bind() override;
+};
+
+
+#endif //COBALT_CUBEMAP_H

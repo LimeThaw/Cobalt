@@ -32,6 +32,19 @@ framebuffer::framebuffer(framebuffer::attachments color_attachments, framebuffer
     }
 }
 
+framebuffer::framebuffer(std::shared_ptr<framebuffer_attachment> color_attachment,
+                         framebuffer::optional_attachment depth_attachment,
+                         framebuffer::optional_attachment stencil_attachment) :
+        framebuffer(framebuffer::attachments { color_attachment }, depth_attachment, stencil_attachment) {
+
+}
+
+framebuffer::framebuffer(std::shared_ptr<framebuffer_attachment> color_attachment,
+                         std::shared_ptr<framebuffer_attachment> depth_attachment) :
+        framebuffer(color_attachment, framebuffer::optional_attachment(depth_attachment)) {
+
+}
+
 framebuffer::framebuffer(GLuint openGL_id) : openGL_id(openGL_id) { }
 
 framebuffer::~framebuffer() {

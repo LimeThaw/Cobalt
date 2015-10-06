@@ -14,8 +14,9 @@ class texture_framebuffer_attachment :
     public framebuffer_attachment {
     private:
         std::shared_ptr<texture> tex;
+        GLenum textarget;
     public:
-        texture_framebuffer_attachment(std::shared_ptr<texture> tex);
+        texture_framebuffer_attachment(std::shared_ptr<texture> tex, GLenum textarget = GL_TEXTURE_2D);
 
         ~texture_framebuffer_attachment();
 

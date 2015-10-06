@@ -30,6 +30,13 @@ class framebuffer {
                     optional_attachment depth_attachment = optional_attachment(),
                     optional_attachment stencil_attachment = optional_attachment());
 
+        framebuffer(std::shared_ptr<framebuffer_attachment> color_attachment,
+                    optional_attachment depth_attachment = optional_attachment(),
+                    optional_attachment stencil_attachment = optional_attachment());
+
+        framebuffer(std::shared_ptr<framebuffer_attachment> color_attachment,
+                    std::shared_ptr<framebuffer_attachment> depth_attachment);
+
         virtual ~framebuffer();
 
         void bind() const;
