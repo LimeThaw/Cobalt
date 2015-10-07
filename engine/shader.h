@@ -12,18 +12,11 @@
 
 class shader {
     public:
-        shader();
+        shader(const std::string &vertex_path, const std::string &fragment_path);
         ~shader();
-        void load_shader(const std::string &vertex_path, const std::string &fragment_path);
         void use();
-        GLuint get_shader_id();
-        unsigned int get_instance_count();
-        void add_instance();
-        void remove_instance();
-
     private:
         GLuint shader_id;
-        unsigned int instances;
 };
 
 const int shader_vertex_location = 0;

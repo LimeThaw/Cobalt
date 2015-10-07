@@ -10,15 +10,22 @@ Example class implementing render_pass used to render the example scene.
 #define SIMPLE_RENDER_PASS_INCLUDED
 
 #include "cobalt.h"
+#include "framebuffer.h"
 
 class simple_render_pass :
-    public render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3> {
+        public render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer &> {
     private:
-        std::vector<unsigned int> render_material_ids;
+        std::vector<std::shared_ptr<material>> render_materials;
     public:
-        simple_render_pass(shader_id new_shader_id, std::vector<material_id> render_material_ids);///< Creating a render pass mith multiple materials.
-        simple_render_pass(shader_id new_shader_id, material_id render_material_id);///< Creating a render pass with a single material.
-        void render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights, std::vector<point_light> p_lights, glm::vec3 ambient_light_color) override;///< Renders all objects in the scene that have one of simple_render_pass's materials.
+        simple_render_pass(std::shared_ptr<shader> new_shader, std::vector<std::shared_ptr<material>> render_materials);
+
+        ///< Creating a render pass mith multiple materials.
+        simple_render_pass(std::shared_ptr<shader> new_shader, std::shared_ptr<material> render_materials);
+
+        ///< Creating a render pass with a single material.
+        void render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights,
+                    std::vector<point_light> p_lights,
+                    glm::vec3 ambient_light_color, const framebuffer &framebuffer) override;///< Renders all objects in the scene that have one of simple_render_pass's materials.
 };
 
 #endif

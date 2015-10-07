@@ -16,11 +16,10 @@ class node {
     public:
         node();
         node(const std::string &scene_path);
-        node(const std::string &scene_path, material_id material);
         ~node();
         void load_model(const std::string &path);
         bool load_scene(const std::string &path);
-        void set_material(unsigned int new_material_id);
+        void set_material(std::shared_ptr<material> new_material);
         void place(float x, float y, float z);
         void set_orientation(float x, float y, float z);
         void set_scale(float x, float y, float z);
@@ -30,8 +29,8 @@ class node {
         void set_parent(node *new_parent);
         bool remove_child(node *child);
         glm::mat4 get_node_matrix() const;
-        void render(glm::mat4 view_matrix) const;
-        void render(glm::mat4 parent_matrix, glm::mat4 view_matrix);
+        void render() const;
+        void render(glm::mat4 parent_matrix);
         std::vector< node*> enumerate();
         const std::vector< mesh *> &get_models();
 

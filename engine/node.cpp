@@ -11,13 +11,6 @@ node::node(const std::string &scene_path) {
     load_scene(scene_path);
 }
 
-node::node(const std::string &scene_path, material_id material) {
-    location = rotation = scale = node_matrix = glm::mat4(1.0f);
-    parent_node = nullptr;
-    load_scene(scene_path);
-    set_material(material);
-}
-
 node::~node() {
     for(unsigned int i = 0; i < models.size(); i++) {
         delete models[i];
@@ -59,12 +52,12 @@ bool node::load_scene(const std::string &path) {
     return true;
 }
 
-void node::set_material(unsigned int new_materialID) {
+void node::set_material(std::shared_ptr<material> new_material) {
     for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->set_material(new_materialID);
+        models[i]->set_material(new_material);
     }
     for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->set_material(new_materialID);
+        children[i]->set_material(new_material);
     }
 }
 
@@ -121,24 +114,24 @@ glm::mat4 node::get_node_matrix() const {
     return temp_matrix;
 }
 
-void node::render(glm::mat4 view_matrix) const {
+void node::render() const {
     for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(get_node_matrix(), view_matrix);
+        models[i]->render(get_node_matrix());
     }
     for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(view_matrix);
+        children[i]->render();
     }
 }
 
-void node::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
+void node::render(glm::mat4 parent_matrix) {
     node_matrix = location * rotation * scale;        //Calculate the node matrix
     glm::mat4 sum_matrix = parent_matrix * node_matrix;
 
     for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(sum_matrix, view_matrix);
+        models[i]->render(sum_matrix);
     }
     for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(sum_matrix, view_matrix);
+        children[i]->render(sum_matrix);
     }
 }
 

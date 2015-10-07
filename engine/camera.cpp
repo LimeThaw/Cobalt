@@ -4,6 +4,10 @@ camera::camera(glm::vec3 position, glm::vec3 look_at, glm::mat4 projection) : po
     view = glm::lookAt(position, look_at, glm::vec3(0, 0, 1));
 }
 
+camera::camera(glm::mat4 view, glm::mat4 projection) : view(view), projection(projection) {
+
+}
+
 camera::~camera() {
 
 }

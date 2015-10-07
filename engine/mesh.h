@@ -15,7 +15,7 @@
 #include <assimp/scene.h> // Output data structure
 #include <assimp/postprocess.h> // Post processing flags
 
-#include "material_manager.h"
+#include "material.h"
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
@@ -27,12 +27,12 @@ class mesh {
         ~mesh();
         bool load_model(const std::string &model_path);
         bool load_model(const std::string &scene_path, int model_index);
-        void set_material(unsigned int new_material_id);
+        void set_material(std::shared_ptr<material> mat);
         void place(float x, float y, float z);
         void set_orientation(float x, float y, float z);
         void set_scale(float new_scale);
-        void render(glm::mat4 parent_matrix, glm::mat4 view_matrix);
-        unsigned int get_material_id() const;
+        void render(glm::mat4 parent_matrix);
+        std::shared_ptr<material> get_material() const;
 
     private:
         void load_model(aiMesh *inmesh);
@@ -53,7 +53,7 @@ class mesh {
         glm::mat4 rotation;
         glm::mat4 scale;
         glm::mat4 model;
-        unsigned int material_id;
+        std::shared_ptr<material> mat;
         bool has_uvs;
 };
 

@@ -1,10 +1,13 @@
 #version 130
+
 #define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_POINT_LIGHTS 3
+
 in vec2 uv;
 in vec3 normal;
 in mat3 view_to_tangent_matrix;
 in vec3 view_position;
+
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 #if NUM_DIRECTIONAL_LIGHTS > 0
@@ -17,6 +20,7 @@ uniform vec3 point_light_positions[NUM_POINT_LIGHTS];
 uniform float point_light_radii_sq[NUM_POINT_LIGHTS];
 #endif
 uniform vec3 ambient_light_color;
+
 out vec3 color;
 
 void main(){

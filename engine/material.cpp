@@ -1,44 +1,23 @@
 #include "material.h"
 
+
 material::material() {
-    instances = 0;
 }
 
-material::~material() {
-    for(unsigned int i = 0; i < textures.size(); i++) {
-        delete textures[i];
-    }
-    textures.clear();
+material::material(const texture_bindings &textures) : textures(textures) {
+
 }
 
-bool material::has_texture() {
-    if(textures.size() == 0) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-void material::add_texture(texture_link *new_texture) {
-    textures.push_back(new_texture);
-}
-
-unsigned int material::get_instance_count() {
-    return instances;
-}
-
-void material::add_instance() {
-    instances++;
-}
-
-void material::remove_instance() {
-    instances--;
+void material::add_texture(std::string uniform_name, std::shared_ptr<texture> tex) {
+    textures.push_back(std::pair<std::string, std::shared_ptr<texture>>(uniform_name, tex));
 }
 
 void material::use() {
-    if(has_texture()) {
-        for(unsigned int i = 0; i < textures.size(); i++) {
-            textures[i]->apply(i);
-        }
+    GLint shader_id;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
+    for(unsigned int i = 0; i < textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        textures[i].second->bind();
+        glUniform1i(glGetUniformLocation((GLuint) shader_id, textures[i].first.c_str()), i);
     }
 }

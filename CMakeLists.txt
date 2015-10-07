@@ -6,7 +6,7 @@ set(SOIL_LIB_DIR "/usr/lib" CACHE PATH "SOIL Lib Path")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/bin")
 link_directories(${SOIL_LIB_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y")
 
 add_subdirectory(engine/)
 add_subdirectory(demo/)

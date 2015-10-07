@@ -8,23 +8,22 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
+#include "texture_data_source.h"
 
 class texture {
-    public:
-        texture();
-        ~texture();
-        bool load(const std::string &path);
-        void load_normalmap_from_heightmap(const std::string &path);
-        void bind_texture();
-        unsigned int get_instance_count();
-        void add_instance();
-        void remove_instance();
+
+        friend class texture_framebuffer_attachment;
 
     private:
         GLuint openGL_id;
-        unsigned int instances;
-        
-        static int get_num_mipmap_levels(int width, int height);
+    protected:
+        GLuint get_openGL_id();
+    public:
+        texture();
+
+        virtual ~texture();
+
+        virtual void bind() = 0;
 };
 
 #endif // TEXTURE_H

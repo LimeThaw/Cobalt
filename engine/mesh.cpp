@@ -1,5 +1,6 @@
 #include "mesh.h"
 #include "gl_exception.h"
+#include "shader.h"
 
 mesh::mesh() {
     model = location = rotation = scale = glm::mat4(1.0f);
@@ -9,7 +10,6 @@ mesh::mesh() {
     normal_data = nullptr;
     vertex_id = uv_id = tangent_id = normal_id = 0;
     vertex_array_object_id = 0;
-    material_id = invalid_material_id;
     has_uvs = false;
 }
 
@@ -23,7 +23,6 @@ mesh::~mesh() {
     if(uv_id != 0) glDeleteBuffers(1, &uv_id);
     if(tangent_id != 0)glDeleteBuffers(1, &tangent_id);
     if(normal_id != 0) glDeleteBuffers(1, &normal_id);
-    if(material_id != invalid_material_id) remove_material_instance(material_id);
 }
 
 bool mesh::load_model(const std::string &model_path) {
@@ -125,8 +124,8 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
     return true;        //Function finished properly
 }
 
-void mesh::set_material(unsigned int new_material_id) {
-    material_id = new_material_id;
+void mesh::set_material(std::shared_ptr<material> mat) {
+    this->mat = mat;
 }
 
 void mesh::place(float x, float y, float z) {
@@ -142,9 +141,9 @@ void mesh::set_scale(float new_scale) {
     scale = glm::scale(glm::vec3(new_scale));
 }
 
-void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
-    if(material_id != invalid_material_id) {
-        set_active_material(material_id);
+void mesh::render(glm::mat4 parent_matrix) {
+    if(mat) {
+        mat->use();
     } else {
         std::cerr << "! Tried to render model without assigned material\n";
         return;
@@ -152,7 +151,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
 
     model = location * rotation * scale;        //Calculate and register the model and rotation matrices
     glm::mat4 render_model = parent_matrix * location * rotation * scale;
-    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
+    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(render_model)));
     GLint shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
     GLuint matrix_location = glGetUniformLocation(shader_id, "model");
@@ -309,6 +308,6 @@ void mesh::load_model(aiMesh *inmesh) {
     faces.clear();
 }
 
-unsigned int mesh::get_material_id() const {
-    return material_id;
+std::shared_ptr<material> mesh::get_material() const {
+    return mat;
 }

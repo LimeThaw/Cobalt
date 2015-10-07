@@ -7,18 +7,18 @@ Template used as  a basis for custom render passes.
 
 #include <vector>
 
-#include "shader_manager.h"
+#include "shader.h"
 
 template<typename scene_type, typename... additional_render_parameter_types>
 class render_pass {
 private:
-    shader_id render_pass_shader_id;
+    std::shared_ptr<shader> render_pass_shader;
 public:
-    render_pass(shader_id render_pass_shader_id) : render_pass_shader_id(render_pass_shader_id) {
+    render_pass(std::shared_ptr<shader> render_pass_shader_id) : render_pass_shader(render_pass_shader_id) {
     }///< Constructor defining the shader to be used in the render pass.
 
     void prepare_render() {
-        shader_manager::get_instance().use_shader(render_pass_shader_id);
+        render_pass_shader->use();
     }///< Function binding the shader associated with the render pass.
 
 
