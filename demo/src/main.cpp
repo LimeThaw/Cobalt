@@ -206,7 +206,7 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { }
 
         //change light intensity
-        intensity += 0.001;
+        intensity += 0.01;
         directional_lights[0].set_intensity(std::abs(sin(intensity)));
 
         //Position and render world
@@ -245,8 +245,8 @@ int main() {
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         /*rtt_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                                   *screen);*/
-        mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
-                                  *screen);
+        /*mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
+                                  *screen);*/
 
         //Update window and events
         glfwSwapBuffers(window);
