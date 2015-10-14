@@ -118,7 +118,7 @@ int main() {
     }
 
     glm::mat4 cubemap_projection = glm::perspective(90.0f, 1.0f, 0.1f, 100.0f);
-    glm::vec3 mirror_position(1);
+    glm::vec3 mirror_position(3, 3, 2);
     std::vector<camera> cubemap_cameras {
             camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)), cubemap_projection),
             camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)), cubemap_projection),
@@ -143,7 +143,7 @@ int main() {
     my_world.append_node(monkey_node);
     node *rtt_node = new node(model_dir + "room.obj");
     rtt_node->set_material(rtt_mat);
-    rtt_node->place(0, 2, 0);
+    rtt_node->place(7, 2, 0);
     my_world.append_node(rtt_node);
     node *mirror_node = new node(model_dir + "sphere.obj");
     mirror_node->set_material(mirror_mat);
@@ -157,10 +157,10 @@ int main() {
 	//Setup main camera and lights
     camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
     std::vector<directional_light> directional_lights = {
-            directional_light(glm::vec3(100, 200, 50), 3, glm::vec3(-2, 0.5, 2)) };
-    std::vector<point_light> point_lights = { point_light(glm::vec3(255, 0, 0), 3, glm::vec3(0, 0.5, 1.5)),
-                                              point_light(glm::vec3(0, 255, 0), 3, glm::vec3(0, -0.5, -1.5)),
-                                              point_light(glm::vec3(0, 0, 255), 3, glm::vec3(1.0, 0, 0.5)),
+            directional_light(glm::vec3(0.5, 0.9, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
+    std::vector<point_light> point_lights = { point_light(glm::vec3(1.0, 0, 0), 3.0, glm::vec3(0, 0.5, 1.5)),
+                                              point_light(glm::vec3(0, 1.0, 0), 3.0, glm::vec3(0, -0.5, -1.5)),
+                                              point_light(glm::vec3(0, 0, 1.0), 3.0, glm::vec3(1.0, 0, 0.5)),
     };
     glm::vec3 ambient_light_color = glm::vec3(0.5);
 
@@ -205,10 +205,6 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { posz -= 0.1; }
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { }
 
-        //change light intensity
-        intensity += 0.01;
-        directional_lights[0].set_intensity(std::abs(sin(intensity)));
-
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
         //my_world.get_parent_node()->place(posx, -5, posz);
@@ -243,10 +239,10 @@ int main() {
         render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
-        /*rtt_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
-                                  *screen);*/
-        /*mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
-                                  *screen);*/
+        rtt_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
+                                  *screen);
+        mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
+                                  *screen);
 
         //Update window and events
         glfwSwapBuffers(window);

@@ -3,7 +3,7 @@
 #define NUM_POINT_LIGHTS 3
 in vec2 uv;
 in vec3 normal;
-in vec3 world_position;
+in vec3 view_position;
 
 #if NUM_DIRECTIONAL_LIGHTS > 0
 uniform vec3 directional_light_colors[NUM_DIRECTIONAL_LIGHTS];
@@ -36,7 +36,7 @@ void main(){
     #if NUM_POINT_LIGHTS > 0
     for(int i = 0; i < NUM_POINT_LIGHTS; ++i) {
         vec3 light_position = point_light_positions[i];
-        vec3 light_direction = point_light_positions[i] - world_position;
+        vec3 light_direction = point_light_positions[i] - view_position;
         float light_distance_sq = dot(light_direction, light_direction);
         vec3 light_color = point_light_colors[i];
         float radius_sq = point_light_radii_sq[i];

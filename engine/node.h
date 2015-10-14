@@ -29,8 +29,8 @@ class node {
         void set_parent(node *new_parent);
         bool remove_child(node *child);
         glm::mat4 get_node_matrix() const;
-        void render() const;
-        void render(glm::mat4 parent_matrix);
+        void render(glm::mat4 view_matrix) const;
+        void render(glm::mat4 parent_matrix, glm::mat4 view_matrix);
         std::vector< node*> enumerate();
         const std::vector< mesh *> &get_models();
 

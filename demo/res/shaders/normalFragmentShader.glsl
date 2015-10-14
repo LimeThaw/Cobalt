@@ -5,7 +5,7 @@
 
 in vec2 uv;
 in vec3 normal;
-in mat3 view_to_tangent_matrix;
+in mat3 tangent_to_view_matrix;
 in vec3 view_position;
 
 uniform sampler2D color_map;
@@ -25,7 +25,7 @@ out vec3 color;
 
 void main(){
 	vec3 local_normal = (2.0 * texture(normal_map, uv).xyz) - vec3(1.0);
-	local_normal = normalize(view_to_tangent_matrix * local_normal);
+	local_normal = normalize(tangent_to_view_matrix * local_normal);
 	vec3 texture_color = texture(color_map, uv).xyz;
     vec3 ambient_color = texture_color * ambient_light_color;
     

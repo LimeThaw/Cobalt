@@ -7,9 +7,9 @@ light::light(glm::vec3 new_color, float new_intensity) {
 }
 
 void light::set_color(glm::vec3 new_color) {
-    color.x = clamp(new_color.x, 0.0f, 255.0f);
-    color.y = clamp(new_color.y, 0.0f, 255.0f);
-    color.z = clamp(new_color.z, 0.0f, 255.0f);
+    color.x = clamp(new_color.x, 0.0f, 1.0f);
+    color.y = clamp(new_color.y, 0.0f, 1.0f);
+    color.z = clamp(new_color.z, 0.0f, 1.0f);
 }
 
 const glm::vec3 &light::get_color() {
