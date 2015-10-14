@@ -72,6 +72,8 @@ int main() {
                                                   shader_dir + "normalFragmentShader.glsl");
     auto mirror_shader = std::make_shared<shader>(shader_dir + "vertexShader.glsl",
                                                   shader_dir + "mirrorFragmentShader.glsl");
+    auto parallax_shader = std::make_shared<shader>(shader_dir + "vertexShader.glsl",
+                                                    shader_dir + "parallaxMappingFragmentShader.glsl");
 
     auto map_tex = std::make_shared<texture2d>(
             texture_cache::get_instance().get_texture_from_filename(texture_dir + "testmapTex_small.png"));
@@ -92,11 +94,27 @@ int main() {
 
     auto mirror_mat = std::make_shared<material>();
 
+    auto rockwall_tex = std::make_shared<texture2d>(
+            texture_cache::get_instance().get_texture_from_filename(texture_dir + "rockwall.jpg"));
+    auto rockwall_height_tex = std::make_shared<texture2d>(
+            texture_cache::get_instance().get_texture_from_filename(texture_dir + "rockwall_height.bmp"));
+    auto rockwall_normal_map = std::make_shared<texture2d>(
+            texture_data_source::create_normals_from_height(
+                    texture_cache::get_instance().get_texture_from_filename(texture_dir + "rockwall_height.bmp")));
+    auto room_mat = std::make_shared<material>(
+            material::texture_bindings {
+                    material::texture_binding("color_map", rockwall_tex),
+                    material::texture_binding("height_map", rockwall_height_tex),
+                    material::texture_binding("normal_map", rockwall_normal_map)
+            });
+
     simple_render_pass render_pass(textured_shader, map_mat);
     simple_render_pass solid_render_pass(untextured_shader, robot_mat);
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
     simple_render_pass rtt_pass(textured_shader, rtt_mat);
     simple_render_pass mirror_pass(mirror_shader, mirror_mat);
+    simple_render_pass no_parallax_render_pass(normal_shader, room_mat);
+    simple_render_pass parallax_render_pass(parallax_shader, room_mat);
 
     auto screen = framebuffer::get_screen();
 
@@ -120,12 +138,18 @@ int main() {
     glm::mat4 cubemap_projection = glm::perspective(90.0f, 1.0f, 0.1f, 100.0f);
     glm::vec3 mirror_position(3, 3, 2);
     std::vector<camera> cubemap_cameras {
-            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)), cubemap_projection),
-            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)), cubemap_projection),
-            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)), cubemap_projection),
-            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)), cubemap_projection),
-            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)), cubemap_projection),
-            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)), cubemap_projection)
+            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
+                   cubemap_projection),
+            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
+                   cubemap_projection),
+            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
+                   cubemap_projection),
+            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
+                   cubemap_projection),
+            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
+                   cubemap_projection),
+            camera(glm::lookAt(mirror_position, mirror_position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)),
+                   cubemap_projection)
     };
 
     //Load objects, give them materials and place them in world
@@ -149,12 +173,17 @@ int main() {
     mirror_node->set_material(mirror_mat);
     mirror_node->place(mirror_position.x, mirror_position.y, mirror_position.z);
     my_world.append_node(mirror_node);
+    node *room_node = new node(model_dir + "room.obj");
+    room_node->set_material(room_mat);
+    room_node->set_scale(0.7f);
+    room_node->place(-3, 0, 1);
+    my_world.append_node(room_node);
 
     //Unused zoom function
     float zoom = 2.0f;
     my_world.get_parent_node()->set_scale(zoom);
 
-	//Setup main camera and lights
+    //Setup main camera and lights
     camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
     std::vector<directional_light> directional_lights = {
             directional_light(glm::vec3(0.5, 0.9, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
@@ -168,7 +197,7 @@ int main() {
     float posx = 0.0f;
     float posz = 0.0f;
     float intensity = 0.0f;
-    
+
     bool was_key_p_pressed = false;
     bool use_parallax = true;
 
@@ -204,6 +233,12 @@ int main() {
         if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { posz += 0.1; }
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { posz -= 0.1; }
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { }
+        if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+            was_key_p_pressed = true;
+        } else if(was_key_p_pressed) {
+            was_key_p_pressed = false;
+            use_parallax = !use_parallax;
+        }
 
         //Position and render world
         //my_world.get_parent_node()->set_orientation(0, roty, 0);
@@ -223,7 +258,7 @@ int main() {
             framebuff->bind();
             glViewport(0, 0, 128, 128);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            auto cam  = cubemap_cameras[i];
+            auto cam = cubemap_cameras[i];
 
             render_pass.render(my_world, cam, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                                *framebuff);
@@ -235,14 +270,21 @@ int main() {
 
         screen->bind();
         glViewport(0, 0, 1280, 640);
-        
+
         render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         rtt_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
-                                  *screen);
+                        *screen);
         mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
-                                  *screen);
+                           *screen);
+        if(use_parallax) {
+            parallax_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
+                                        *screen);
+        } else {
+            no_parallax_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
+                                           *screen);
+        }
 
         //Update window and events
         glfwSwapBuffers(window);
