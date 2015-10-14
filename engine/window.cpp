@@ -40,6 +40,11 @@ window::window(int width, int height, std::string title) : width(width), height(
     } else {
         std::clog << " - Initialized GLEW\n\n";
     }
+    
+    //setup some OpneGL functions
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_CUBE_MAP);
 
 }
 
@@ -59,4 +64,8 @@ void  window::update() {
 
 bool window::key_pressed(int key_code) {
 	return glfwGetKey(glfw_window, key_code) == GLFW_PRESS;
+}
+
+bool window::should_close() {
+	return glfwWindowShouldClose(glfw_window);
 }

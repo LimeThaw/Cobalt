@@ -29,11 +29,6 @@ int main() {
     const std::string shader_dir = "./demo/res/shaders/";
     const std::string texture_dir = "./demo/res/textures/";
 
-    //setup some OpneGL functions
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_CUBE_MAP);
-
 
     //Load shaders and textures
     auto textured_shader = std::make_shared<shader>(shader_dir + "vertexShader.glsl",
@@ -137,8 +132,7 @@ int main() {
     glm::vec3 ambient_light_color = glm::vec3(0.5);
 
     //Setup rotation and location
-    float posx = 0.0f;
-    float posz = 0.0f;
+    float posx, posy, posz = 0.0f;
     float intensity = 0.0f;
     
     bool was_key_p_pressed = false;
@@ -146,11 +140,11 @@ int main() {
 
     //loop
     bool quit = false;
-    while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE)) {
+    while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
 
         //count framerate
         if(glfwGetTime() - fpsc >= 1.0f) {
-            std::clog << "-FPS: " << fps << '\n';
+            std::clog << "-FPS: " << fps << "   \r";
 
             fps = 0;
             fpsc = glfwGetTime();
@@ -164,23 +158,18 @@ int main() {
         glViewport(0, 0, 128, 128);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
-        //move world
-        if(win.key_pressed(GLFW_KEY_A)) { posx += 0.1; }
-        if(win.key_pressed(GLFW_KEY_D)) { posx -= 0.1; }
-        if(win.key_pressed(GLFW_KEY_W)) { posz += 0.1; }
-        if(win.key_pressed(GLFW_KEY_S)) { posz -= 0.1; }
+        //move camera
+        if(win.key_pressed(GLFW_KEY_A)) { posx -= 0.1; }
+        if(win.key_pressed(GLFW_KEY_D)) { posx += 0.1; }
+        if(win.key_pressed(GLFW_KEY_W)) { posz -= 0.1; }
+        if(win.key_pressed(GLFW_KEY_S)) { posz += 0.1; }
+        if(win.key_pressed(GLFW_KEY_LEFT_SHIFT)) { posy += 0.1; }
+        if(win.key_pressed(GLFW_KEY_LEFT_CONTROL)) { posy -= 0.1; }
+        the_camera.setup(glm::vec3(posx + 2, 10 + posy, posz + 10), glm::vec3(posx + 2, 5 + (0.5 * posy), posz + 5));
 
         //change light intensity
         intensity += 0.001;
         directional_lights[0].set_intensity(std::abs(sin(intensity)));
-
-        //Position and render world
-        //my_world.get_parent_node()->set_orientation(0, roty, 0);
-        //my_world.get_parent_node()->place(posx, -5, posz);
-        the_camera.place(posx, 10, posz);
-        //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
 
         render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                            offscreen_framebuffer);

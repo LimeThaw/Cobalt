@@ -17,6 +17,7 @@ class window {
 		void make_current();
 		void update();
 		bool key_pressed(int key_code);
+		bool should_close();
 
 	private:
 		int width, height, samples;
