@@ -3,16 +3,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/transform.hpp>
 #include <math.h>
-#include <texture_framebuffer_attachment.h>
-#include <renderbuffer_framebuffer_attachment.h>
-#include <texture_cache.h>
-#include <texture2d.h>
-#include <cubemap.h>
 
 #include "cobalt.h"
 #include "simple_render_pass.h"
