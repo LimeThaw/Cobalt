@@ -8,7 +8,7 @@ find_package(GLEW REQUIRED)
 
 add_library(Cobalt camera.cpp gl_exception.cpp lights.cpp material.cpp mesh.cpp node.cpp
             scene.cpp shader.cpp simple_render_pass.cpp texture.cpp
-            cobalt.h render_pass.h util.h framebuffer.cpp framebuffer.h framebuffer_attachment.cpp framebuffer_attachment.h texture_framebuffer_attachment.cpp texture_framebuffer_attachment.h renderbuffer_framebuffer_attachment.cpp renderbuffer_framebuffer_attachment.h texture_data_source.cpp texture_data_source.h texture_cache.cpp texture_cache.h texture2d.cpp texture2d.h cubemap.cpp cubemap.h) # CLion ignores header files that are not named like the corresponding .cpp file, so enumerate them manually
+            cobalt.h render_pass.h util.h framebuffer.cpp framebuffer.h framebuffer_attachment.cpp framebuffer_attachment.h texture_framebuffer_attachment.cpp texture_framebuffer_attachment.h renderbuffer_framebuffer_attachment.cpp renderbuffer_framebuffer_attachment.h texture_data_source.cpp texture_data_source.h texture_cache.cpp texture_cache.h texture2d.cpp texture2d.h cubemap.cpp cubemap.h window.cpp window.h) # CLion ignores header files that are not named like the corresponding .cpp file, so enumerate them manually
 target_include_directories(Cobalt PUBLIC ${SOIL_INCLUDE_DIRS})
 target_include_directories(Cobalt PRIVATE ${GLFW_INCLUDE_DIRS})
 target_link_libraries(Cobalt ${GLFW_LIBRARIES})

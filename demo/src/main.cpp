@@ -9,49 +9,16 @@
 #include "simple_render_pass.h"
 
 int main() {
+
+	//Initialize window
+	window win(1280, 640, "Cobalt Demo");
+	
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
 
     const std::string model_dir = "./demo/res/models/";
     const std::string shader_dir = "./demo/res/shaders/";
     const std::string texture_dir = "./demo/res/textures/";
-
-    //init GLFW
-    if(!glfwInit()) {
-        std::cerr << "-Failed to initialize GLFW\n";
-        return -1;
-    } else {
-        std::cout << "-Initialized GLFW\n";
-    }
-
-    //Give GLFW some info
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
-    //init window
-    GLFWwindow *window = glfwCreateWindow(1280, 640, "OpenGLTest", NULL, 0);
-    if(window == NULL) {
-        std::cerr << "-Failed to open window\n";
-        return -1;
-    } else {
-        std::cout << "-Opened window\n";
-    }
-    glfwMakeContextCurrent(window);
-
-    //init GLEW
-    if(glewInit() != GLEW_OK) {
-        std::cerr << "-Failed to initialize GLEW\n";
-        return -1;
-    } else {
-        std::cout << "-Initialized GLEW\n\n";
-    }
-    clear_gl_error();
-
-    //setup some OpneGL functions
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_CUBE_MAP);
 
 
     //Load shaders and textures
@@ -156,24 +123,19 @@ int main() {
     glm::vec3 ambient_light_color = glm::vec3(0.5);
 
     //Setup rotation and location
-    float posx = 0.0f;
-    float posz = 0.0f;
+    float posx, posy, posz = 0.0f;
     float intensity = 0.0f;
     
     bool was_key_p_pressed = false;
     bool use_parallax = true;
 
-    //Setup key capturing
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE);
-
     //loop
     bool quit = false;
-    while(!quit && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS) {
+    while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
 
         //count framerate
         if(glfwGetTime() - fpsc >= 1.0f) {
-            std::clog << "-FPS: " << fps << '\n';
+            std::clog << "-FPS: " << fps << "   \r";
 
             fps = 0;
             fpsc = glfwGetTime();
@@ -187,24 +149,18 @@ int main() {
         glViewport(0, 0, 128, 128);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
-        //move world
-        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { posx += 0.1; }
-        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { posx -= 0.1; }
-        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { posz += 0.1; }
-        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { posz -= 0.1; }
-        if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { }
+        //move camera
+        if(win.key_pressed(GLFW_KEY_A)) { posx -= 0.1; }
+        if(win.key_pressed(GLFW_KEY_D)) { posx += 0.1; }
+        if(win.key_pressed(GLFW_KEY_W)) { posz -= 0.1; }
+        if(win.key_pressed(GLFW_KEY_S)) { posz += 0.1; }
+        if(win.key_pressed(GLFW_KEY_LEFT_SHIFT)) { posy += 0.1; }
+        if(win.key_pressed(GLFW_KEY_LEFT_CONTROL)) { posy -= 0.1; }
+        the_camera.setup(glm::vec3(posx + 2, 10 + posy, posz + 10), glm::vec3(posx + 2, 5 + (0.5 * posy), posz + 5));
 
         //change light intensity
         intensity += 0.001;
         directional_lights[0].set_intensity(std::abs(sin(intensity)));
-
-        //Position and render world
-        //my_world.get_parent_node()->set_orientation(0, roty, 0);
-        //my_world.get_parent_node()->place(posx, -5, posz);
-        the_camera.place(posx, 10, posz);
-        //point_lights[0].set_position(glm::vec3(posx + 2, -3, posz + 2));
 
         render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                            offscreen_framebuffer);
@@ -238,10 +194,7 @@ int main() {
                                   *screen);*/
         mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                                   *screen);
-
-        //Update window and events
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        win.update();
 
         //check for OpenGL errors
         try {
@@ -252,8 +205,5 @@ int main() {
         }
 
     }
-
-    // Close OpenGL window and terminate GLFW
-    glfwTerminate();
 
 }

@@ -1,10 +1,11 @@
 //Main header used to include all functions of the engine
 
-#ifndef W3D_H_INCLUDED
-#define W3D_H_INCLUDED
+#ifndef COBALT_H_INCLUDED
+#define COBALT_H_INCLUDED
 
 #define  GLM_FORCE_RADIANS
 
+#include "window.h"
 #include "scene.h"
 #include "mesh.h"
 #include "node.h"
@@ -21,4 +22,4 @@
 #include "texture2d.h"
 #include "cubemap.h"
 
-#endif // W3D_H_INCLUDED
+#endif // COBALT_H_INCLUDED
