@@ -3,7 +3,7 @@
 #define NUM_POINT_LIGHTS 3
 in vec2 uv;
 in vec3 normal;
-in mat3 tangent_space_matrix;
+in mat3 tangent_to_view_matrix;
 in vec3 view_position;
 in vec3 tangent_view_position;
 uniform sampler2D height_map;
@@ -27,7 +27,7 @@ void main(){
         vec2 effective_uv = uv - vec2(uv_offset.x, -uv_offset.y);
 
         vec3 local_normal = (2.0 * texture(normal_map, effective_uv).xyz) - vec3(1.0);
-        local_normal = normalize(tangent_space_matrix * local_normal);
+        local_normal = normalize(tangent_to_view_matrix * local_normal);
         vec3 texture_color = texture(color_map, effective_uv).xyz;
         vec3 ambient_color = texture_color * ambient_light_color;
         

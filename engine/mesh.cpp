@@ -141,7 +141,7 @@ void mesh::set_scale(float new_scale) {
     scale = glm::scale(glm::vec3(new_scale));
 }
 
-void mesh::render(glm::mat4 parent_matrix) {
+void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
     if(mat) {
         mat->use();
     } else {
@@ -151,7 +151,7 @@ void mesh::render(glm::mat4 parent_matrix) {
 
     model = location * rotation * scale;        //Calculate and register the model and rotation matrices
     glm::mat4 render_model = parent_matrix * location * rotation * scale;
-    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(render_model)));
+    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
     GLint shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
     GLuint matrix_location = glGetUniformLocation(shader_id, "model");
