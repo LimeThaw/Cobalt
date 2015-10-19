@@ -65,6 +65,15 @@ void node::place(float x, float y, float z) {
     location = glm::translate(glm::vec3(x, y, z));
 }
 
+void node::move(float x, float y, float z) {
+    location = glm::translate(glm::vec3(x, y, z)) * location;
+}
+
+void node::move_relative(float x, float y, float z) {
+	glm::vec3 tmp(glm::vec4(x, y, z, 1) * glm::inverse(rotation));
+	location = glm::translate(location, tmp);
+}
+
 void node::set_orientation(float x, float y, float z) {
     glm::quat rot = glm::quat(glm::vec3(x, y , z));
     rotation = glm::mat4_cast(rot);

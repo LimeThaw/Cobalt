@@ -21,6 +21,8 @@ class node {
         bool load_scene(const std::string &path);
         void set_material(std::shared_ptr<material> new_material);
         void place(float x, float y, float z);
+        void move(float x, float y, float z);
+        void move_relative(float x, float y, float z);
         void set_orientation(float x, float y, float z);
         void set_scale(float x, float y, float z);
         void set_scale(float new_scale);
