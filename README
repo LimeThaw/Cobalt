@@ -1,6 +1,6 @@
  - Version 0.1 - 
 
-Includes a sample program
+Includes a sample program and doxygen configuration and documentation
 
 Libraries needed:
 - assimp
