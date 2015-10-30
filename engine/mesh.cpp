@@ -30,7 +30,7 @@ bool mesh::load_model(const std::string &model_path) {
 }
 
 bool mesh::load_model(const std::string &scene_path, int model_index) {
-    std::clog << "-Loading mesh " << scene_path << " [" << model_index << "]\n";
+    std::clog << " - Loading mesh " << scene_path << " [" << model_index << "]\n";
     float start_time = glfwGetTime();
 
     Assimp::Importer importer;      //Create importer object
@@ -42,7 +42,7 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
                            aiProcess_GenSmoothNormals);    //Load scene
 
     if(!scene) {        //Check for loading errors
-        std::cerr << "-Failed to load model " << scene_path << ": " << importer.GetErrorString();
+        std::cerr << "  ! Failed to load model " << scene_path << ": " << importer.GetErrorString();
         return false;
     }
 
@@ -119,7 +119,7 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
 
     glBindVertexArray(0);
 
-    std::clog << "- Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << "seconds\n\n";
+    std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << "seconds\n";
 
     return true;        //Function finished properly
 }
@@ -145,7 +145,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
     if(mat) {
         mat->use();
     } else {
-        std::cerr << "! Tried to render model without assigned material\n";
+        std::cerr << " ! Tried to render model without assigned material\n";
         return;
     }
 
@@ -171,7 +171,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
 //Private
 void mesh::load_model(aiMesh *inmesh) {
 
-    std::clog << "- Loading model\n";
+    std::clog << "  - Loading model\n";
 
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
@@ -182,7 +182,7 @@ void mesh::load_model(aiMesh *inmesh) {
     for(unsigned int i = 0; i < inmesh->mNumVertices; i++) { //Get vertices
         glm::vec3 vertex = glm::vec3(inmesh->mVertices[i].x, inmesh->mVertices[i].y, inmesh->mVertices[i].z);     //Get vertices and push them into vector
         vertices.push_back(vertex);
-        if(MESH_INFO)std::clog << "- Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
+        if(MESH_INFO)std::clog << "   - Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
     }
 
     if(inmesh->HasTextureCoords(0)) {    //Get uvs
@@ -190,38 +190,38 @@ void mesh::load_model(aiMesh *inmesh) {
         for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec2 uv = glm::vec2(inmesh->mTextureCoords[0][i].x, inmesh->mTextureCoords[0][i].y);
             uvs.push_back(uv);
-            if(MESH_INFO)std::clog << "- Read UV [" << i << "] at " << uv.x << ", " << uv.y << '\n';
+            if(MESH_INFO)std::clog << "   - Read UV [" << i << "] at " << uv.x << ", " << uv.y << '\n';
         }
     } else {
         has_uvs = false;
-        std::cerr << "! Could not find texture coordinates\n";
+        std::cerr << "   ! Could not find texture coordinates\n";
     }
 
     if(inmesh->HasNormals()) {      //Get normals
         for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec3 normal = glm::vec3(inmesh->mNormals[i].x, inmesh->mNormals[i].y, inmesh->mNormals[i].z);
             normals.push_back(normal);
-            if(MESH_INFO)std::clog << "- Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
+            if(MESH_INFO)std::clog << "  - Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
         }
     } else {
-        std::cerr << "! Could not find normals\n";
+        std::cerr << "   ! Could not find normals\n";
     }
 
     if(inmesh->HasTangentsAndBitangents()) {      //Get tangents
         for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec3 tangent = glm::vec3(inmesh->mTangents[i].x, inmesh->mTangents[i].y, inmesh->mTangents[i].z);
             tangents.push_back(tangent);
-            if(MESH_INFO)std::clog << "- Read Tangent [" << i << "] at " << tangent.x << ", " <<  tangent.y << ", " << tangent.z << '\n';
+            if(MESH_INFO)std::clog << "   - Read Tangent [" << i << "] at " << tangent.x << ", " <<  tangent.y << ", " << tangent.z << '\n';
         }
     } else {
-        std::cerr << "! Could not generate tangents\n";
+        std::cerr << "   ! Could not generate tangents\n";
     }
 
     for(unsigned int i = 0; i < inmesh->mNumFaces; i++) { //Get faces
         aiFace face = inmesh->mFaces[i];
         glm::vec3 vec = glm::vec3(face.mIndices[0], face.mIndices[1], face.mIndices[2]);    //Get faces and put them into vector
         faces.push_back(vec);
-        if(MESH_INFO)std::clog << "- Read face [" << i << "] with vertices " << vec.x << ", " << vec.y << ", " << vec.z << '\n';
+        if(MESH_INFO)std::clog << "   - Read face [" << i << "] with vertices " << vec.x << ", " << vec.y << ", " << vec.z << '\n';
     }
 
     //Put data into float arrays

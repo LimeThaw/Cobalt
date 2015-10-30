@@ -11,6 +11,7 @@ Can have other node objects as children or parents.
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
 #include <vector>
 #include "mesh.h"
 
@@ -23,7 +24,9 @@ class node {
         bool load_scene(const std::string &path);///< Loads all meshes from the specified file and appends them to the node.
         void set_material(std::shared_ptr<material> new_material);///< Sets the material for all nodes and meshes appended to this node.
         void place(float x, float y, float z);///< Specifies the node location relative to its parent node.
+        void place(glm::vec3 arg_position);///< See member place(float x, float y, float z).
         void move(float x, float y, float z);///< Moves the node relative to its parent node.
+        void move(glm::vec3 arg_movement);///< See member move(float x, float y, float z).
         void move_relative(float x, float y, float z);///< Moves the node relative to its parent considering the node's rotation.
         void set_orientation(float x, float y, float z);///< Sets the node's rotation relative to its parent.
         void set_scale(float x, float y, float z);///< Sets the node's scale.
@@ -41,9 +44,6 @@ class node {
     private:
         node *parent_node;
         void load_model(const std::string &path, int model_index);
-        glm::mat4 location;
-        glm::mat4 rotation;
-        glm::mat4 scale;
         glm::mat4 node_matrix;
         std::vector<mesh *> models;
         std::vector<node *> children;

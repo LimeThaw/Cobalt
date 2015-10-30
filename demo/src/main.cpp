@@ -182,10 +182,10 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //move camera
-        if(win.key_pressed(GLFW_KEY_A)) { posx += 0.1; }
-        if(win.key_pressed(GLFW_KEY_D)) { posx -= 0.1; }
-        if(win.key_pressed(GLFW_KEY_W)) { posz += 0.1; }
-        if(win.key_pressed(GLFW_KEY_S)) { posz -= 0.1; }
+        if(win.key_pressed(GLFW_KEY_A)) { posx += 0.2; }
+        if(win.key_pressed(GLFW_KEY_D)) { posx -= 0.2; }
+        if(win.key_pressed(GLFW_KEY_W)) { posz += 0.2; }
+        if(win.key_pressed(GLFW_KEY_S)) { posz -= 0.2; }
         if(win.key_pressed(GLFW_KEY_Q)) { rot += 0.1; }
         if(win.key_pressed(GLFW_KEY_E)) { rot -= 0.1; }
         if(win.key_pressed(GLFW_KEY_LEFT_SHIFT)) { posy += 0.1; }
@@ -196,7 +196,7 @@ int main() {
         posx = posy = posz = 0;
 
         //change light intensity
-        intensity += 0.001;
+        intensity += 0.01;
         directional_lights[0].set_intensity(std::abs(sin(intensity)));
 
         if(win.key_pressed(GLFW_KEY_P)) {

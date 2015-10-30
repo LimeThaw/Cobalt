@@ -2,7 +2,7 @@
 
 window::window(int width, int height, std::string title) : width(width), height(height), title(title), samples(4) {
 
-	std::clog << "- Creating new window...";
+	std::clog << "- Creating new window...\n";
 
     //init GLFW
     if(!glfwInit()) {
