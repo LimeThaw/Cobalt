@@ -104,6 +104,17 @@ void node::set_scale(float new_scale) {
 	set_scale(new_scale, new_scale, new_scale);
 }
 
+void node::look_at(float x, float y, float z) {
+	look_at(glm::vec3(x, y, z));
+}
+
+void node::look_at(glm::vec3 arg_look) {
+	glm::vec3 current_position(node_matrix[3][0], node_matrix[3][1], node_matrix[3][2]);
+	glm::vec3 current_scale(glm::length(glm::vec3(node_matrix[0][0], node_matrix[1][0], node_matrix[2][0])), glm::length(glm::vec3(node_matrix[0][1], node_matrix[1][1], node_matrix[2][1])), glm::length(glm::vec3(node_matrix[0][2], node_matrix[1][2], node_matrix[2][2])));
+	node_matrix = glm::lookAt(current_position, arg_look, glm::vec3(0, 1, 0));
+	set_scale(current_scale.x, current_scale.y, current_scale.z);
+}
+
 void node::append_node(const std::string &file_path) {
     node *temp_node = new node();
     temp_node->load_scene(file_path);

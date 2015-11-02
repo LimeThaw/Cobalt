@@ -31,6 +31,8 @@ class node {
         void set_orientation(float x, float y, float z);///< Sets the node's rotation relative to its parent.
         void set_scale(float x, float y, float z);///< Sets the node's scale.
         void set_scale(float new_scale);///< See member set_scale(float x, float y, float z).
+        void look_at(float x, float y, float z);///< Rotates the node to face the specified point in space.
+        void look_at(glm::vec3 arg_look);///< See member look_at(float x, float y, float z).
         void append_node(const std::string &file_path);///< Basically append_node(new node(file_path)).
         void append_node(node *new_child);///< Appends the given node as its child.
         void set_parent(node *new_parent);///< Set the node's parent.
@@ -41,7 +43,7 @@ class node {
         std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
         const std::vector< mesh *> &get_models();///< Returns a list of all mesh objects attached to this node.
 
-    private:
+    protected:
         node *parent_node;
         void load_model(const std::string &path, int model_index);
         glm::mat4 node_matrix;
