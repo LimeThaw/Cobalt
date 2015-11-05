@@ -1,4 +1,5 @@
 #include "node.h"
+#include "mesh.h";
 
 node::node() {
     node_matrix = glm::mat4(1.0f);
@@ -118,13 +119,23 @@ void node::look_at(glm::vec3 arg_look) {
 void node::append_node(const std::string &file_path) {
     node *temp_node = new node();
     temp_node->load_scene(file_path);
-    temp_node->set_parent(this);
-    children.push_back(temp_node);
+    append_node(temp_node);
 }
 
 void node::append_node(node *new_child) {
     new_child->set_parent(this);
     children.push_back(new_child);
+}
+
+void node::append_mesh(const std::string &file_path) {
+	mesh *temp_mesh = new mesh();
+	temp_mesh->load_model(file_path);
+	append_mesh(temp_mesh);
+}
+
+void node::append_mesh(mesh *new_mesh) {
+	new_mesh->set_parent(this);
+	models.push_back(new_mesh);
 }
 
 void node::set_parent(node *new_parent) {

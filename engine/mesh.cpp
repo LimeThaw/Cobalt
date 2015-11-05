@@ -3,7 +3,8 @@
 #include "shader.h"
 
 mesh::mesh() {
-    model = location = rotation = scale = glm::mat4(1.0f);
+    node_matrix = glm::mat4(1.0f);
+    parent_node = nullptr;
     vertex_data = nullptr;
     uv_data = nullptr;
     tangent_data = nullptr;
@@ -11,6 +12,19 @@ mesh::mesh() {
     vertex_id = uv_id = tangent_id = normal_id = 0;
     vertex_array_object_id = 0;
     has_uvs = false;
+}
+
+mesh::mesh(const std::string &file_path) {
+    node_matrix = glm::mat4(1.0f);
+    parent_node = nullptr;
+    vertex_data = nullptr;
+    uv_data = nullptr;
+    tangent_data = nullptr;
+    normal_data = nullptr;
+    vertex_id = uv_id = tangent_id = normal_id = 0;
+    vertex_array_object_id = 0;
+    has_uvs = false;
+	load_model(file_path);
 }
 
 mesh::~mesh() {
@@ -128,19 +142,6 @@ void mesh::set_material(std::shared_ptr<material> mat) {
     this->mat = mat;
 }
 
-void mesh::place(float x, float y, float z) {
-    location = glm::translate(glm::vec3(x, y, z));
-}
-
-void mesh::set_orientation(float x, float y, float z) {
-    glm::quat rot = glm::quat(glm::vec3(x, y, z));
-    rotation = glm::mat4_cast(rot);
-}
-
-void mesh::set_scale(float new_scale) {
-    scale = glm::scale(glm::vec3(new_scale));
-}
-
 void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
     if(mat) {
         mat->use();
@@ -149,8 +150,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
         return;
     }
 
-    model = location * rotation * scale;        //Calculate and register the model and rotation matrices
-    glm::mat4 render_model = parent_matrix * location * rotation * scale;
+    glm::mat4 render_model = parent_matrix * node_matrix;
     glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
     GLint shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);

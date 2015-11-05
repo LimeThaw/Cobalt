@@ -13,7 +13,11 @@ Can have other node objects as children or parents.
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/matrix_interpolation.hpp>
 #include <vector>
-#include "mesh.h"
+#include <memory>
+
+#include "material.h"
+
+class mesh;
 
 class node {
     public:
@@ -35,6 +39,8 @@ class node {
         void look_at(glm::vec3 arg_look);///< See member look_at(float x, float y, float z).
         void append_node(const std::string &file_path);///< Basically append_node(new node(file_path)).
         void append_node(node *new_child);///< Appends the given node as its child.
+        void append_mesh(const std::string &file_path);
+        void append_mesh(mesh *new_mesh);
         void set_parent(node *new_parent);///< Set the node's parent.
         bool remove_child(node *child);///< Removes a child node from this node.
         glm::mat4 get_node_matrix() const;///< Returns the transformation matrix affecting all of the node's children. It includes the transformation of it's parents.

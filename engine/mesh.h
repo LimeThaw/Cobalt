@@ -16,21 +16,20 @@
 #include <assimp/postprocess.h> // Post processing flags
 
 #include "material.h"
+#include "node.h"
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
 
 
-class mesh {
+class mesh : public node {
     public:
         mesh();
+        mesh(const std::string &file_path);
         ~mesh();
         bool load_model(const std::string &model_path);
         bool load_model(const std::string &scene_path, int model_index);
         void set_material(std::shared_ptr<material> mat);
-        void place(float x, float y, float z);
-        void set_orientation(float x, float y, float z);
-        void set_scale(float new_scale);
         void render(glm::mat4 parent_matrix, glm::mat4 view_matrix);
         std::shared_ptr<material> get_material() const;
 
@@ -49,10 +48,6 @@ class mesh {
         GLuint uv_id;
         GLuint normal_id;
         GLuint tangent_id;
-        glm::mat4 location;
-        glm::mat4 rotation;
-        glm::mat4 scale;
-        glm::mat4 model;
         std::shared_ptr<material> mat;
         bool has_uvs;
 };

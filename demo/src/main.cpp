@@ -112,9 +112,9 @@ int main() {
 
     //Load objects, give them materials and place them in world
     scene my_world;
-    node *map_node = new node(model_dir + "testmap.obj");
+    mesh *map_node = new mesh(model_dir + "testmap.obj");
     map_node->set_material(map_mat);
-    my_world.append_node(map_node);
+    my_world.append_mesh(map_node);
     node *robot_node = new node(model_dir + "Robot.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
