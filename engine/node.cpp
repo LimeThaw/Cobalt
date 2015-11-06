@@ -81,11 +81,11 @@ void node::move(glm::vec3 arg_movement) {
 }
 
 void node::move_relative(float x, float y, float z) {
-	glm::vec3 tmp(glm::extractMatrixRotation(node_matrix) * glm::vec4(x, y, z, 1));
+	glm::vec3 tmp(get_node_matrix() * glm::vec4(x, y, z, 0));
 	move(tmp);
 }
 
-void node::set_orientation(float x, float y, float z) {
+void node::set_rotation(float x, float y, float z) {
 	glm::vec3 current_scale(glm::length(glm::vec3(node_matrix[0][0], node_matrix[0][1], node_matrix[0][2])), glm::length(glm::vec3(node_matrix[1][0], node_matrix[1][1], node_matrix[1][2])), glm::length(glm::vec3(node_matrix[2][0], node_matrix[2][1], node_matrix[2][2])));
 	node_matrix = node_matrix * glm::inverse(glm::extractMatrixRotation(node_matrix));
 	set_scale(current_scale.x, current_scale.y, current_scale.z);

@@ -32,7 +32,7 @@ class node {
         void move(float x, float y, float z);///< Moves the node relative to its parent node.
         void move(glm::vec3 arg_movement);///< See member move(float x, float y, float z).
         void move_relative(float x, float y, float z);///< Moves the node relative to its parent considering the node's rotation.
-        void set_orientation(float x, float y, float z);///< Sets the node's rotation relative to its parent.
+        void set_rotation(float x, float y, float z);///< Sets the node's rotation relative to its parent.
         void set_scale(float x, float y, float z);///< Sets the node's scale.
         void set_scale(float new_scale);///< See member set_scale(float x, float y, float z).
         void look_at(float x, float y, float z);///< Rotates the node to face the specified point in space.
