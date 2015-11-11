@@ -4,6 +4,8 @@
 #ifndef MESH_H
 #define MESH_H
 
+#define  GLM_FORCE_RADIANS
+
 #include <vector>
 #include <iostream>
 #include <GL/glew.h>

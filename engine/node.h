@@ -6,6 +6,8 @@ Can have other node objects as children or parents.
 #ifndef NODE_H
 #define NODE_H
 
+#define  GLM_FORCE_RADIANS
+
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -23,7 +25,7 @@ class node {
     public:
         node();///< Default constructor.
         node(const std::string &scene_path);///< Constructor loading all meshes from a file and appending them to the node.
-        ~node();///< Default destructor.
+        virtual ~node();///< Default destructor.
         void load_model(const std::string &path);///< Loads the first mesh in the specified file and appends it to the node.
         bool load_scene(const std::string &path);///< Loads all meshes from the specified file and appends them to the node.
         virtual void set_material(std::shared_ptr<material> new_material);///< Sets the material for all nodes and meshes appended to this node.
@@ -33,7 +35,7 @@ class node {
         void move(float x, float y, float z);///< Moves the node relative to its parent node.
         void move(glm::vec3 arg_movement);///< See member move(float x, float y, float z).
         void move_relative(float x, float y, float z);///< Moves the node relative to its parent considering the node's rotation.
-        void set_rotation(float x, float y, float z);///< Sets the node's rotation relative to its parent.
+        void rotate(float x, float y, float z);///< Rotates the node for the given angles around the respective axes.
         void set_scale(float x, float y, float z);///< Sets the node's scale.
         void set_scale(float new_scale);///< See member set_scale(float x, float y, float z).
         void look_at(float x, float y, float z, glm::vec3 up_vector = glm::vec3(0, 1, 0));///< Rotates the node to face the specified point in space.

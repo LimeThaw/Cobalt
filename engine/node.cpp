@@ -1,5 +1,5 @@
 #include "node.h"
-#include "mesh.h";
+#include "mesh.h"
 
 node::node() {
     node_matrix = glm::mat4(1.0f);
@@ -82,11 +82,8 @@ void node::move_relative(float x, float y, float z) {
 	move(tmp);
 }
 
-void node::set_rotation(float x, float y, float z) {
-	glm::vec3 current_scale(glm::length(glm::vec3(node_matrix[0][0], node_matrix[0][1], node_matrix[0][2])), glm::length(glm::vec3(node_matrix[1][0], node_matrix[1][1], node_matrix[1][2])), glm::length(glm::vec3(node_matrix[2][0], node_matrix[2][1], node_matrix[2][2])));
-	node_matrix = node_matrix * glm::inverse(glm::extractMatrixRotation(node_matrix));
-	set_scale(current_scale.x, current_scale.y, current_scale.z);
-    node_matrix = node_matrix * glm::mat4_cast(glm::quat(glm::vec3(x, y, z)));
+void node::rotate(float x, float y, float z) {
+	node_matrix = node_matrix * glm::mat4_cast(glm::quat(glm::vec3(x, y, z)));
 }
 
 void node::set_scale(float x, float y, float z) {
@@ -108,9 +105,7 @@ void node::look_at(float x, float y, float z, glm::vec3 up_vector) {
 
 void node::look_at(glm::vec3 arg_look, glm::vec3 up_vector) {
 	glm::vec3 current_position(node_matrix[3][0], node_matrix[3][1], node_matrix[3][2]);
-	glm::vec3 current_scale(glm::length(glm::vec3(node_matrix[0][0], node_matrix[1][0], node_matrix[2][0])), glm::length(glm::vec3(node_matrix[0][1], node_matrix[1][1], node_matrix[2][1])), glm::length(glm::vec3(node_matrix[0][2], node_matrix[1][2], node_matrix[2][2])));
-	node_matrix = glm::lookAt(current_position, arg_look, up_vector);
-	set_scale(current_scale.x, current_scale.y, current_scale.z);
+	node_matrix = glm::inverse(glm::lookAt(current_position, arg_look, up_vector));
 }
 
 void node::append_node(const std::string &file_path) {

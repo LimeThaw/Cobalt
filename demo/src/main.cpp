@@ -118,7 +118,6 @@ int main() {
     node *robot_node = new node(model_dir + "Robot.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
-    robot_node->set_rotation(0, 2, 0);
     my_world.append_node(robot_node);
     node *monkey_node = new node(model_dir + "NormalExample.obj");
     monkey_node->set_material(monkey_mat);
@@ -190,10 +189,9 @@ int main() {
         if(win.key_pressed(GLFW_KEY_E)) { rot -= 0.1; }
         if(win.key_pressed(GLFW_KEY_LEFT_SHIFT)) { posy += 0.1; }
         if(win.key_pressed(GLFW_KEY_LEFT_CONTROL)) { posy -= 0.1; }
-        //the_camera.setup(glm::vec3(posx + 2, 10 + posy, posz + 10), glm::vec3(posx + 2, 5 + (0.5 * posy), posz + 5));
-        robot_node->set_rotation(0, rot, 0);
+        robot_node->rotate(0, rot, 0);
         robot_node->move_relative(posx, posy, posz);
-        posx = posy = posz = 0;
+        posx = posy = posz = rot = 0;
 
         //change light intensity
         intensity += 0.01;

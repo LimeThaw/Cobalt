@@ -1,7 +1,8 @@
 #include "camera.h"
 
-camera::camera(glm::vec3 position, glm::vec3 look_at, glm::mat4 projection) : projection(projection) {
-    node_matrix = glm::lookAt(position, look_at, glm::vec3(0, 1, 0));
+camera::camera(glm::vec3 position, glm::vec3 look_point, glm::mat4 projection) : projection(projection) {
+	place(position);
+    look_at(look_point);
     parent_node = nullptr;
 }
 
@@ -21,7 +22,7 @@ void camera::setup(glm::vec3 arg_pos, glm::vec3 arg_point) {
 
 const glm::mat4 camera::get_view() const {
 	if(parent_node != nullptr) {
-		return node_matrix * glm::inverse(parent_node->get_node_matrix());
+		return glm::inverse(parent_node->get_node_matrix() * node_matrix);
 	} else {
     	return node_matrix;
 	}

@@ -19,6 +19,7 @@ out vec3 tangent_view_position;
 void main() {
     vec4 world_position4 = model * vec4(vertex_position, 1.0);
     vec4 view_position4 = view * world_position4;
+    view_position = view_position4.xyz;
 	gl_Position = projection * view_position4;
 	
 	uv = vertex_UV;

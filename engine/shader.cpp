@@ -32,7 +32,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
     int info_log_length;
 
     // Compile Vertex Shader
-    printf(" - Compiling shader : %s\n", vertex_path.c_str());
+    if(DEBUG_INFO) printf(" - Compiling shader : %s\n", vertex_path.c_str());
     char const *vertex_source_counter = vertex_shader_code.c_str();
     glShaderSource(vertex_shader_id, 1, &vertex_source_counter , NULL);
     glCompileShader(vertex_shader_id);
@@ -47,7 +47,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
     }
 
     // Compile Fragment Shader
-    printf(" - Compiling shader : %s\n", fragment_path.c_str());
+    if(DEBUG_INFO) printf(" - Compiling shader : %s\n", fragment_path.c_str());
     char const *fragment_source_pointer = fragment_shader_source.c_str();
     glShaderSource(fragment_shader_id, 1, &fragment_source_pointer , NULL);
     glCompileShader(fragment_shader_id);
@@ -62,7 +62,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
     }
 
     // Link the program
-    fprintf(stdout, " - Linking program\n");
+    if(DEBUG_INFO) fprintf(stdout, " - Linking program\n");
     GLuint program_id = glCreateProgram();
     glAttachShader(program_id, vertex_shader_id);
     glAttachShader(program_id, fragment_shader_id);
@@ -86,7 +86,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
 
     GLuint shader_id = program_id;
 
-    std::clog << " - Finished loading shader in " << glfwGetTime() - start_time << " seconds\n\n";
+    if(DEBUG_INFO) std::clog << " - Finished loading shader in " << glfwGetTime() - start_time << " seconds\n\n";
 
     return shader_id;
 }
