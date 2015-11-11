@@ -147,7 +147,7 @@ int main() {
     camera the_camera(glm::vec3(0, 20, -20), glm::vec3(0, 0, 20));
     the_camera.set_parent(robot_node);
     std::vector<directional_light> directional_lights = {
-            directional_light(glm::vec3(0.5, 0.9, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
+            directional_light(glm::vec3(0.5, 0.5, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
     std::vector<point_light> point_lights = { point_light(glm::vec3(1.0, 0, 0), 3.0, glm::vec3(0, 0.5, 1.5)),
                                               point_light(glm::vec3(0, 1.0, 0), 3.0, glm::vec3(0, -0.5, -1.5)),
                                               point_light(glm::vec3(0, 0, 1.0), 3.0, glm::vec3(1.0, 0, 0.5)),

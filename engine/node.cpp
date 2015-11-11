@@ -13,20 +13,16 @@ node::node(const std::string &scene_path) {
 }
 
 node::~node() {
-    for(unsigned int i = 0; i < models.size(); i++) {
-        delete models[i];
-    }
     for(unsigned int i = 0; i < children.size(); i++) {
         delete children[i];
     }
-    models.clear();
     children.clear();
 }
 
 void node::load_model(const std::string &path) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path);
-    models.push_back(temp_mesh);
+    append_mesh(temp_mesh);
 }
 
 bool node::load_scene(const std::string &path) {
@@ -49,17 +45,18 @@ bool node::load_scene(const std::string &path) {
         load_model(path, i);
     }
 
-    std::clog << " - Finished loading scene with " << scene->mNumMeshes << " meshes in " << glfwGetTime() - start_time << "seconds\n\n";
+    std::clog << " - Finished loading scene with " << scene->mNumMeshes << " meshes in " << glfwGetTime() - start_time << " seconds\n\n";
     return true;
 }
 
 void node::set_material(std::shared_ptr<material> new_material) {
-    for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->set_material(new_material);
-    }
     for(unsigned int i = 0; i < children.size(); i++) {
         children[i]->set_material(new_material);
     }
+}
+
+std::shared_ptr<material> node::get_material() const {
+	return false;
 }
 
 void node::place(float x, float y, float z) {
@@ -105,14 +102,14 @@ void node::set_scale(float new_scale) {
 	set_scale(new_scale, new_scale, new_scale);
 }
 
-void node::look_at(float x, float y, float z) {
-	look_at(glm::vec3(x, y, z));
+void node::look_at(float x, float y, float z, glm::vec3 up_vector) {
+	look_at(glm::vec3(x, y, z), up_vector);
 }
 
-void node::look_at(glm::vec3 arg_look) {
+void node::look_at(glm::vec3 arg_look, glm::vec3 up_vector) {
 	glm::vec3 current_position(node_matrix[3][0], node_matrix[3][1], node_matrix[3][2]);
 	glm::vec3 current_scale(glm::length(glm::vec3(node_matrix[0][0], node_matrix[1][0], node_matrix[2][0])), glm::length(glm::vec3(node_matrix[0][1], node_matrix[1][1], node_matrix[2][1])), glm::length(glm::vec3(node_matrix[0][2], node_matrix[1][2], node_matrix[2][2])));
-	node_matrix = glm::lookAt(current_position, arg_look, glm::vec3(0, 1, 0));
+	node_matrix = glm::lookAt(current_position, arg_look, up_vector);
 	set_scale(current_scale.x, current_scale.y, current_scale.z);
 }
 
@@ -135,7 +132,7 @@ void node::append_mesh(const std::string &file_path) {
 
 void node::append_mesh(mesh *new_mesh) {
 	new_mesh->set_parent(this);
-	models.push_back(new_mesh);
+	children.push_back(new_mesh);
 }
 
 void node::set_parent(node *new_parent) {
@@ -162,25 +159,10 @@ glm::mat4 node::get_node_matrix() const {
     return temp_matrix;
 }
 
-void node::render(glm::mat4 view_matrix) const {
-    for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(get_node_matrix(), view_matrix);
-    }
-    for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(get_node_matrix(), view_matrix);
-    }
-}
-
-void node::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
-    //node_matrix = location * rotation * scale;        //Calculate the node matrix
-    glm::mat4 sum_matrix = parent_matrix * node_matrix;
-
-    for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(sum_matrix, view_matrix);
-    }
-    for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(sum_matrix);
-    }
+void node::render(glm::mat4 view_matrix) {
+	for(auto child : children) {
+		child->render(view_matrix);
+	}
 }
 
 std::vector< node * > node::enumerate() {
@@ -193,14 +175,10 @@ std::vector< node * > node::enumerate() {
     return rst;
 }
 
-const std::vector< mesh * > &node::get_models() {
-    return models;
-}
-
 
 //Private
 void node::load_model(const std::string &path, int model_index) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path, model_index);
-    models.push_back(temp_mesh);
+    append_mesh(temp_mesh);
 }

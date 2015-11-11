@@ -29,9 +29,9 @@ class mesh : public node {
         ~mesh();
         bool load_model(const std::string &model_path);
         bool load_model(const std::string &scene_path, int model_index);
-        void set_material(std::shared_ptr<material> mat);
-        void render(glm::mat4 parent_matrix, glm::mat4 view_matrix);
+        void set_material(std::shared_ptr<material> material);
         std::shared_ptr<material> get_material() const;
+        void render(glm::mat4 view_matrix);
 
     private:
         void load_model(aiMesh *inmesh);

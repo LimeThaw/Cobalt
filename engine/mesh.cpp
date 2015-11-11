@@ -133,16 +133,20 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
 
     glBindVertexArray(0);
 
-    std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << "seconds\n";
+    std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n";
 
     return true;        //Function finished properly
 }
 
-void mesh::set_material(std::shared_ptr<material> mat) {
-    this->mat = mat;
+void mesh::set_material(std::shared_ptr<material> material) {
+    mat = material;
 }
 
-void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
+std::shared_ptr<material> mesh::get_material() const {
+    return mat;
+}
+
+void mesh::render(glm::mat4 view_matrix) {
     if(mat) {
         mat->use();
     } else {
@@ -150,7 +154,7 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
         return;
     }
 
-    glm::mat4 render_model = parent_matrix * node_matrix;
+    glm::mat4 render_model = get_node_matrix();
     glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
     GLint shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
@@ -164,8 +168,6 @@ void mesh::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
 
     glBindVertexArray(0);
-
-    //glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 //Private
@@ -306,8 +308,4 @@ void mesh::load_model(aiMesh *inmesh) {
     tangents.clear();
     normals.clear();
     faces.clear();
-}
-
-std::shared_ptr<material> mesh::get_material() const {
-    return mat;
 }
