@@ -16,6 +16,14 @@ void scene::append_node(node *new_child) {
     parent_node.append_node(new_child);
 }
 
+void scene::append_mesh(const std::string &file_path) {
+	parent_node.append_mesh(file_path);
+}
+
+void scene::append_mesh(mesh *new_child) {
+	parent_node.append_mesh(new_child);
+}
+
 node *scene::get_parent_node() {
     return &parent_node;
 }

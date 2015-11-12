@@ -1,35 +1,32 @@
 #include "node.h"
+#include "mesh.h"
 
 node::node() {
-    location = rotation = scale = node_matrix = glm::mat4(1.0f);
+    node_matrix = glm::mat4(1.0f);
     parent_node = nullptr;
 }
 
 node::node(const std::string &scene_path) {
-    location = rotation = scale = node_matrix = glm::mat4(1.0f);
+    node_matrix = glm::mat4(1.0f);
     parent_node = nullptr;
     load_scene(scene_path);
 }
 
 node::~node() {
-    for(unsigned int i = 0; i < models.size(); i++) {
-        delete models[i];
-    }
     for(unsigned int i = 0; i < children.size(); i++) {
         delete children[i];
     }
-    models.clear();
     children.clear();
 }
 
 void node::load_model(const std::string &path) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path);
-    models.push_back(temp_mesh);
+    append_mesh(temp_mesh);
 }
 
 bool node::load_scene(const std::string &path) {
-    std::clog << "-Loading scene " << path << "\n\n";
+    std::clog << "- Loading scene " << path << "\n";
     float start_time = glfwGetTime();
 
     Assimp::Importer importer;      //Create importer object
@@ -48,46 +45,89 @@ bool node::load_scene(const std::string &path) {
         load_model(path, i);
     }
 
-    std::clog << "- Finished loading scene with " << scene->mNumMeshes << " meshes in " << glfwGetTime() - start_time << "seconds\n\n";
+    std::clog << " - Finished loading scene with " << scene->mNumMeshes << " meshes in " << glfwGetTime() - start_time << " seconds\n\n";
     return true;
 }
 
 void node::set_material(std::shared_ptr<material> new_material) {
-    for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->set_material(new_material);
-    }
     for(unsigned int i = 0; i < children.size(); i++) {
         children[i]->set_material(new_material);
     }
 }
 
-void node::place(float x, float y, float z) {
-    location = glm::translate(glm::vec3(x, y, z));
+std::shared_ptr<material> node::get_material() const {
+	return false;
 }
 
-void node::set_orientation(float x, float y, float z) {
-    glm::quat rot = glm::quat(glm::vec3(x, y , z));
-    rotation = glm::mat4_cast(rot);
+void node::place(float x, float y, float z) {
+    node_matrix[3][0] = x;
+    node_matrix[3][1] = y;
+    node_matrix[3][2] = z;
+}
+
+void node::place(glm::vec3 arg_position) {
+	place(arg_position.x, arg_position.y, arg_position.z);
+}
+
+void node::move(float x, float y, float z) {
+    move(glm::vec3(x, y, z));
+}
+
+void node::move(glm::vec3 arg_movement) {
+	node_matrix = glm::translate(arg_movement) * node_matrix;
+}
+
+void node::move_relative(float x, float y, float z) {
+	glm::vec3 tmp(get_node_matrix() * glm::vec4(x, y, z, 0));
+	move(tmp);
+}
+
+void node::rotate(float x, float y, float z) {
+	node_matrix = node_matrix * glm::mat4_cast(glm::quat(glm::vec3(x, y, z)));
 }
 
 void node::set_scale(float x, float y, float z) {
-    scale = glm::scale(glm::vec3(x, y, z));
+	if(x < 0) x = -x;
+	if(y < 0) y = -y;
+	if(z < 0) z = -z;
+	glm::vec3 current_scale(glm::length(glm::vec3(node_matrix[0][0], node_matrix[1][0], node_matrix[2][0])), glm::length(glm::vec3(node_matrix[0][1], node_matrix[1][1], node_matrix[2][1])), glm::length(glm::vec3(node_matrix[0][2], node_matrix[1][2], node_matrix[2][2])));
+    node_matrix = node_matrix * glm::inverse(glm::scale(current_scale));
+    node_matrix = node_matrix * glm::scale(glm::vec3(x, y, z));
 }
 
 void node::set_scale(float new_scale) {
-    scale = glm::scale(glm::vec3(new_scale));
+	set_scale(new_scale, new_scale, new_scale);
+}
+
+void node::look_at(float x, float y, float z, glm::vec3 up_vector) {
+	look_at(glm::vec3(x, y, z), up_vector);
+}
+
+void node::look_at(glm::vec3 arg_look, glm::vec3 up_vector) {
+	glm::vec3 current_position(node_matrix[3][0], node_matrix[3][1], node_matrix[3][2]);
+	node_matrix = glm::inverse(glm::lookAt(current_position, arg_look, up_vector));
 }
 
 void node::append_node(const std::string &file_path) {
     node *temp_node = new node();
     temp_node->load_scene(file_path);
-    temp_node->set_parent(this);
-    children.push_back(temp_node);
+    append_node(temp_node);
 }
 
 void node::append_node(node *new_child) {
     new_child->set_parent(this);
     children.push_back(new_child);
+}
+
+void node::append_mesh(const std::string &file_path) {
+	mesh *temp_mesh = new mesh();
+	temp_mesh->load_model(file_path);
+	append_mesh(temp_mesh);
+}
+
+void node::append_mesh(mesh *new_mesh) {
+	new_mesh->set_parent(this);
+	children.push_back(new_mesh);
 }
 
 void node::set_parent(node *new_parent) {
@@ -109,30 +149,15 @@ bool node::remove_child(node *child) {
 
 glm::mat4 node::get_node_matrix() const {
     glm::mat4 temp_matrix;
-    temp_matrix = location * rotation * scale;
+    temp_matrix = node_matrix;
     if(parent_node != nullptr)temp_matrix = parent_node->get_node_matrix() * temp_matrix;
     return temp_matrix;
 }
 
-void node::render(glm::mat4 view_matrix) const {
-    for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(get_node_matrix(), view_matrix);
-    }
-    for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(get_node_matrix(), view_matrix);
-    }
-}
-
-void node::render(glm::mat4 parent_matrix, glm::mat4 view_matrix) {
-    node_matrix = location * rotation * scale;        //Calculate the node matrix
-    glm::mat4 sum_matrix = parent_matrix * node_matrix;
-
-    for(unsigned int i = 0; i < models.size(); i++) {
-        models[i]->render(sum_matrix, view_matrix);
-    }
-    for(unsigned int i = 0; i < children.size(); i++) {
-        children[i]->render(sum_matrix);
-    }
+void node::render(glm::mat4 view_matrix) {
+	for(auto child : children) {
+		child->render(view_matrix);
+	}
 }
 
 std::vector< node * > node::enumerate() {
@@ -145,14 +170,10 @@ std::vector< node * > node::enumerate() {
     return rst;
 }
 
-const std::vector< mesh * > &node::get_models() {
-    return models;
-}
-
 
 //Private
 void node::load_model(const std::string &path, int model_index) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path, model_index);
-    models.push_back(temp_mesh);
+    append_mesh(temp_mesh);
 }

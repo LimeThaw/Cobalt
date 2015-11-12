@@ -1,47 +1,59 @@
-//Class containing a group of mesh objects that can be transformed and rendered as a group
-//Can have other node objects as children or parents
+/**
+Class containing a group of mesh objects that can be transformed and rendered as a group.
+Can have other node objects as children or parents.
+*/
 
 #ifndef NODE_H
 #define NODE_H
+
+#define  GLM_FORCE_RADIANS
 
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
 #include <vector>
-#include "mesh.h"
+#include <memory>
+
+#include "material.h"
+
+class mesh;
 
 class node {
     public:
-        node();
-        node(const std::string &scene_path);
-        ~node();
-        void load_model(const std::string &path);
-        bool load_scene(const std::string &path);
-        void set_material(std::shared_ptr<material> new_material);
-        void place(float x, float y, float z);
-        void set_orientation(float x, float y, float z);
-        void set_scale(float x, float y, float z);
-        void set_scale(float new_scale);
-        void append_node(const std::string &file_path);
-        void append_node(node *new_child);
-        void set_parent(node *new_parent);
-        bool remove_child(node *child);
-        glm::mat4 get_node_matrix() const;
-        void render(glm::mat4 view_matrix) const;
-        void render(glm::mat4 parent_matrix, glm::mat4 view_matrix);
-        std::vector< node*> enumerate();
-        const std::vector< mesh *> &get_models();
+        node();///< Default constructor.
+        node(const std::string &scene_path);///< Constructor loading all meshes from a file and appending them to the node.
+        virtual ~node();///< Default destructor.
+        void load_model(const std::string &path);///< Loads the first mesh in the specified file and appends it to the node.
+        bool load_scene(const std::string &path);///< Loads all meshes from the specified file and appends them to the node.
+        virtual void set_material(std::shared_ptr<material> new_material);///< Sets the material for all nodes and meshes appended to this node.
+        virtual std::shared_ptr<material> get_material() const;
+        void place(float x, float y, float z);///< Specifies the node location relative to its parent node.
+        void place(glm::vec3 arg_position);///< See member place(float x, float y, float z).
+        void move(float x, float y, float z);///< Moves the node relative to its parent node.
+        void move(glm::vec3 arg_movement);///< See member move(float x, float y, float z).
+        void move_relative(float x, float y, float z);///< Moves the node relative to its parent considering the node's rotation.
+        void rotate(float x, float y, float z);///< Rotates the node for the given angles around the respective axes.
+        void set_scale(float x, float y, float z);///< Sets the node's scale.
+        void set_scale(float new_scale);///< See member set_scale(float x, float y, float z).
+        void look_at(float x, float y, float z, glm::vec3 up_vector = glm::vec3(0, 1, 0));///< Rotates the node to face the specified point in space.
+        void look_at(glm::vec3 arg_look, glm::vec3 up_vector = glm::vec3(0, 1, 0));///< See member look_at(float x, float y, float z).
+        void append_node(const std::string &file_path);///< Basically append_node(new node(file_path)).
+        void append_node(node *new_child);///< Appends the given node as its child.
+        void append_mesh(const std::string &file_path);
+        void append_mesh(mesh *new_mesh);
+        void set_parent(node *new_parent);///< Set the node's parent.
+        bool remove_child(node *child);///< Removes a child node from this node.
+        glm::mat4 get_node_matrix() const;///< Returns the transformation matrix affecting all of the node's children. It includes the transformation of it's parents.
+        virtual void render(glm::mat4 view_matrix);///< Renders the whole node with all of its descendants.
+        std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
 
-    private:
+    protected:
         node *parent_node;
         void load_model(const std::string &path, int model_index);
-        glm::mat4 location;
-        glm::mat4 rotation;
-        glm::mat4 scale;
         glm::mat4 node_matrix;
-        std::vector<mesh *> models;
         std::vector<node *> children;
 };
 

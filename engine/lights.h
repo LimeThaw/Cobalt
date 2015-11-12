@@ -1,10 +1,14 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
+#define  GLM_FORCE_RADIANS
+
 #include <iostream>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+
 #include "util.h"
+#include "node.h"
 
 class light {
     public:
@@ -29,14 +33,12 @@ class directional_light : public light {
         glm::vec3 direction;
 };
 
-class point_light : public light {
+class point_light : public light, public node {
     public:
         point_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 position = glm::vec3(0, 0, 1), float radius = 10.0f);
-        void set_position(glm::vec3 new_position);
-        const glm::vec3 &get_position();
+        const glm::vec3 get_position();
         float get_radius();
     private:
-        glm::vec3 position;
         float radius;
 };
 

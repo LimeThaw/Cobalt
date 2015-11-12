@@ -112,9 +112,9 @@ int main() {
 
     //Load objects, give them materials and place them in world
     scene my_world;
-    node *map_node = new node(model_dir + "testmap.obj");
+    mesh *map_node = new mesh(model_dir + "testmap.obj");
     map_node->set_material(map_mat);
-    my_world.append_node(map_node);
+    my_world.append_mesh(map_node);
     node *robot_node = new node(model_dir + "Robot.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
@@ -142,9 +142,11 @@ int main() {
     my_world.get_parent_node()->set_scale(zoom);
 
     //Setup main camera and lights
-    camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
+    //camera the_camera(glm::vec3(0, 10, 5), glm::vec3(0, 1, 0));
+    camera the_camera(glm::vec3(0, 20, -20), glm::vec3(0, 0, 20));
+    the_camera.set_parent(robot_node);
     std::vector<directional_light> directional_lights = {
-            directional_light(glm::vec3(0.5, 0.9, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
+            directional_light(glm::vec3(0.5, 0.5, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
     std::vector<point_light> point_lights = { point_light(glm::vec3(1.0, 0, 0), 3.0, glm::vec3(0, 0.5, 1.5)),
                                               point_light(glm::vec3(0, 1.0, 0), 3.0, glm::vec3(0, -0.5, -1.5)),
                                               point_light(glm::vec3(0, 0, 1.0), 3.0, glm::vec3(1.0, 0, 0.5)),
@@ -152,7 +154,7 @@ int main() {
     glm::vec3 ambient_light_color = glm::vec3(0.5);
 
     //Setup rotation and location
-    float posx, posy, posz = 0.0f;
+    float posx, posy, posz, rot = 0.0f;
     float intensity = 0.0f;
 
     bool was_key_p_pressed = false;
@@ -179,16 +181,20 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //move camera
-        if(win.key_pressed(GLFW_KEY_A)) { posx -= 0.1; }
-        if(win.key_pressed(GLFW_KEY_D)) { posx += 0.1; }
-        if(win.key_pressed(GLFW_KEY_W)) { posz -= 0.1; }
-        if(win.key_pressed(GLFW_KEY_S)) { posz += 0.1; }
+        if(win.key_pressed(GLFW_KEY_A)) { posx += 0.2; }
+        if(win.key_pressed(GLFW_KEY_D)) { posx -= 0.2; }
+        if(win.key_pressed(GLFW_KEY_W)) { posz += 0.2; }
+        if(win.key_pressed(GLFW_KEY_S)) { posz -= 0.2; }
+        if(win.key_pressed(GLFW_KEY_Q)) { rot += 0.1; }
+        if(win.key_pressed(GLFW_KEY_E)) { rot -= 0.1; }
         if(win.key_pressed(GLFW_KEY_LEFT_SHIFT)) { posy += 0.1; }
         if(win.key_pressed(GLFW_KEY_LEFT_CONTROL)) { posy -= 0.1; }
-        the_camera.setup(glm::vec3(posx + 2, 10 + posy, posz + 10), glm::vec3(posx + 2, 5 + (0.5 * posy), posz + 5));
+        robot_node->rotate(0, rot, 0);
+        robot_node->move_relative(posx, posy, posz);
+        posx = posy = posz = rot = 0;
 
         //change light intensity
-        intensity += 0.001;
+        intensity += 0.01;
         directional_lights[0].set_intensity(std::abs(sin(intensity)));
 
         if(win.key_pressed(GLFW_KEY_P)) {

@@ -55,12 +55,9 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
                 ambient_light_color.g, ambient_light_color.b);
 
     for(auto nodes : the_scene.enumerate_nodes()) {
-        glm::mat4 node_matrix = nodes->get_node_matrix();
-        for(auto meshes : nodes->get_models()) {
-            if(std::find(render_materials.begin(), render_materials.end(), meshes->get_material()) !=
-                    render_materials.end()) {
-                meshes->render(node_matrix, view_matrix);
-            }
+        if(nodes->get_material() && std::find(render_materials.begin(), render_materials.end(), nodes->get_material()) !=
+                render_materials.end()) {
+            nodes->render(view_matrix);
         }
     }
 }
