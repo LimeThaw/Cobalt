@@ -4,7 +4,9 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#ifndef DEBUG_INFO
 #define DEBUG_INFO false
+#endif
 
 #include <iostream>
 #include <fstream>
