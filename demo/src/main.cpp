@@ -15,6 +15,8 @@ int main() {
 	
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
+    
+    float_uniform funi(1.0f);
 
     const std::string model_dir = "./demo/res/models/";
     const std::string shader_dir = "./demo/res/shaders/";

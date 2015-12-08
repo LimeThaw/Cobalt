@@ -11,16 +11,21 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "shader_uniform.h"
 
 class shader {
     public:
         shader(const std::string &vertex_path, const std::string &fragment_path);
         ~shader();
+        void set_uniform(std::string name, uniform *new_uniform);
+        void remove_uniform(std::string name);
         void use();
     private:
         GLuint shader_id;
+        std::map<std::string, uniform*> uniforms;
 };
 
 const int shader_vertex_location = 0;
