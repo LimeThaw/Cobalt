@@ -9,7 +9,7 @@
 #include "scene.h"
 #include "mesh.h"
 #include "node.h"
-#include "shader_uniform.h"
+#include "uniforms.h"
 #include "shader.h"
 #include "util.h"
 #include "gl_exception.h"

@@ -1,12 +1,12 @@
-#include "shader_uniform.h"
+#include "uniforms.h"
 
 template<typename T>
-T *shader_uniform<T>::get_data() {
+T *material_uniform<T>::get_data() {
 	return &data;
 }
 
 template<typename T>
-void shader_uniform<T>::set_data(T &new_data) {
+void material_uniform<T>::set_data(T &new_data) {
 	data = new_data;
 }
 

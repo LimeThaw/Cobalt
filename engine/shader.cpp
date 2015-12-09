@@ -99,19 +99,6 @@ shader::~shader() {
     glDeleteProgram(shader_id);
 }
 
-void shader::set_uniform(std::string name, uniform *new_uniform) {
-	uniforms[name] = new_uniform;
-}
-
-void shader::remove_uniform(std::string name) {
-	if(uniforms.erase(name) == 0) {
-		std::cerr << " ! Tried to remove non-existent uniform " << name << ".\n";
-	}
-}
-
 void shader::use() {
     glUseProgram(shader_id);
-    for(auto iterator : uniforms) {
-    	iterator.second->bind(iterator.first);
-    }
 }

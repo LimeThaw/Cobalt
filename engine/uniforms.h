@@ -13,7 +13,7 @@ class uniform {
 };
 
 template<typename T>
-class shader_uniform : public uniform {
+class material_uniform : public uniform {
 
 	public:
 		T *get_data();
@@ -24,7 +24,7 @@ class shader_uniform : public uniform {
 
 };
 
-class float_uniform : public shader_uniform<float> {
+class float_uniform : public material_uniform<float> {
 
 	public:
 		float_uniform(float new_data);
