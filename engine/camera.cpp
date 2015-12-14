@@ -24,7 +24,7 @@ const glm::mat4 camera::get_view() const {
 	if(parent_node != nullptr) {
 		return glm::inverse(parent_node->get_node_matrix() * node_matrix);
 	} else {
-    	return node_matrix;
+    	return glm::inverse(node_matrix);
 	}
 }
 

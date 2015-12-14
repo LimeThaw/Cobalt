@@ -1,14 +1,14 @@
 #include "material.h"
 
-
 material::material() {
+	mat_is_standard = false;
 }
 
 material::material(const texture_bindings &textures) : textures(textures) {
-
+	mat_is_standard = false;
 }
 
-void material::set_uniform(std::string name, uniform *new_uniform) {
+void material::set_uniform(std::string name, uniform::ptr new_uniform) {
 	uniforms[name] = new_uniform;
 }
 
@@ -33,4 +33,8 @@ void material::use() {
     for(auto iterator : uniforms) {
     	iterator.second->bind(iterator.first);
     }
+}
+
+bool material::is_standard() {
+	return mat_is_standard;
 }

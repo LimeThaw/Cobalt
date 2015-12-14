@@ -5,7 +5,7 @@
 #define SHADER_H
 
 #ifndef DEBUG_INFO
-#define DEBUG_INFO false
+#define DEBUG_INFO true
 #endif
 
 #include <iostream>
@@ -19,7 +19,7 @@ class shader {
         shader(const std::string &vertex_path, const std::string &fragment_path);
         ~shader();
         void use();
-    private:
+    protected:
         GLuint shader_id;
 };
 

@@ -4,10 +4,13 @@
 #include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <memory>
 
 class uniform {
 
 	public:
+		typedef std::shared_ptr<uniform> ptr;
 		virtual void bind(std::string target) = 0;
 
 };
@@ -30,6 +33,12 @@ class float_uniform : public material_uniform<float> {
 		float_uniform(float new_data);
 		void bind(std::string target);
 
+};
+
+class vec3_uniform : public material_uniform<glm::vec3> {
+	public:
+		vec3_uniform(glm::vec3 new_vec);
+		void bind(std::string target);
 };
 
 #endif

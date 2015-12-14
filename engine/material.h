@@ -21,14 +21,18 @@ class material {
 
         material();
         material(const texture_bindings &textures);
-        void set_uniform(std::string name, uniform *new_uniform);
+        void set_uniform(std::string name, uniform::ptr new_uniform);
         void remove_uniform(std::string name);
         void add_texture(std::string uniform_name, std::shared_ptr<texture> tex);
         void use();///< Gives all associated textures to the currently active shader.
+        bool is_standard();
 
     private:
         texture_bindings textures;
-        std::map<std::string, uniform*> uniforms;
+        std::map<std::string, std::shared_ptr<uniform>> uniforms;
+        
+    protected:
+        bool mat_is_standard;
 };
 
 #endif // MATERIAL_H

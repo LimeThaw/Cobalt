@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "cobalt.h"
+#include "library/standard.h"
 #include "simple_render_pass.h"
 
 int main() {
@@ -15,8 +16,6 @@ int main() {
 	
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
-    
-    float_uniform funi(1.0f);
 
     const std::string model_dir = "./demo/res/models/";
     const std::string shader_dir = "./demo/res/shaders/";
@@ -40,7 +39,7 @@ int main() {
     auto map_mat = std::make_shared<material>(
             material::texture_bindings { material::texture_binding("color_map", map_tex) });
 
-    auto robot_mat = std::make_shared<material>();
+    auto robot_mat = std::make_shared<cs::std_material>();
 
     auto dirt_tex = std::make_shared<texture2d>(
             texture_cache::get_instance().get_texture_from_filename(texture_dir + "dirt.jpeg"));
@@ -69,7 +68,8 @@ int main() {
             });
 
     simple_render_pass render_pass(textured_shader, map_mat);
-    simple_render_pass solid_render_pass(untextured_shader, robot_mat);
+    //simple_render_pass solid_render_pass(untextured_shader, robot_mat);
+    cs::std_render_pass solid_render_pass;
     simple_render_pass normal_render_pass(normal_shader, monkey_mat);
     simple_render_pass rtt_pass(textured_shader, rtt_mat);
     simple_render_pass mirror_pass(mirror_shader, mirror_mat);
@@ -117,7 +117,7 @@ int main() {
     mesh *map_node = new mesh(model_dir + "testmap.obj");
     map_node->set_material(map_mat);
     my_world.append_mesh(map_node);
-    node *robot_node = new node(model_dir + "Robot.obj");
+    node *robot_node = new node(model_dir + "mat_demo.obj");
     robot_node->set_material(robot_mat);
     robot_node->set_scale(0.3f);
     my_world.append_node(robot_node);
@@ -148,7 +148,7 @@ int main() {
     camera the_camera(glm::vec3(0, 20, -20), glm::vec3(0, 0, 20));
     the_camera.set_parent(robot_node);
     std::vector<directional_light> directional_lights = {
-            directional_light(glm::vec3(0.5, 0.5, 0.1), 0.5, glm::vec3(-2, 0.5, 2)) };
+            directional_light(glm::vec3(100, 100, 100), 0.5, glm::vec3(-2, 5, 2)) };
     std::vector<point_light> point_lights = { point_light(glm::vec3(1.0, 0, 0), 3.0, glm::vec3(0, 0.5, 1.5)),
                                               point_light(glm::vec3(0, 1.0, 0), 3.0, glm::vec3(0, -0.5, -1.5)),
                                               point_light(glm::vec3(0, 0, 1.0), 3.0, glm::vec3(1.0, 0, 0.5)),
@@ -197,7 +197,7 @@ int main() {
 
         //change light intensity
         intensity += 0.01;
-        directional_lights[0].set_intensity(std::abs(sin(intensity)));
+        directional_lights[0].set_intensity(0.5 * sin(intensity) + 0.5);
 
         if(win.key_pressed(GLFW_KEY_P)) {
             was_key_p_pressed = true;
@@ -208,8 +208,7 @@ int main() {
 
         render_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                            offscreen_framebuffer);
-        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
-                                 offscreen_framebuffer);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
                                   offscreen_framebuffer);
 
@@ -222,8 +221,7 @@ int main() {
 
             render_pass.render(my_world, cam, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                                *framebuff);
-            solid_render_pass.render(my_world, cam, directional_lights, point_lights, ambient_light_color,
-                                     *framebuff);
+            solid_render_pass.render(my_world, cam, directional_lights, point_lights);
             normal_render_pass.render(my_world, cam, directional_lights, point_lights, ambient_light_color,
                                       *framebuff);
         }
@@ -232,7 +230,7 @@ int main() {
         glViewport(0, 0, 1280, 640);
 
         render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
-        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
+        solid_render_pass.render(my_world, the_camera, directional_lights, point_lights);
         normal_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color, *screen);
         rtt_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                         *screen);
