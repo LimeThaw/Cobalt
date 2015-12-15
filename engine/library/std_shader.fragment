@@ -1,7 +1,7 @@
 #version 130
 
 #define NUM_DIRECTIONAL_LIGHTS 1
-#define NUM_POINT_LIGHTS 3
+#define NUM_POINT_LIGHTS 0
 
 in vec3 normal;
 in vec3 view_position;
@@ -23,14 +23,16 @@ uniform float point_light_radii_sq[NUM_POINT_LIGHTS];
 out vec3 color;
 
 void main(){
-	float exponent = 2 + 60 * (1 - material_roughness);
-	float k_diffuse = 0.1 + 0.8 * material_roughness * material_reflectivity;
-	float k_specular = 0.1 + 0.8 * (1 - material_roughness) * material_reflectivity;
+	vec3 temp_color = vec3(0.2) + 0.8 * material_color;
+	float roughness = 0.2 + 0.8 * material_roughness;
+	float exponent = 2 + pow(2000, (1 - roughness));
+	float k_diffuse = 0.35 + 0.6 * roughness * material_reflectivity;
+	float k_specular = 0.05 + 0.6 * (1 - roughness) * material_reflectivity;
 	
 	vec3 local_normal = normalize(normal);
 	
-	vec3 ambient_light_color = vec3(0.3);
-	vec3 ambient_color = normalize(material_color) * ambient_light_color;
+	vec3 ambient_light_color = vec3(0.01);
+	vec3 ambient_color = temp_color * ambient_light_color + vec3(0.1);
 	
 	vec3 diffuse_color = vec3(0);
 	vec3 specular_color = vec3(0);
@@ -39,8 +41,8 @@ void main(){
     for(int i = 0; i < NUM_DIRECTIONAL_LIGHTS; ++i) {
         vec3 light_direction = normalize(directional_light_directions[i]);
         vec3 light_color = directional_light_colors[i];
-        diffuse_color += k_diffuse * normalize(material_color) * light_color * clamp(dot(local_normal, light_direction), 0.0, 1.0);
-        specular_color += k_specular * light_color * pow(clamp(dot(local_normal, light_direction), 0.0, 1.0), exponent);
+        diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, light_direction), 0.0, 1.0);
+        specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, light_direction), 0.0, 1.0), exponent);
     }
     #endif
 
@@ -52,8 +54,8 @@ void main(){
         vec3 light_color = point_light_colors[i];
         float radius_sq = point_light_radii_sq[i];
         float attenuation = clamp(1.0 - (light_distance_sq / radius_sq), 0.0, 1.0);
-        diffuse_color += k_diffuse * normalize(material_color) * light_color * clamp(dot(local_normal, normalize(light_direction)), 0.0, 1.0) * attenuation;
-        specular_color += k_specular * light_color * pow(clamp(dot(local_normal, light_direction), 0.0, 1.0), exponent) * attenuation;
+        diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, normalize(light_direction)), 0.0, 1.0) * attenuation;
+        specular_color += k_specular * light_color * ((exponent + 2) / (2*3.141593)) * pow(clamp(dot(local_normal, light_direction), 0.0, 1.0), exponent) * attenuation;
     }
     #endif
     

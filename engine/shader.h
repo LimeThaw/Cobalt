@@ -5,7 +5,7 @@
 #define SHADER_H
 
 #ifndef DEBUG_INFO
-#define DEBUG_INFO true
+#define DEBUG_INFO false
 #endif
 
 #include <iostream>
