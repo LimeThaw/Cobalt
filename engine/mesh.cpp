@@ -170,6 +170,14 @@ void mesh::render(glm::mat4 view_matrix) {
     glBindVertexArray(0);
 }
 
+void mesh::render_no_bind_matrices() {
+    glBindVertexArray(vertex_array_object_id);
+
+    glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
+
+    glBindVertexArray(0);
+}
+
 //Private
 void mesh::load_model(aiMesh *inmesh) {
 

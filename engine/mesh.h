@@ -34,6 +34,7 @@ class mesh : public node {
         void set_material(std::shared_ptr<material> material);
         std::shared_ptr<material> get_material() const;
         void render(glm::mat4 view_matrix);
+	void render_no_bind_matrices();
 
     private:
         void load_model(aiMesh *inmesh);

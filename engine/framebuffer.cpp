@@ -15,9 +15,14 @@ framebuffer::framebuffer(framebuffer::attachments color_attachments, framebuffer
     glGenFramebuffers(1, &openGL_id);
     glBindFramebuffer(GL_FRAMEBUFFER, openGL_id);
 
-    for(uint i = 0; i < color_attachments.size(); ++i) {
-        color_attachments[i]->attachAs(GL_COLOR_ATTACHMENT0 + i);
+    if(color_attachments.size() == 0) {
+      glDrawBuffer(GL_NONE);
+    } else {
+	for(uint i = 0; i < color_attachments.size(); ++i) {
+	  color_attachments[i]->attachAs(GL_COLOR_ATTACHMENT0 + i);
+      }
     }
+    
 
     if((bool) depth_attachment) {
         (*depth_attachment)->attachAs(GL_DEPTH_ATTACHMENT);

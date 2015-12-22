@@ -12,6 +12,8 @@ class uniform {
 	public:
 		typedef std::shared_ptr<uniform> ptr;
 		virtual void bind(std::string target) = 0;
+	protected:
+		GLuint get_uniform_location(const std::string &target);
 
 };
 
@@ -20,11 +22,10 @@ class material_uniform : public uniform {
 
 	public:
 		T *get_data();
-		void set_data(T &new_data);
+		void set_data(const T &new_data);
 		virtual void bind(std::string target) = 0;
 	protected:
 		T data;
-
 };
 
 class float_uniform : public material_uniform<float> {
@@ -38,6 +39,12 @@ class float_uniform : public material_uniform<float> {
 class vec3_uniform : public material_uniform<glm::vec3> {
 	public:
 		vec3_uniform(glm::vec3 new_vec);
+		void bind(std::string target);
+};
+
+class mat4_uniform : public material_uniform<glm::mat4> {
+	public:
+		mat4_uniform(const glm::mat4 &new_mat);
 		void bind(std::string target);
 };
 

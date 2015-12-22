@@ -26,7 +26,6 @@ class camera : public node {
 
     private:
         glm::mat4 projection;
-        bool first_person;
 };
 
 #endif // CAMERA_H
