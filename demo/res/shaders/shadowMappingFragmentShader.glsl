@@ -1,14 +1,14 @@
 #version 130
 
-#define NUM_DIRECTIONAL_LIGHTS 1
+#define NUM_DIRECTIONAL_LIGHTS 4
 
 in vec2 uv;
 in vec3 normal;
 in vec3 view_position;
-in vec3 shadow_map_space_position;
+in vec3 shadow_map_space_position[NUM_DIRECTIONAL_LIGHTS];
 out vec3 color;
 uniform sampler2D color_map;
-uniform sampler2D shadow_map;
+uniform sampler2D shadow_map[NUM_DIRECTIONAL_LIGHTS];
 
 uniform vec3 ambient_light_color;
 
@@ -29,7 +29,7 @@ void main(){
         for(int i = 0; i < NUM_DIRECTIONAL_LIGHTS; ++i) {
             vec3 light_direction = directional_light_directions[i];
             vec3 light_color = directional_light_colors[i];
-            if(texture2D(shadow_map, shadow_map_space_position.xy).x + BIAS > shadow_map_space_position.z) 
+            if(texture2D(shadow_map[i], shadow_map_space_position[i].xy).x + BIAS > shadow_map_space_position[i].z) 
 	      color += texture_color * light_color * clamp(dot(local_normal, light_direction), 0.0, 1.0);
         }
         #endif

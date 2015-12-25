@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <memory>
+#include <vector>
 
 class uniform {
 
@@ -45,6 +46,14 @@ class vec3_uniform : public material_uniform<glm::vec3> {
 class mat4_uniform : public material_uniform<glm::mat4> {
 	public:
 		mat4_uniform(const glm::mat4 &new_mat);
+		void bind(std::string target);
+};
+
+class array_uniform : public uniform {
+	private:
+		std::vector<std::shared_ptr<uniform>> data;
+	public:
+		array_uniform(const std::vector<std::shared_ptr<uniform>> &data);
 		void bind(std::string target);
 };
 

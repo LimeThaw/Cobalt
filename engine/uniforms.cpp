@@ -43,3 +43,14 @@ void mat4_uniform::bind(std::string target) {
   GLuint uniform_id = get_uniform_location(target);
   glUniformMatrix4fv(uniform_id, 1, GL_FALSE, &data[0][0]);
 }
+
+array_uniform::array_uniform(const std::vector<std::shared_ptr<uniform>> &data) : data(data) {
+}
+
+void array_uniform::bind(std::string target) {
+  for(unsigned int i = 0; i < data.size(); ++i) {
+    std::string this_target = target + "[" + std::to_string(i) + "]";
+    data[i]->bind(this_target);
+  }
+}
+    
