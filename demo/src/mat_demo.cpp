@@ -32,6 +32,16 @@ int main() {
     blue_mesh->set_material(blue_mat);
     blue_mesh->place(5, 0, 0);
     demo_world.append_mesh(blue_mesh);
+
+	// Loading chair
+	auto chair_mat = std::make_shared<cs::std_material>();
+	auto chair_tex = std::make_shared<texture2d>(
+            texture_cache::get_instance().get_texture_from_filename("./demo/res/textures/stuhl_color.png"));
+	chair_mat->set_color_map(chair_tex);
+	mesh *chair_mesh = new mesh("./demo/res/models/stuhl.obj");
+	chair_mesh->set_material(chair_mat);
+	chair_mesh->place(0, 0, -5);
+	demo_world.append_node(chair_mesh);
 	
 	// Creating the render pass and camera
 	cs::std_render_pass demo_render_pass;
@@ -61,6 +71,7 @@ int main() {
 		red_mesh->get_material()->set_uniform("material_roughness", std::make_shared<float_uniform>(roughness));
 		green_mesh->get_material()->set_uniform("material_roughness", std::make_shared<float_uniform>(roughness));
 		blue_mesh->get_material()->set_uniform("material_roughness", std::make_shared<float_uniform>(roughness));
+		chair_mesh->get_material()->set_uniform("material_roughness", std::make_shared<float_uniform>(roughness));
 		
 		// Rendering the scene
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

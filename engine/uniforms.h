@@ -41,4 +41,10 @@ class vec3_uniform : public material_uniform<glm::vec3> {
 		void bind(std::string target);
 };
 
+class bool_uniform : public material_uniform<bool> {
+	public:
+		bool_uniform(bool new_bool);
+		void bind(std::string target);
+};
+
 #endif

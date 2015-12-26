@@ -32,3 +32,18 @@ void vec3_uniform::bind(std::string target) {
     glUniform3f(uniform_id, data.x, data.y, data.z);
 
 }
+
+bool_uniform::bool_uniform(bool new_bool) {
+	set_data(new_bool);
+}
+
+void bool_uniform::bind(std::string target) {
+    GLint active_shader_id;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
+    GLuint uniform_id = glGetUniformLocation(active_shader_id, target.c_str());
+    if(data) {
+		glUniform1i(uniform_id, 1);
+	} else {
+		glUniform1i(uniform_id, 0);
+	}
+}

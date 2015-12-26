@@ -3,10 +3,13 @@
 #define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_POINT_LIGHTS 0
 
+in vec2 uv;
 in vec3 normal;
 in vec3 view_position;
 
 uniform vec3 material_color;
+uniform bool has_color_map;
+uniform sampler2D color_map;
 uniform float material_roughness;
 uniform float material_reflectivity;
 
@@ -23,7 +26,12 @@ uniform float point_light_radii_sq[NUM_POINT_LIGHTS];
 out vec3 color;
 
 void main(){
-	vec3 temp_color = vec3(0.2) + 0.8 * material_color;
+	vec3 temp_color;
+	if(has_color_map) {
+		temp_color = vec3(0.2) + 0.8 * texture(color_map, uv).xyz;
+	} else {
+		temp_color = vec3(0.2) + 0.8 * material_color;
+	}
 	float roughness = 0.2 + 0.8 * material_roughness;
 	float exponent = 2 + pow(2000, (1 - roughness));
 	float k_diffuse = 0.35 + 0.6 * roughness * material_reflectivity;
