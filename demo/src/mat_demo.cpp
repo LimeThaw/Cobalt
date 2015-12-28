@@ -38,6 +38,13 @@ int main() {
 	auto chair_tex = std::make_shared<texture2d>(
             texture_cache::get_instance().get_texture_from_filename("./demo/res/textures/stuhl_color.png"));
 	chair_mat->set_color_map(chair_tex);
+	auto chair_normal = std::make_shared<texture2d>(
+		texture_data_source::create_normals_from_height(            
+		texture_cache::get_instance().get_texture_from_filename("./demo/res/textures/stuhl_height.png")));
+	chair_mat->set_normal_map(chair_normal);
+	auto chair_mask = std::make_shared<texture2d>(
+            texture_cache::get_instance().get_texture_from_filename("./demo/res/textures/stuhl_spec.png"));
+	chair_mat->set_shader_mask(chair_mask);
 	mesh *chair_mesh = new mesh("./demo/res/models/stuhl.obj");
 	chair_mesh->set_material(chair_mat);
 	chair_mesh->place(0, 0, -5);
@@ -58,6 +65,9 @@ int main() {
 	// Main loop
 	bool quit = false;
 	while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
+
+		// Introducing angle variable for turning the chair
+		float angle = 0.0f;
 	
 		// Checking for key strokes
 		if(win.key_pressed(GLFW_KEY_W)) {
@@ -66,6 +76,15 @@ int main() {
 		if(win.key_pressed(GLFW_KEY_S)) {
 			if(roughness > 0.0f) roughness -= 0.01f;
 		}
+		if(win.key_pressed(GLFW_KEY_Q)) {
+			angle -= 0.001;
+		}
+		if(win.key_pressed(GLFW_KEY_E)) {
+			angle += 0.001;
+		}
+
+		// Rotating the chair
+		chair_mesh->rotate(0, angle, 0);
 		
 		// Setting roughness for the meshes
 		red_mesh->get_material()->set_uniform("material_roughness", std::make_shared<float_uniform>(roughness));

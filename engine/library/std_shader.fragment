@@ -6,10 +6,15 @@
 in vec2 uv;
 in vec3 normal;
 in vec3 view_position;
+in mat3 tangent_to_view_matrix;
 
 uniform vec3 material_color;
 uniform bool has_color_map;
 uniform sampler2D color_map;
+uniform bool has_normal_map;
+uniform sampler2D normal_map;
+uniform bool has_shader_mask;
+uniform sampler2D shader_mask;
 uniform float material_roughness;
 uniform float material_reflectivity;
 
@@ -28,17 +33,30 @@ out vec3 color;
 void main(){
 	vec3 temp_color;
 	if(has_color_map) {
-		temp_color = vec3(0.2) + 0.8 * texture(color_map, uv).xyz;
+		temp_color = texture(color_map, uv).xyz;
 	} else {
 		temp_color = vec3(0.2) + 0.8 * material_color;
 	}
-	float roughness = 0.2 + 0.8 * material_roughness;
+
+	float roughness;
+	if(has_shader_mask) {
+		roughness = texture(shader_mask, uv).x;
+	} else {
+		roughness = 0.2 + 0.8 * material_roughness;
+	}
+
 	float exponent = 2 + pow(2000, (1 - roughness));
 	float k_diffuse = 0.35 + 0.6 * roughness * material_reflectivity;
 	float k_specular = 0.05 + 0.6 * (1 - roughness) * material_reflectivity;
 	
-	vec3 local_normal = normalize(normal);
-	
+	vec3 local_normal;
+	if(has_normal_map) {
+		local_normal = (2.0 * texture(normal_map, uv).xyz) - vec3(1.0);
+		local_normal = normalize(tangent_to_view_matrix * local_normal);
+	} else {
+		local_normal = normalize(normal);
+	}	
+
 	vec3 ambient_light_color = vec3(0.01);
 	vec3 ambient_color = temp_color * ambient_light_color + vec3(0.1);
 	
@@ -48,9 +66,10 @@ void main(){
     #if NUM_DIRECTIONAL_LIGHTS > 0
     for(int i = 0; i < NUM_DIRECTIONAL_LIGHTS; ++i) {
         vec3 light_direction = normalize(directional_light_directions[i]);
+		vec3 h = normalize(-light_direction - view_position);
         vec3 light_color = directional_light_colors[i];
         diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, light_direction), 0.0, 1.0);
-        specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, light_direction), 0.0, 1.0), exponent);
+        specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, h), 0.0, 1.0), exponent);
     }
     #endif
 

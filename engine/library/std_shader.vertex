@@ -1,8 +1,9 @@
 #version 130
 
-in vec2 vertex_UV;
 in vec3 vertex_position;
+in vec2 vertex_UV;
 in vec3 vertex_normal;
+in vec3 vertex_tangent;
 
 uniform mat3 normal_to_view_matrix;
 uniform mat4 model;
@@ -12,11 +13,14 @@ uniform mat4 projection;
 out vec2 uv;
 out vec3 normal;
 out vec3 view_position;
+out mat3 tangent_to_view_matrix;
 
 void main() {
 	vec4 view_position4 = view * model * vec4(vertex_position, 1.0);
 	gl_Position = projection * view_position4;
 	uv = vertex_UV;
 	normal = normal_to_view_matrix * vertex_normal;
+	vec3 tangent = normal_to_view_matrix * vertex_tangent;
+	tangent_to_view_matrix = mat3(tangent, cross(tangent, normal), normal);
 	view_position = view_position4.xyz;
 }
