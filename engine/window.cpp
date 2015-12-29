@@ -46,6 +46,9 @@ window::window(int width, int height, std::string title) : width(width), height(
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_CUBE_MAP);
 
+	//setup framerate limiting
+	fps = 0; //0 fps -> unlimited
+	last_frame_time = glfwGetTime();
 }
 
 window::~window() {
@@ -57,6 +60,11 @@ void window::make_current() {
 }
 
 void  window::update() {
+		//Limit framerate
+		if(fps > 0) {
+			while((float)(glfwGetTime() - last_frame_time) < (float)(1.0f / fps)){}
+			last_frame_time = glfwGetTime();
+		}
         //Update window and events
         glfwSwapBuffers(glfw_window);
         glfwPollEvents();
@@ -68,4 +76,11 @@ bool window::key_pressed(int key_code) {
 
 bool window::should_close() {
 	return glfwWindowShouldClose(glfw_window);
+}
+
+unsigned int window::get_fps() {
+	return fps;
+}
+void window::set_fps(unsigned int new_fps) {
+	fps = new_fps;
 }

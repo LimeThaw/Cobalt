@@ -18,10 +18,14 @@ class window {
 		void update();
 		bool key_pressed(int key_code);
 		bool should_close();
+		unsigned int get_fps();
+		void set_fps(unsigned int new_fps);
 
 	private:
 		int width, height, samples;
 		std::string title;
+		unsigned int fps;
+		float last_frame_time;
 		GLFWwindow *glfw_window;
 };
 

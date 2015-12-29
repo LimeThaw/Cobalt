@@ -1,7 +1,7 @@
 #version 130
 
 #define NUM_DIRECTIONAL_LIGHTS 1
-#define NUM_POINT_LIGHTS 0
+#define NUM_POINT_LIGHTS 1
 
 in vec2 uv;
 in vec3 normal;
@@ -78,11 +78,12 @@ void main(){
         vec3 light_position = point_light_positions[i];
         vec3 light_direction = point_light_positions[i] - view_position;
         float light_distance_sq = dot(light_direction, light_direction);
+		vec3 h = normalize(light_direction - view_position);
         vec3 light_color = point_light_colors[i];
         float radius_sq = point_light_radii_sq[i];
         float attenuation = clamp(1.0 - (light_distance_sq / radius_sq), 0.0, 1.0);
         diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, normalize(light_direction)), 0.0, 1.0) * attenuation;
-        specular_color += k_specular * light_color * ((exponent + 2) / (2*3.141593)) * pow(clamp(dot(local_normal, light_direction), 0.0, 1.0), exponent) * attenuation;
+        specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, h), 0.0, 1.0), exponent) * attenuation;
     }
     #endif
     
