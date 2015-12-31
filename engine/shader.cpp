@@ -1,6 +1,6 @@
 #include "shader.h"
 
-static GLuint load_shader(const std::string &vertex_path, const std::string &fragment_path) {
+static GLuint load_shader(const std::string &vertex_path, const std::string &fragment_path, const std::string fragment_prefix) {
     std::clog << "- Loading shader\n";
     float start_time = glfwGetTime();
 
@@ -19,7 +19,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
     }
 
     // Read the Fragment Shader code from the file
-    std::string fragment_shader_source;
+    std::string fragment_shader_source = fragment_prefix + "\n";
     std::ifstream fragment_shader_stream(fragment_path, std::ios::in);
     if(fragment_shader_stream.is_open()) {
         std::string line = "";
@@ -91,8 +91,8 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
     return shader_id;
 }
 
-shader::shader(const std::string &vertex_path, const std::string &fragment_path) {
-    shader_id = load_shader(vertex_path, fragment_path);
+shader::shader(const std::string &vertex_path, const std::string &fragment_path, const std::string fragment_prefix) {
+    shader_id = load_shader(vertex_path, fragment_path, fragment_prefix);
 }
 
 shader::~shader() {

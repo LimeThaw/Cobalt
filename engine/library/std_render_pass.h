@@ -11,6 +11,10 @@ class std_render_pass : public render_pass<scene, camera, std::vector<directiona
 	public:
 		std_render_pass();
 		void render(scene &a_scene, camera the_camera, std::vector<directional_light> d_lights, std::vector<point_light> p_lights) override;
+		
+	private:
+		unsigned int num_d_lights;
+		unsigned int num_p_lights;
 };
 
 }

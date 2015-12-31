@@ -13,7 +13,8 @@ int main() {
 	std::vector<directional_light> d_lights = {
             directional_light(glm::vec3(100, 100, 100), 0.5, glm::vec3(-5, 5, -10)) };
     std::vector<point_light> p_lights = {
-    		point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5))};
+    		point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5)),
+    		point_light(glm::vec3(1.0, 0.2 ,0.2), 1.0f, glm::vec3(-3, 3, -5))};
     
     // Loading the red sphere
 	auto red_mat = std::make_shared<cs::std_material>(glm::vec3(2.0f, 0.5f, 0.5f), 0.5f, 1.0f);

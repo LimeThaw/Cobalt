@@ -2,10 +2,20 @@
 using namespace cs;
 
 std_render_pass::std_render_pass() :
-		render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>>(std::make_shared<shader>("./engine/library/std_shader.vertex", "./engine/library/std_shader.fragment")) {
+		render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>>(std::make_shared<shader>("./engine/library/std_shader.vertex", "./engine/library/std_shader.fragment", "#version 130\n")) {
 }
 
 void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<directional_light> d_lights, std::vector<point_light> p_lights) {
+
+	if(d_lights.size() != num_d_lights || p_lights.size() != num_p_lights) {
+		num_d_lights = d_lights.size();
+		num_p_lights = p_lights.size();
+		set_shader(std::make_shared<shader>("./engine/library/std_shader.vertex",
+			"./engine/library/std_shader.fragment",
+			std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(num_d_lights) +
+			"\n#define NUM_POINT_LIGHTS " + std::to_string(num_p_lights) + "\n")));
+	}	
+	
 	prepare_render();
     GLint active_shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);

@@ -21,6 +21,9 @@ public:
         render_pass_shader->use();
     }///< Function binding the shader associated with the render pass.
 
+	void set_shader(std::shared_ptr<shader> new_render_pass_shader) {
+		render_pass_shader = new_render_pass_shader;
+	}
 
     virtual void render(scene_type &scene, additional_render_parameter_types... additional_render_parameters) = 0;///< Render function that needs to be defined individually for every render pass.
 };
