@@ -1,6 +1,5 @@
 #include "cobalt.h"
 #include "library/standard.h"
-#include "simple_render_pass.h"
 
 int main() {
 
@@ -9,12 +8,9 @@ int main() {
 	win.set_fps(60);
 	
 	//Creating scene and light(s)
-    scene demo_world;
-	std::vector<directional_light> d_lights = {
-            directional_light(glm::vec3(100, 100, 100), 0.5, glm::vec3(-5, 5, -10)) };
-    std::vector<point_light> p_lights = {
-    		point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5)),
-    		point_light(glm::vec3(1.0, 0.2 ,0.2), 1.0f, glm::vec3(-3, 3, -5))};
+    cs::std_scene demo_world;
+	demo_world.add_directional_light(directional_light(glm::vec3(100, 100, 100), 0.5, glm::vec3(-5, 5, -10)));
+    demo_world.add_point_light(point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5)));
     
     // Loading the red sphere
 	auto red_mat = std::make_shared<cs::std_material>(glm::vec3(2.0f, 0.5f, 0.5f), 0.5f, 1.0f);
@@ -46,9 +42,9 @@ int main() {
 	chair_mesh->place(0, 0, -5);
 	demo_world.append_node(chair_mesh);
 	
-	// Creating the render pass and camera
-	cs::std_render_pass demo_render_pass;
-	camera main_camera(glm::vec3(0, 5, -8), glm::vec3(0, 0, 0));
+	// Creating the camera
+	auto main_camera = std::make_shared<camera>(glm::vec3(0, 5, -8), glm::vec3(0, 0, 0));
+	demo_world.set_camera(main_camera);
 	
 	// Introducing the roughness variable
 	// Used to dynamically control the roughness of the spheres
@@ -89,7 +85,7 @@ int main() {
 		
 		// Rendering the scene
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		demo_render_pass.render(demo_world, main_camera, d_lights, p_lights);
+		demo_world.render();
 		win.update();
 		
         // Counting and displaying the current framerate
