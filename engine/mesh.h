@@ -33,7 +33,7 @@ class mesh : public node {
         bool load_model(const std::string &scene_path, int model_index);
         void set_material(std::shared_ptr<material> material);
         std::shared_ptr<material> get_material() const;
-        void render(glm::mat4 view_matrix);
+        void render(glm::mat4 view_matrix) override;
 
     private:
         void load_model(aiMesh *inmesh);
