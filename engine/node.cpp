@@ -22,7 +22,7 @@ node::~node() {
 void node::load_model(const std::string &path) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path);
-    append_mesh(temp_mesh);
+    append_node(temp_mesh);
 }
 
 bool node::load_scene(const std::string &path) {
@@ -53,10 +53,6 @@ void node::set_material(std::shared_ptr<material> new_material) {
     for(unsigned int i = 0; i < children.size(); i++) {
         children[i]->set_material(new_material);
     }
-}
-
-std::shared_ptr<material> node::get_material() const {
-	return false;
 }
 
 void node::place(float x, float y, float z) {
@@ -122,12 +118,7 @@ void node::append_node(node *new_child) {
 void node::append_mesh(const std::string &file_path) {
 	mesh *temp_mesh = new mesh();
 	temp_mesh->load_model(file_path);
-	append_mesh(temp_mesh);
-}
-
-void node::append_mesh(mesh *new_mesh) {
-	new_mesh->set_parent(this);
-	children.push_back(new_mesh);
+	append_node(temp_mesh);
 }
 
 void node::set_parent(node *new_parent) {
@@ -154,12 +145,6 @@ glm::mat4 node::get_node_matrix() const {
     return temp_matrix;
 }
 
-void node::render(glm::mat4 view_matrix) {
-	for(auto child : children) {
-		child->render(view_matrix);
-	}
-}
-
 std::vector< node * > node::enumerate() {
     std::vector< node * > rst;
     rst.push_back(this);
@@ -175,5 +160,5 @@ std::vector< node * > node::enumerate() {
 void node::load_model(const std::string &path, int model_index) {
     mesh *temp_mesh = new mesh();
     temp_mesh->load_model(path, model_index);
-    append_mesh(temp_mesh);
+    append_node(temp_mesh);
 }

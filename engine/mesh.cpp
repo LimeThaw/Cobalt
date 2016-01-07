@@ -146,22 +146,13 @@ std::shared_ptr<material> mesh::get_material() const {
     return mat;
 }
 
-void mesh::render(glm::mat4 view_matrix) {
+void mesh::render() {
     if(mat) {
         mat->use();
     } else {
         std::cerr << " ! Tried to render model without assigned material\n";
         return;
     }
-
-    glm::mat4 render_model = get_node_matrix();
-    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
-    GLint shader_id;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
-    GLuint matrix_location = glGetUniformLocation(shader_id, "model");
-    glUniformMatrix4fv(matrix_location, 1, GL_FALSE, &render_model[0][0]);
-    matrix_location = glGetUniformLocation(shader_id, "normal_to_view_matrix");
-    glUniformMatrix3fv(matrix_location, 1, GL_FALSE, &normal_matrix[0][0]);
 
     glBindVertexArray(vertex_array_object_id);
 

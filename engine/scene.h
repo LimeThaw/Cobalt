@@ -21,7 +21,6 @@ class scene {
         void append_node(const std::string &file_path);
         void append_node(node *new_child);
         void append_mesh(const std::string &file_path);
-        void append_mesh(mesh *new_child);
         node *get_parent_node();
         std::vector< node * > enumerate_nodes();
 

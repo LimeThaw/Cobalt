@@ -29,7 +29,6 @@ class node {
         void load_model(const std::string &path);///< Loads the first mesh in the specified file and appends it to the node.
         bool load_scene(const std::string &path);///< Loads all meshes from the specified file and appends them to the node.
         virtual void set_material(std::shared_ptr<material> new_material);///< Sets the material for all nodes and meshes appended to this node.
-        virtual std::shared_ptr<material> get_material() const;
         void place(float x, float y, float z);///< Specifies the node location relative to its parent node.
         void place(glm::vec3 arg_position);///< See member place(float x, float y, float z).
         void move(float x, float y, float z);///< Moves the node relative to its parent node.
@@ -43,11 +42,9 @@ class node {
         void append_node(const std::string &file_path);///< Basically append_node(new node(file_path)).
         void append_node(node *new_child);///< Appends the given node as its child.
         void append_mesh(const std::string &file_path);
-        void append_mesh(mesh *new_mesh);
         void set_parent(node *new_parent);///< Set the node's parent.
         bool remove_child(node *child);///< Removes a child node from this node.
         glm::mat4 get_node_matrix() const;///< Returns the transformation matrix affecting all of the node's children. It includes the transformation of it's parents.
-        virtual void render(glm::mat4 view_matrix);///< Renders the whole node with all of its descendants.
         std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
 
     protected:

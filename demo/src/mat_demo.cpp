@@ -62,16 +62,16 @@ int main() {
         } else {
             fps += 1;
         }
-		
-		// Checking for OpenGL errors (usually shader errors)
+
+        // Checking for OpenGL errors (usually shader errors)
         try {
             check_gl_error();
         } catch(gl_exception &e) {
             std::cerr << "! Detected GL Error: " << e.what() << '\n';
             quit = true;
         }
-	
-	}
+
+    }
 
 }
 
