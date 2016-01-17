@@ -12,6 +12,7 @@ uniform bool has_shader_mask;
 uniform sampler2D shader_mask;
 uniform float material_roughness;
 uniform float material_reflectivity;
+uniform float material_luminosity;
 
 #if NUM_DIRECTIONAL_LIGHTS > 0
 uniform vec3 directional_light_colors[NUM_DIRECTIONAL_LIGHTS];
@@ -32,17 +33,24 @@ void main(){
 	} else {
 		temp_color = vec3(0.2) + 0.8 * material_color;
 	}
-
+	
+	float reflectivity;
 	float roughness;
+	float luminosity;
 	if(has_shader_mask) {
-		roughness = texture(shader_mask, uv).x;
+		vec4 tmp = texture(shader_mask, uv);
+		reflectivity = tmp.x;
+		roughness = tmp.y;
+		luminosity = 2.0 * material_luminosity * tmp.z;
 	} else {
+		reflectivity = material_reflectivity;
 		roughness = 0.2 + 0.8 * material_roughness;
+		luminosity = 2.0 * material_luminosity;
 	}
 
 	float exponent = 2 + pow(2000, (1 - roughness));
-	float k_diffuse = 0.35 + 0.6 * roughness * material_reflectivity;
-	float k_specular = 0.05 + 0.6 * (1 - roughness) * material_reflectivity;
+	float k_diffuse = 0.35 + 0.6 * roughness * reflectivity;
+	float k_specular = 0.05 + 0.6 * (1 - roughness) * reflectivity;
 	
 	vec3 local_normal;
 	if(has_normal_map) {
@@ -52,8 +60,8 @@ void main(){
 		local_normal = normalize(normal);
 	}	
 
-	vec3 ambient_light_color = vec3(0.01);
-	vec3 ambient_color = temp_color * ambient_light_color + vec3(0.1);
+	vec3 ambient_light_color = vec3(0.05);
+	vec3 ambient_color = temp_color * (ambient_light_color);
 	
 	vec3 diffuse_color = vec3(0);
 	vec3 specular_color = vec3(0);
@@ -82,5 +90,8 @@ void main(){
     }
     #endif
     
-    color = ambient_color + diffuse_color + specular_color;
+    vec3 emitted_color = temp_color * luminosity;
+    
+    color = ambient_color + diffuse_color + specular_color + emitted_color;
+    if(length(color) > 3.0) color = 3.0 * normalize(color);
 }

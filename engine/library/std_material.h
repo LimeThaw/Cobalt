@@ -7,10 +7,11 @@ namespace cs {
 
 class std_material : public material {
 	public:
-		std_material(glm::vec3 color = glm::vec3(1.0f), float rough = 0.5f, float ref = 1.0f);
+		std_material(glm::vec3 color = glm::vec3(1.0f), float ref = 1.0f, float rough = 0.5f, float lumi = 0.0f);
 		void set_color(glm::vec3 new_color);
 		void set_roughness(float new_roughness);
 		void set_reflectivity(float new_reflectivity);
+		void set_luminosity(float new_luminosity);
 		void set_color_map(std::shared_ptr<texture2d> new_color_map);
 		void set_color_map(std::string path);
 		void set_normal_map(std::shared_ptr<texture2d> new_normal_map);

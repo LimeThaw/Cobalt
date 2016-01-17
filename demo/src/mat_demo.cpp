@@ -35,8 +35,9 @@ int main() {
 	bool quit = false;
 	while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
 
-		// Introducing angle variable for turning the helmet
+		// Introducing angle and luminosity variables for turning the helmet
 		float angle = 0.0f;
+		float luminosity;
 	
 		// Checking for key strokes
 		if(win.key_pressed(GLFW_KEY_Q)) {
@@ -45,9 +46,16 @@ int main() {
 		if(win.key_pressed(GLFW_KEY_E)) {
 			angle += 0.02;
 		}
+		if(win.key_pressed(GLFW_KEY_W)) {
+			if(luminosity < 1.0f) luminosity += 0.02f;
+		}
+		if(win.key_pressed(GLFW_KEY_S)) {
+			if(luminosity > 0.0f) luminosity -= 0.02f;
+		}
 
 		// Rotating the helmet
 		helm_mesh->rotate(0, angle, 0);
+		helm_mat->set_luminosity(luminosity);
 		
 		// Rendering the scene
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

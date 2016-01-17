@@ -1,10 +1,11 @@
 #include "std_material.h"
 using namespace cs;
 
-std_material::std_material(glm::vec3 color, float rough, float ref) {
+std_material::std_material(glm::vec3 color, float ref, float rough, float lumi) {
 	set_uniform("material_color", std::make_shared<vec3_uniform>(color));
-	set_uniform("material_roughness", std::make_shared<float_uniform>(rough));
 	set_uniform("material_reflectivity", std::make_shared<float_uniform>(ref));
+	set_uniform("material_roughness", std::make_shared<float_uniform>(rough));
+	set_uniform("material_luminosity", std::make_shared<float_uniform>(lumi));
 	mat_is_standard = true;
 	set_uniform("has_color_map", std::make_shared<bool_uniform>(false));
 	set_uniform("has_normal_map", std::make_shared<bool_uniform>(false));
@@ -21,6 +22,10 @@ void std_material::set_roughness(float new_roughness) {
 
 void std_material::set_reflectivity(float new_reflectivity) {
 	set_uniform("material_reflectivity", std::make_shared<float_uniform>(new_reflectivity));
+}
+
+void std_material::set_luminosity(float new_luminosity) {
+	set_uniform("material_luminosity", std::make_shared<float_uniform>(new_luminosity));
 }
 
 void std_material::set_color_map(std::shared_ptr<texture2d> new_color_map) {

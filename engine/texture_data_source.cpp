@@ -2,6 +2,7 @@
 // Created by flocke on 05.10.15.
 //
 
+#include <iostream>
 #include <SOIL/SOIL.h>
 #include <glm/glm.hpp>
 #include "texture_data_source.h"
@@ -51,6 +52,8 @@ texture_data_source texture_data_source::load_from_file(std::string filename) {
     unsigned char *data = SOIL_load_image(filename.c_str(), &width, &height, &channels, SOIL_LOAD_AUTO);
     if(data == nullptr) {
         throw std::runtime_error("error loading texture " + filename + ": " + SOIL_last_result());
+    } else {
+    	std::clog << "- Loaded texture " << filename << "\n";
     }
     return texture_data_source(width, height, num_channels_to_format((uint) channels), GL_UNSIGNED_BYTE,
                                std::shared_ptr<void>(data));
