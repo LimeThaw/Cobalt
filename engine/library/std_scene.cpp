@@ -36,14 +36,18 @@ void std_scene::render() {
 			GLint active_shader_id;
 			glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
 			
+			skybox->set_parent(&*main_camera);
+			GLuint model_id = glGetUniformLocation(active_shader_id, "model");
+			glUniformMatrix4fv(model_id, 1, GL_FALSE, &skybox->get_node_matrix()[0][0]);
+			GLuint normal_id = glGetUniformLocation(active_shader_id, "normal_to_view_matrix");
+			glUniformMatrix4fv(normal_id, 1, GL_FALSE, &glm::transpose(glm::inverse(glm::mat3(main_camera->get_view() * skybox->get_node_matrix())))[0][0]);
 			GLuint view_id = glGetUniformLocation(active_shader_id, "view");
 			glUniformMatrix4fv(view_id, 1, GL_FALSE, &main_camera->get_view()[0][0]);
 			GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
 			glUniformMatrix4fv(projection_id, 1, GL_FALSE, &main_camera->get_projection()[0][0]);
 			
-			skybox->set_parent(&*main_camera);
 			glDepthMask(false);
-			skybox->render(main_camera->get_view());
+			skybox->render();
 			glDepthMask(true);
 		}
 		render_pass -> render(*this, *main_camera, d_lights, p_lights);
