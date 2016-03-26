@@ -31,7 +31,7 @@ directional_light::directional_light(glm::vec3 color, float intensity, glm::vec3
 
 void directional_light::set_direction(glm::vec3 new_direction) {
     if(glm::length(new_direction) != 0) {
-        direction = new_direction;
+        direction = glm::normalize(new_direction);
     } else {
         std::cerr << "! Can't assign a nullvector as direction for a sun light\n";
         return;

@@ -84,3 +84,7 @@ unsigned int window::get_fps() {
 void window::set_fps(unsigned int new_fps) {
 	fps = new_fps;
 }
+
+void window::clear() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}

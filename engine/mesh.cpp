@@ -161,6 +161,18 @@ void mesh::render() {
     glBindVertexArray(0);
 }
 
+void mesh::render_no_bind() {
+    glBindVertexArray(vertex_array_object_id);
+
+    glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
+
+    glBindVertexArray(0);
+}
+
+bool mesh::is_shadow_caster() {
+	return ((bool)mat && mat->is_shadow_caster());
+}
+
 //Private
 void mesh::load_model(aiMesh *inmesh) {
 

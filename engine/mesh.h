@@ -34,6 +34,8 @@ class mesh : public node {
         void set_material(std::shared_ptr<material> material);
         std::shared_ptr<material> get_material() const;
         void render();
+        void render_no_bind();
+        bool is_shadow_caster();
 
     private:
         void load_model(aiMesh *inmesh);

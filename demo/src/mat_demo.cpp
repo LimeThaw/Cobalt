@@ -10,21 +10,21 @@ int main() {
 	//Creating scene and light(s)
     cs::std_scene demo_world;
     demo_world.set_skybox("demo/res/textures/skybox.png");
-	demo_world.add_directional_light(directional_light(glm::vec3(100, 100, 100), 0.2, glm::vec3(-5, 5, -10)));
-    demo_world.add_point_light(point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5)));
+	demo_world.add_directional_light(directional_light(glm::vec3(100, 100, 100), 3.0f, glm::vec3(1, 1, 0)));
+    //demo_world.add_point_light(point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5)));
 	
 	// Loading helmet
-	auto helm_mat = std::make_shared<cs::std_material>();
-	helm_mat->set_color_map("demo/res/textures/helm_colormap.png");
+	auto sample_mat = std::make_shared<cs::std_material>();
+	/*helm_mat->set_color_map("demo/res/textures/helm_colormap.png");
 	helm_mat->set_normal_map("demo/res/textures/NormalMap.png");
-	helm_mat->set_shader_mask("demo/res/textures/helm_bumpmap.png");
-	mesh* helm_mesh = new mesh("demo/res/models/helm.obj");
-	helm_mesh->set_scale(2.0f);
-	helm_mesh->set_material(helm_mat);
-	demo_world.append_node(helm_mesh);
+	helm_mat->set_shader_mask("demo/res/textures/helm_bumpmap.png");*/
+	mesh* sample_mesh = new mesh("demo/res/models/vase.obj");
+	sample_mesh->set_scale(1.0f);
+	sample_mesh->set_material(sample_mat);
+	demo_world.append_node(sample_mesh);
 	
 	// Creating the camera
-	auto main_camera = std::make_shared<camera>(glm::vec3(0, 5, -8), glm::vec3(0, 1.5, 0));
+	auto main_camera = std::make_shared<camera>(glm::vec3(0, 10, -8), glm::vec3(0, 1.5, 0));
 	demo_world.set_camera(main_camera);
 	
 	// Declaring variables used for framerate counting
@@ -54,11 +54,11 @@ int main() {
 		}
 
 		// Rotating the helmet
-		helm_mesh->rotate(0, angle, 0);
-		helm_mat->set_luminosity(luminosity);
+		sample_mesh->rotate(0, angle, 0);
+		sample_mat->set_luminosity(luminosity);
 		
 		// Rendering the scene
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		win.clear();
 		demo_world.render();
 		win.update();
 		

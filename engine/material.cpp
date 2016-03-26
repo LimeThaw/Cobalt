@@ -1,10 +1,10 @@
 #include "material.h"
 
-material::material() {
+material::material(bool shadow_caster) : shadow_caster(shadow_caster) {
 	mat_is_standard = false;
 }
 
-material::material(const texture_bindings &textures) : textures(textures) {
+material::material(const texture_bindings &textures, bool shadow_caster) : textures(textures), shadow_caster(shadow_caster) {
 	mat_is_standard = false;
 }
 
@@ -19,6 +19,12 @@ void material::remove_uniform(std::string name) {
 }
 
 void material::add_texture(std::string uniform_name, std::shared_ptr<texture> tex) {
+	for(unsigned int i = 0; i < textures.size(); ++i) {
+		if(textures[i].first == uniform_name) {
+			textures[i].second = tex;
+			return;
+		}
+	}
     textures.push_back(std::pair<std::string, std::shared_ptr<texture>>(uniform_name, tex));
 }
 
@@ -37,4 +43,12 @@ void material::use() {
 
 bool material::is_standard() {
 	return mat_is_standard;
+}
+
+bool material::is_shadow_caster() {
+	return shadow_caster;
+}
+
+void material::set_shadow_cast(bool shadow) {
+	shadow_caster = shadow;
 }

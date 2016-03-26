@@ -16,7 +16,7 @@
 
 class shader {
     public:
-        shader(const std::string &vertex_path, const std::string &fragment_path, const std::string fragment_prefix = "");
+        shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix = "");
         ~shader();
         void use();
     protected:

@@ -20,6 +20,7 @@ class window {
 		bool should_close();
 		unsigned int get_fps();
 		void set_fps(unsigned int new_fps);
+		void clear();
 
 	private:
 		int width, height, samples;
