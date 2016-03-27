@@ -10,15 +10,18 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <math.h>
 
 class shader {
     public:
         shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix = "");
         ~shader();
         void use();
+        static std::string process_shader(std::string filename);
     protected:
         GLuint shader_id;
 };

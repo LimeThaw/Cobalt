@@ -11,6 +11,7 @@ int main() {
     cs::std_scene demo_world;
     demo_world.set_skybox("demo/res/textures/skybox.png");
 	demo_world.add_directional_light(directional_light(glm::vec3(100, 100, 100), 3.0f, glm::vec3(1, 1, 0)));
+	demo_world.add_directional_light(directional_light(glm::vec3(100, 100, 100), 1.0f, glm::vec3(0, 1, 1)));
     //demo_world.add_point_light(point_light(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(3, 3, -5)));
 	
 	// Loading helmet
@@ -33,6 +34,7 @@ int main() {
 	
 	// Main loop
 	bool quit = false;
+	float rotation = 0.0f;
 	while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
 
 		// Introducing angle and luminosity variables for turning the helmet
@@ -52,10 +54,19 @@ int main() {
 		if(win.key_pressed(GLFW_KEY_S)) {
 			if(luminosity > 0.0f) luminosity -= 0.02f;
 		}
+		if(win.key_pressed(GLFW_KEY_A)) {
+			rotation -= 0.05f;
+		}
+		if(win.key_pressed(GLFW_KEY_D)) {
+			rotation += 0.05f;
+		}
 
-		// Rotating the helmet
+		// Rotating the model
 		sample_mesh->rotate(0, angle, 0);
 		sample_mat->set_luminosity(luminosity);
+		
+		//Rotate the camera
+		main_camera->setup(glm::vec3(8 * sin(rotation), 10, -8 * cos(rotation)), glm::vec3(0, 1.5, 0));
 		
 		// Rendering the scene
 		win.clear();

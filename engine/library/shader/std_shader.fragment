@@ -71,15 +71,15 @@ void main(){
 	vec3 specular_color = vec3(0);
 	        
     #if NUM_DIRECTIONAL_LIGHTS > 0
-    for(int i = 0; i < NUM_DIRECTIONAL_LIGHTS; ++i) {
-    	if(texture2D(shadow_map[0], shadow_map_space_position[i].xy).x + BIAS > shadow_map_space_position[i].z) { // TODO: !Can't access sampler array with non-constant index
-		    vec3 light_direction = normalize(directional_light_directions[i]);
+    ::for i NUM_DIRECTIONAL_LIGHTS --
+    	if(texture2D(shadow_map[ i ], shadow_map_space_position[ i ].xy).x + BIAS > shadow_map_space_position[ i ].z) {
+		    vec3 light_direction = normalize(directional_light_directions[ i ]);
 			vec3 h = normalize(-light_direction - view_position);
-		    vec3 light_color = directional_light_colors[i];
+		    vec3 light_color = directional_light_colors[ i ];
 		    diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, light_direction), 0.0, 1.0);
-		    specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, h), 0.0, 1.0), exponent);
+		    specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, h), 0.0, 1.0), exponent) * clamp(dot(local_normal, light_direction), 0.0, 1.0);
 		}
-    }
+    ;;
     #endif
 
     #if NUM_POINT_LIGHTS > 0

@@ -5,6 +5,7 @@ using namespace cs;
 #define bias glm::mat4(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0)
 
 const std::string shader_dir = "./engine/library/shader/";
+const int shadow_map_resolution = 2048;
 
 std_render_pass::std_render_pass() :
 		render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>>(std::make_shared<shader>(shader_dir + "std_shader.vertex",
@@ -19,6 +20,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
 		num_d_lights = d_lights.size();
 		num_p_lights = p_lights.size();
 		
+		shader::process_shader(shader_dir + "std_shader.fragment.pre");
 		std_shader = std::make_shared<shader>(shader_dir + "std_shader.vertex",
 			shader_dir + "std_shader.fragment",
 			std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(num_d_lights) +
@@ -34,7 +36,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
 		
 		for(unsigned int i = 0; i < num_d_lights; ++i) {
 			auto shadow_map = std::make_shared<texture2d>(
-				512, 512, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+				shadow_map_resolution, shadow_map_resolution, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 			auto shadow_map_attachment = std::make_shared<texture_framebuffer_attachment>(shadow_map);
 			auto shadow_map_framebuffer = std::make_shared<framebuffer>(
 				framebuffer::attachments(), framebuffer::optional_attachment(shadow_map_attachment));
@@ -57,7 +59,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
 	// Render shadow maps
 	set_shader(depth_shader);
 	prepare_render();
-	glViewport(0, 0, 512, 512);
+	glViewport(0, 0, shadow_map_resolution, shadow_map_resolution);
     GLint active_shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
 	GLuint model_view_projection_id = glGetUniformLocation(active_shader_id, "model_view_projection_matrix");
@@ -147,4 +149,3 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
         }
     }
 }
-
