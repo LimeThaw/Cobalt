@@ -10,11 +10,11 @@ void std_scene::set_camera(std::shared_ptr<camera> new_camera) {
 	main_camera = new_camera;
 }
 
-void std_scene::add_point_light(point_light new_light) {
+void std_scene::add_point_light(std::shared_ptr<point_light> new_light) {
 	p_lights.push_back(new_light);
 }
 
-void std_scene::add_directional_light(directional_light new_light) {
+void std_scene::add_directional_light(std::shared_ptr<directional_light> new_light) {
 	d_lights.push_back(new_light);
 }
 

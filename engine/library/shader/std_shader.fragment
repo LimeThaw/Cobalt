@@ -71,7 +71,7 @@ void main(){
 	vec3 specular_color = vec3(0);
 	        
     #if NUM_DIRECTIONAL_LIGHTS > 0
-    ::for i NUM_DIRECTIONAL_LIGHTS --
+    ::for i NUM_DIRECTIONAL_LIGHTS--
     	if(texture2D(shadow_map[ i ], shadow_map_space_position[ i ].xy).x + BIAS > shadow_map_space_position[ i ].z) {
 		    vec3 light_direction = normalize(directional_light_directions[ i ]);
 			vec3 h = normalize(-light_direction - view_position);

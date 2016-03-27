@@ -144,7 +144,6 @@ std::string shader::process_shader(std::string source) {
 		data = source.substr(b+2, c-b-2);
 		
 		if(command.substr(0, 3) == "for") {
-			std::cout << "FOR\n";
 			b = command.find_first_not_of(" ", 3);
 			d = command.find_first_of(" ", b);
 			term = command.substr(b, d - b);
@@ -152,7 +151,6 @@ std::string shader::process_shader(std::string source) {
 			d = std::min(command.find_first_of(" ", b), command.find_first_of("-", b));
 			value = command.substr(b, d - b);
 			std::stringstream(value) >> d;
-			std::cout << "D: "<< d << "\n";
 			
 			for(unsigned int i = 0; i < d; ++i) {
 				result += data;
@@ -166,7 +164,6 @@ std::string shader::process_shader(std::string source) {
 		
 		source = source.substr(0, a) + result + source.substr(c + 2);
 	}
-	std::cout << source;
 	
 	// ::for i 5--print(i);;  ==  for(int i = 0; i < 5, ++i) print(i);
 	

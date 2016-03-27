@@ -8,13 +8,13 @@ const std::string shader_dir = "./engine/library/shader/";
 const int shadow_map_resolution = 2048;
 
 std_render_pass::std_render_pass() :
-		render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>>(std::make_shared<shader>(shader_dir + "std_shader.vertex",
+		render_pass<scene, camera, std::vector<std::shared_ptr<directional_light>>, std::vector<std::shared_ptr<point_light>>>(std::make_shared<shader>(shader_dir + "std_shader.vertex",
 			shader_dir + "std_shader.fragment", std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"))) {
 	depth_shader = std::make_shared<shader>(shader_dir + "/depthOnlyVertexShader.glsl",
 			shader_dir + "depthOnlyFragmentShader.glsl");
 }
 
-void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<directional_light> d_lights, std::vector<point_light> p_lights) {
+void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std::shared_ptr<directional_light>> d_lights, std::vector<std::shared_ptr<point_light>> p_lights) {
 
 	if(d_lights.size() != num_d_lights || p_lights.size() != num_p_lights) {
 		num_d_lights = d_lights.size();
@@ -43,14 +43,19 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
 			auto shadow_map_binding = material::texture_binding("shadow_map[" + std::to_string(i) + "]", shadow_map);
 			
 			shadow_map_view_projections.push_back(glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f)
-				* glm::lookAt(d_lights[i].get_direction() * 10.0f, glm::vec3(0, 0, 0), glm::vec3(0, 0, 1)));
+				* glm::lookAt(d_lights[i]->get_direction() * 10.0f, glm::vec3(0, 0, 0), glm::vec3(0, 0, 1)));
 			
 			shadow_maps.push_back(shadow_map);
 			shadow_map_framebuffers.push_back(shadow_map_framebuffer);
 			shadow_map_bindings.push_back(shadow_map_binding);
 		}
+	} else {
+		// Update light matrices
+		for(unsigned int i = 0; i < num_d_lights; ++i) {
+			shadow_map_view_projections[i] = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f)
+				* glm::lookAt(d_lights[i]->get_direction() * 10.0f, glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+		}
 	}
-	
 	
 	// Save viewport variables
 	int viewport_variables[4];
@@ -114,7 +119,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
     
 
     for(unsigned int i = 0; i < d_lights.size(); ++i) {
-        directional_light d_light = d_lights[i];
+        directional_light d_light = *d_lights[i];
         glm::vec3 color_vec = d_light.get_color() * clamp(d_light.get_intensity(), 0.0f, 1.0f);
         glm::vec3 direction_vec = glm::vec3((view_matrix * glm::vec4(d_light.get_direction(), 0.0f)));
         std::string is = std::to_string(i);
@@ -125,7 +130,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<dire
     }
 
     for(unsigned int i = 0; i < p_lights.size(); ++i) {
-        point_light p_light = p_lights[i];
+        point_light p_light = *p_lights[i];
         glm::vec3 point_color_vec = p_light.get_color() * p_light.get_intensity();
         glm::vec3 point_position_vec = glm::vec3((view_matrix * glm::vec4(p_light.get_position(), 1.0f)));
         std::string is = std::to_string(i);
