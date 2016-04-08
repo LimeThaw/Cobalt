@@ -12,6 +12,7 @@ mesh::mesh() {
     vertex_id = uv_id = tangent_id = normal_id = 0;
     vertex_array_object_id = 0;
     has_uvs = false;
+    box = bounding_box();
 }
 
 mesh::mesh(const std::string &file_path) {
@@ -173,10 +174,16 @@ bool mesh::is_shadow_caster() {
 	return ((bool)mat && mat->is_shadow_caster());
 }
 
+bounding_box mesh::get_bounding_box() {
+	return box;
+}
+
 //Private
 void mesh::load_model(aiMesh *inmesh) {
 
     std::clog << "  - Loading model\n";
+    
+    glm::vec3 min_vertex = glm::vec3(0, 0, 0), max_vertex = glm::vec3(0, 0, 0);
 
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
@@ -187,8 +194,17 @@ void mesh::load_model(aiMesh *inmesh) {
     for(unsigned int i = 0; i < inmesh->mNumVertices; i++) { //Get vertices
         glm::vec3 vertex = glm::vec3(inmesh->mVertices[i].x, inmesh->mVertices[i].y, inmesh->mVertices[i].z);     //Get vertices and push them into vector
         vertices.push_back(vertex);
+        
+        if(vertex.x < min_vertex.x) min_vertex.x = vertex.x;
+        if(vertex.x > max_vertex.x) max_vertex.x = vertex.x;
+        if(vertex.y < min_vertex.y) min_vertex.y = vertex.y;
+        if(vertex.y > max_vertex.y) max_vertex.y = vertex.y;
+        if(vertex.z < min_vertex.z) min_vertex.z = vertex.z;
+        if(vertex.z > max_vertex.z) max_vertex.z = vertex.z;
+        
         if(MESH_INFO)std::clog << "   - Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
     }
+    box = bounding_box(min_vertex, max_vertex);
 
     if(inmesh->HasTextureCoords(0)) {    //Get uvs
         has_uvs = true;

@@ -21,6 +21,7 @@ class std_render_pass : public render_pass<scene, camera, std::vector<std::share
 		std::vector<std::shared_ptr<framebuffer>> shadow_map_framebuffers;
 		material::texture_bindings shadow_map_bindings;
 		std::vector<glm::mat4> shadow_map_view_projections;
+		glm::mat4 get_light_matrix(glm::vec3 direction, scene &a_scene);
 };
 
 }

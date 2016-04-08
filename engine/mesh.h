@@ -19,6 +19,8 @@
 
 #include "material.h"
 #include "node.h"
+#include "scene.h"
+#include "bounding_box.h"
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
@@ -36,6 +38,7 @@ class mesh : public node {
         void render();
         void render_no_bind();
         bool is_shadow_caster();
+        bounding_box get_bounding_box();
 
     private:
         void load_model(aiMesh *inmesh);
@@ -54,6 +57,7 @@ class mesh : public node {
         GLuint tangent_id;
         std::shared_ptr<material> mat;
         bool has_uvs;
+        bounding_box box;
 };
 
 #endif // MESH_H

@@ -17,8 +17,8 @@ int main() {
 	
 	// Loading helmet
 	auto sample_mat = std::make_shared<cs::std_material>();
-	mesh* sample_mesh = new mesh("demo/res/models/vase.obj");
-	sample_mesh->set_scale(1.0f);
+	mesh* sample_mesh = new mesh("demo/res/models/untitled.obj");
+	sample_mesh->set_scale(0.3f);
 	sample_mesh->set_material(sample_mat);
 	demo_world.append_node(sample_mesh);
 	
@@ -64,7 +64,8 @@ int main() {
 		sample_mat->set_luminosity(luminosity);
 		
 		// Rotate the camera
-		main_camera->setup(glm::vec3(8 * sin(rotation), 10, -8 * cos(rotation)), glm::vec3(0, 1.5, 0));
+		//main_camera->setup(glm::vec3(8 * sin(rotation), 10, -8 * cos(rotation)), glm::vec3(0, 1.5, 0));
+		sample_mesh->set_scale(0.3f + 0.1f * rotation);
 		
 		// Rotate the light
 		light_angle += 0.01;

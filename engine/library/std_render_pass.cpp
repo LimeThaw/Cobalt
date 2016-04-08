@@ -42,8 +42,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 				framebuffer::attachments(), framebuffer::optional_attachment(shadow_map_attachment));
 			auto shadow_map_binding = material::texture_binding("shadow_map[" + std::to_string(i) + "]", shadow_map);
 			
-			shadow_map_view_projections.push_back(glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f)
-				* glm::lookAt(d_lights[i]->get_direction() * 10.0f, glm::vec3(0, 0, 0), glm::vec3(0, 0, 1)));
+			shadow_map_view_projections.push_back(get_light_matrix(d_lights[i]->get_direction(), a_scene));
 			
 			shadow_maps.push_back(shadow_map);
 			shadow_map_framebuffers.push_back(shadow_map_framebuffer);
@@ -52,8 +51,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 	} else {
 		// Update light matrices
 		for(unsigned int i = 0; i < num_d_lights; ++i) {
-			shadow_map_view_projections[i] = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f)
-				* glm::lookAt(d_lights[i]->get_direction() * 10.0f, glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+			shadow_map_view_projections[i] = get_light_matrix(d_lights[i]->get_direction(), a_scene);
 		}
 	}
 	
@@ -153,4 +151,17 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
             }
         }
     }
+}
+
+glm::mat4 std_render_pass::get_light_matrix(glm::vec3 direction, scene& a_scene) {
+	bounding_box light_box = bounding_box(direction);
+	for(auto node : a_scene.enumerate_nodes()) {
+		if(mesh *m = dynamic_cast<mesh*>(node)) {
+			if(m->is_shadow_caster()) {
+				light_box.add_bounding_box(m->get_node_matrix() * m->get_bounding_box());
+			}
+	
+		}
+	}
+	return light_box.get_light_matrix();
 }
