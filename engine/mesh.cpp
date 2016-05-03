@@ -181,7 +181,7 @@ bounding_box mesh::get_bounding_box() {
 //Private
 void mesh::load_model(aiMesh *inmesh) {
 
-    std::clog << "  - Loading model\n";
+    if(MESH_INFO)std::clog << "  - Loading model\n";
     
     glm::vec3 min_vertex = glm::vec3(0, 0, 0), max_vertex = glm::vec3(0, 0, 0);
 
@@ -215,7 +215,7 @@ void mesh::load_model(aiMesh *inmesh) {
         }
     } else {
         has_uvs = false;
-        std::cerr << "   ! Could not find texture coordinates\n";
+        std::cerr << "   ! Could not find texture coordinates or generate tangents\n";
     }
 
     if(inmesh->HasNormals()) {      //Get normals
@@ -235,7 +235,7 @@ void mesh::load_model(aiMesh *inmesh) {
             if(MESH_INFO)std::clog << "   - Read Tangent [" << i << "] at " << tangent.x << ", " <<  tangent.y << ", " << tangent.z << '\n';
         }
     } else {
-        std::cerr << "   ! Could not generate tangents\n";
+        //std::cerr << "   ! Could not generate tangents\n";
     }
 
     for(unsigned int i = 0; i < inmesh->mNumFaces; i++) { //Get faces

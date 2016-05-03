@@ -4,7 +4,7 @@ in vec2 uv;
 in vec3 normal;
 in vec3 view_position;
 in mat3 tangent_to_view_matrix;
-in vec3 shadow_map_space_position[NUM_DIRECTIONAL_LIGHTS];
+in mat4 view_matrix;
 
 uniform vec3 material_color;
 uniform bool has_color_map;
@@ -16,19 +16,34 @@ uniform sampler2D shader_mask;
 uniform float material_roughness;
 uniform float material_reflectivity;
 uniform float material_luminosity;
-uniform sampler2D shadow_map[NUM_DIRECTIONAL_LIGHTS];
 
 #if NUM_DIRECTIONAL_LIGHTS > 0
+in vec3 shadow_map_space_position[NUM_DIRECTIONAL_LIGHTS];
+uniform sampler2D directional_shadow_map[NUM_DIRECTIONAL_LIGHTS];
 uniform vec3 directional_light_colors[NUM_DIRECTIONAL_LIGHTS];
 uniform vec3 directional_light_directions[NUM_DIRECTIONAL_LIGHTS];
 #endif
 #if NUM_POINT_LIGHTS > 0
+uniform samplerCube point_shadow_map[NUM_POINT_LIGHTS];
 uniform vec3 point_light_colors[NUM_POINT_LIGHTS];
 uniform vec3 point_light_positions[NUM_POINT_LIGHTS];
 uniform float point_light_radii_sq[NUM_POINT_LIGHTS];
 #endif
 
 out vec3 color;
+
+#if NUM_POINT_LIGHTS > 0
+	float vector_to_depth(vec3 Vec, int i) {
+		vec3 AbsVec = abs(Vec);
+		float LocalZcomp = max(AbsVec.x, max(AbsVec.y, AbsVec.z));
+
+		float f = sqrt(point_light_radii_sq[i]);
+		const float n = 0.1;
+		float NormZComp = (f+n) / (f-n) - (2*f*n)/(f-n)/LocalZcomp;
+		return (NormZComp + 1.0) * 0.5;
+		return 0.0f;
+	}
+#endif
 
 void main(){
 	vec3 temp_color;
@@ -72,7 +87,7 @@ void main(){
 	        
     #if NUM_DIRECTIONAL_LIGHTS > 0
     ::for i NUM_DIRECTIONAL_LIGHTS--
-    	if(texture2D(shadow_map[ i ], shadow_map_space_position[ i ].xy).x + BIAS > shadow_map_space_position[ i ].z) {
+    	if(texture2D(directional_shadow_map[ i ], shadow_map_space_position[ i ].xy).x + BIAS > shadow_map_space_position[ i ].z) {
 		    vec3 light_direction = normalize(directional_light_directions[ i ]);
 			vec3 h = normalize(-light_direction - view_position);
 		    vec3 light_color = directional_light_colors[ i ];
@@ -83,21 +98,27 @@ void main(){
     #endif
 
     #if NUM_POINT_LIGHTS > 0
-    for(int i = 0; i < NUM_POINT_LIGHTS; ++i) {
-        vec3 light_position = point_light_positions[i];
-        vec3 light_direction = point_light_positions[i] - view_position;
-        float light_distance_sq = dot(light_direction, light_direction);
-		vec3 h = normalize(light_direction - view_position);
-        vec3 light_color = point_light_colors[i];
-        float radius_sq = point_light_radii_sq[i];
-        float attenuation = clamp(1.0 - (light_distance_sq / radius_sq), 0.0, 1.0);
-        diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, normalize(light_direction)), 0.0, 1.0) * attenuation;
-        specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, h), 0.0, 1.0), exponent) * attenuation;
-    }
+    ::for i NUM_POINT_LIGHTS--
+        vec3 light_direction = point_light_positions[ i ] - view_position;
+        vec3 global_light_direction = (inverse(view_matrix) * vec4(light_direction, 0)).xyz;
+    	if(textureCube(point_shadow_map[ i ], global_light_direction).x + (BIAS / 5) > vector_to_depth(global_light_direction, i )) {
+		    vec3 light_position = point_light_positions[ i ];
+		    float light_distance_sq = dot(light_direction, light_direction);
+			vec3 h = normalize(light_direction - view_position);
+		    vec3 light_color = point_light_colors[ i ];
+		    float radius_sq = point_light_radii_sq[ i ];
+		    float attenuation = clamp(1.0 - (light_distance_sq / radius_sq), 0.0, 1.0);
+		    diffuse_color += k_diffuse * temp_color * light_color * clamp(dot(local_normal, normalize(light_direction)), 0.0, 1.0) * attenuation;
+		    //specular_color += k_specular * light_color * ((exponent + 2) / (2 * 3.141593)) * pow(clamp(dot(local_normal, h), 0.0, 1.0), exponent) * attenuation;
+		}
+    ;;
     #endif
     
     vec3 emitted_color = temp_color * luminosity;
     
     color = ambient_color + diffuse_color + specular_color + emitted_color;
+    //color = vec3(textureCube(point_shadow_map[ 0 ], global_light_direction).x);
+    //color = vec3(vector_to_depth(global_light_direction, 0));
+    //color = vec3(clamp(textureCube(point_shadow_map[ 0 ], global_light_direction).x + BIAS - length(global_light_direction), 0, 1));
     if(length(color) > 3.0) color = 3.0 * normalize(color);
 }

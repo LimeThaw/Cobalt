@@ -1,7 +1,7 @@
 #include "shader.h"
 
 static GLuint load_shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix) {
-    std::clog << "- Loading shader\n";
+    std::clog << "- Loading shader\n";//" << vertex_path << " | " << fragment_path << "\n";
     float start_time = glfwGetTime();
 
     // Create the shaders

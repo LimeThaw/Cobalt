@@ -10,6 +10,8 @@ The window class is used to initialize an OpenGL context and open a window
 #include <string>
 #include <iostream>
 
+#define WINDOW_INFO false
+
 class window {
 	public:
 		window(int width, int height, std::string title);

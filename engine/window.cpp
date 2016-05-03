@@ -9,7 +9,7 @@ window::window(int width, int height, std::string title) : width(width), height(
         std::cerr << " ! Window could not be created: Failed to initialize GLFW\n";
         return;
     } else {
-        std::clog << " - Initialized GLFW\n";
+        if(WINDOW_INFO)std::clog << " - Initialized GLFW\n";
     }
     
 	//Give GLFW some info
@@ -38,8 +38,9 @@ window::window(int width, int height, std::string title) : width(width), height(
         std::cerr << " ! Window could not be created: Failed to initialize GLEW\n";
         return;
     } else {
-        std::clog << " - Initialized GLEW\n\n";
+        if(WINDOW_INFO)std::clog << " - Initialized GLEW\n";
     }
+    std::clog << "\n";
     
     //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);

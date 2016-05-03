@@ -1,0 +1,19 @@
+#version 130
+
+#define PI 3.141593
+
+in vec3 vertex_position;
+
+uniform vec3 light_position;
+uniform float radius;
+uniform mat4 model_matrix;
+
+void main() {
+	vec3 vertex_direction = vec3(model_matrix * vec4(vertex_position, 1.0)) - light_position;
+	float r = length(vertex_direction);
+	float theta = asin(vertex_direction.y / r);
+	float phi = acos(vertex_direction.z / (length(vec3(vertex_direction.x, 0, vertex_direction.z))));
+	float x = 0.5 + (vertex_direction.x / abs(vertex_direction.x)) * (1 / (2 * PI)) * phi;
+	float y = 0.5 + (1 / PI) * theta;
+	gl_Position = vec4(x, y, r / radius, 1.0);
+}

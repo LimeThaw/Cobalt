@@ -35,7 +35,7 @@ class directional_light : public light {
 
 class point_light : public light, public node {
     public:
-        point_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 position = glm::vec3(0, 0, 1), float radius = 10.0f);
+        point_light(glm::vec3 color = glm::vec3(255, 255, 255), float intensity = 1.0f, glm::vec3 position = glm::vec3(0, 0, 0), float radius = 10.0f);
         const glm::vec3 get_position();
         float get_radius();
     private:
