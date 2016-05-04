@@ -32,9 +32,9 @@ void material::use() {
     GLint shader_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
     for(unsigned int i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
+        glActiveTexture(GL_TEXTURE0 + i + 1);
         textures[i].second->bind();
-        glUniform1i(glGetUniformLocation((GLuint) shader_id, textures[i].first.c_str()), i);
+        glUniform1i(glGetUniformLocation((GLuint) shader_id, textures[i].first.c_str()), i + 1);
     }
     for(auto iterator : uniforms) {
     	iterator.second->bind(iterator.first);

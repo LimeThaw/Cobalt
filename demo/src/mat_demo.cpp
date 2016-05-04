@@ -11,7 +11,7 @@ int main() {
     cs::std_scene demo_world;
     demo_world.set_skybox("demo/res/textures/skybox.png");
     auto light = std::make_shared<directional_light>(glm::vec3(100, 100, 100), 0.5f, glm::vec3(0, 1, 1));
-	demo_world.add_directional_light(std::make_shared<directional_light>(glm::vec3(100, 100, 100), 0.0f, glm::vec3(1, 1, 1)));
+	//demo_world.add_directional_light(std::make_shared<directional_light>(glm::vec3(100, 100, 100), 0.0f, glm::vec3(1, 1, 1)));
 	//demo_world.add_directional_light(light);
     demo_world.add_point_light(std::make_shared<point_light>(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(0, 1.8, 0), 10.0f));
 	
