@@ -6,6 +6,7 @@ in vec3 vertex_tangent;
 uniform mat3 normal_to_view_matrix;
 uniform mat4 model;
 uniform mat4 view;
+uniform mat4 inverse_view;
 uniform mat4 projection;
 
 out vec2 uv;
@@ -13,6 +14,7 @@ out vec3 normal;
 out vec3 view_position;
 out mat3 tangent_to_view_matrix;
 out mat4 view_matrix;
+out mat4 inverse_view_matrix;
 
 #if NUM_DIRECTIONAL_LIGHTS > 0
 	uniform mat4 shadow_map_view_projection_matrix[NUM_DIRECTIONAL_LIGHTS];
@@ -31,6 +33,7 @@ void main() {
 	tangent_to_view_matrix = mat3(tangent, cross(tangent, normal), normal);
 	
 	view_matrix = view;
+	inverse_view_matrix = inverse_view;
 	
 	#if NUM_DIRECTIONAL_LIGHTS > 0
 		for(int i = 0; i < NUM_DIRECTIONAL_LIGHTS; ++i) {

@@ -142,9 +142,12 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 	
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
     glm::mat4 view_matrix = the_camera.get_view();
+    glm::mat4 inverse_view_matrix = glm::inverse(view_matrix);
 
     GLuint view_id = glGetUniformLocation(active_shader_id, "view");
     glUniformMatrix4fv(view_id, 1, GL_FALSE, &view_matrix[0][0]);
+    GLuint inverse_view_id = glGetUniformLocation(active_shader_id, "inverse_view");
+    glUniformMatrix4fv(inverse_view_id, 1, GL_FALSE, &inverse_view_matrix[0][0]);
     GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
     GLuint model_id = glGetUniformLocation(active_shader_id, "model");

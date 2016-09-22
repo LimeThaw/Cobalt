@@ -5,6 +5,7 @@ in vec3 normal;
 in vec3 view_position;
 in mat3 tangent_to_view_matrix;
 in mat4 view_matrix;
+in mat4 inverse_view_matrix;
 
 uniform vec3 material_color;
 uniform bool has_color_map;
@@ -100,7 +101,7 @@ void main(){
     #if NUM_POINT_LIGHTS > 0
     ::for i NUM_POINT_LIGHTS--
         vec3 light_direction = point_light_positions[ i ] - view_position;
-        vec3 global_light_direction = (inverse(view_matrix) * vec4(light_direction, 0)).xyz;
+        vec3 global_light_direction = (inverse_view_matrix * vec4(light_direction, 0)).xyz;
     	if(textureCube(point_shadow_map[ i ], global_light_direction).x + (BIAS / 5) > vector_to_depth(global_light_direction, i )) {
 		    vec3 light_position = point_light_positions[ i ];
 		    float light_distance_sq = dot(light_direction, light_direction);
