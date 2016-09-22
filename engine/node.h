@@ -18,6 +18,7 @@ Can have other node objects as children or parents.
 #include <memory>
 
 #include "material.h"
+#include "name_manager.h"
 
 class mesh;
 
@@ -52,6 +53,7 @@ class node {
         void load_model(const std::string &path, int model_index);
         glm::mat4 node_matrix;
         std::vector<node *> children;
+        string name;
 };
 
 #endif // NODE_H

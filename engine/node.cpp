@@ -4,11 +4,11 @@
 node::node() {
     node_matrix = glm::mat4(1.0f);
     parent_node = nullptr;
+    name = name_manager::get_instance()->insert(this);
 }
 
 node::node(const std::string &scene_path) {
-    node_matrix = glm::mat4(1.0f);
-    parent_node = nullptr;
+    node();
     load_scene(scene_path);
 }
 
