@@ -3,6 +3,8 @@
 
 #include "../shader.h"
 
+namespace cs {
+
 class std_shader {
 	public:
 		std_shader();
@@ -10,5 +12,7 @@ class std_shader {
 	private:
 		shader actual_shader;
 };
+
+}
 
 #endif

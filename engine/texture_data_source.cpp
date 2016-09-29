@@ -116,3 +116,7 @@ texture_data_source texture_data_source::create_normals_from_height(const textur
 texture_data_source texture_data_source::create_null_data_source(GLsizei width, GLsizei height) {
     return texture_data_source(width, height, GL_RED, GL_UNSIGNED_BYTE, std::shared_ptr<void>());
 }
+
+bool texture_data_source::operator== (const texture_data_source &other) {
+	return data == other.data;
+}

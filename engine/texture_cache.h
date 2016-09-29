@@ -16,6 +16,7 @@ class texture_cache {
         static texture_cache &get_instance();
 
         texture_data_source get_texture_from_filename(std::string filename);
+        std::string get_path(const texture_data_source &source);
 };
 
 

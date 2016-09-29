@@ -11,11 +11,11 @@
 class cubemap :
     public texture {
     public:
-        cubemap(GLsizei width, GLsizei height, GLenum internalformat,
+        cubemap(GLsizei width, GLsizei height, std::string arg_name, GLenum internalformat,
 		    GLenum wrap_r = GL_CLAMP_TO_EDGE, GLenum wrap_s = GL_CLAMP_TO_EDGE, GLenum wrap_t = GL_CLAMP_TO_EDGE,
 		    GLenum mag_filter = GL_LINEAR, GLenum min_filter = GL_LINEAR);
 		    
-	    cubemap(GLsizei width, GLsizei height, GLenum internalformat, GLenum format,
+	    cubemap(GLsizei width, GLsizei height, std::string arg_name, GLenum internalformat, GLenum format,
 	    	GLenum wrap_r = GL_CLAMP_TO_EDGE, GLenum wrap_s = GL_CLAMP_TO_EDGE, GLenum wrap_t = GL_CLAMP_TO_EDGE,
 	    	GLenum mag_filter = GL_LINEAR, GLenum min_filter = GL_LINEAR);
 

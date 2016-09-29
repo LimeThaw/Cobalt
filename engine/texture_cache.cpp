@@ -21,3 +21,12 @@ texture_data_source texture_cache::get_texture_from_filename(std::string filenam
         return rst;
     }
 }
+
+std::string texture_cache::get_path(const texture_data_source &source) {
+	for (auto it = entries.begin(); it != entries.end(); ++it ) {
+		if (it->second == source)
+			return it->first;
+	}
+	printf("! Could not find path of a texture. Returned empty string.\n");
+	return "";	 
+}

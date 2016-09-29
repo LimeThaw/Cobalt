@@ -13,19 +13,16 @@ mesh::mesh() {
     vertex_array_object_id = 0;
     has_uvs = false;
     box = bounding_box();
+    path = "";
+    name = name_manager::get_instance()->insert(this);
 }
 
-mesh::mesh(const std::string &file_path) {
-    node_matrix = glm::mat4(1.0f);
-    parent_node = nullptr;
-    vertex_data = nullptr;
-    uv_data = nullptr;
-    tangent_data = nullptr;
-    normal_data = nullptr;
-    vertex_id = uv_id = tangent_id = normal_id = 0;
-    vertex_array_object_id = 0;
-    has_uvs = false;
+mesh::mesh(const std::string &file_path) : mesh() {
 	load_model(file_path);
+}
+
+mesh::mesh(const std::string &file_path, const std::string &arg_name) : mesh(file_path) {
+	set_name(arg_name);
 }
 
 mesh::~mesh() {
@@ -133,6 +130,8 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
     );
 
     glBindVertexArray(0);
+    
+	path = scene_path;
 
     std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n";
 
@@ -176,6 +175,10 @@ bool mesh::is_shadow_caster() {
 
 bounding_box mesh::get_bounding_box() {
 	return box;
+}
+
+const string &mesh::get_path() {
+	return path;
 }
 
 //Private

@@ -18,7 +18,6 @@ Can have other node objects as children or parents.
 #include <memory>
 
 #include "material.h"
-#include "name_manager.h"
 
 class mesh;
 
@@ -44,9 +43,13 @@ class node {
         void append_node(node *new_child);///< Appends the given node as its child.
         void append_mesh(const std::string &file_path);
         void set_parent(node *new_parent);///< Set the node's parent.
+        node* get_parent();
         bool remove_child(node *child);///< Removes a child node from this node.
         glm::mat4 get_node_matrix() const;///< Returns the transformation matrix affecting all of the node's children. It includes the transformation of it's parents.
         std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
+        std::vector<node*> get_children();
+        string set_name(const string arg_name);
+        string get_name();
 
     protected:
         node *parent_node;

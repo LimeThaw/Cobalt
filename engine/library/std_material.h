@@ -7,7 +7,7 @@ namespace cs {
 
 class std_material : public material {
 	public:
-		std_material(glm::vec3 color = glm::vec3(1.0f), float ref = 1.0f, float rough = 0.5f, float lumi = 0.0f, bool shadow_caster = true);
+		std_material(std::string arg_name = "", glm::vec3 color = glm::vec3(1.0f), float ref = 1.0f, float rough = 0.5f, float lumi = 0.0f, bool shadow_caster = true);
 		void set_color(glm::vec3 new_color);
 		void set_roughness(float new_roughness);
 		void set_reflectivity(float new_reflectivity);

@@ -1,3 +1,6 @@
+#ifndef NAME_MANAGER_H
+#define NAME_MANAGER_H
+
 #include <string>
 #include <map>
 
@@ -7,12 +10,16 @@ class node;
 class name_manager {
 	public:
 		static name_manager* get_instance();
-		string insert(string name, node* item);
-		string insert(node* item);
+		string insert(string name, void* item);
+		string insert(void* item);
+		bool contains(string name);
+		bool remove(string name);
 	
 	private:
 		name_manager();
 		static name_manager* instance;
-		map<string, node*> dictionary;
-		int count;
+		map<string, void*> dictionary;
+		unsigned long long count;
 };
+
+#endif

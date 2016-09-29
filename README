@@ -1,4 +1,4 @@
- - Version 0.2 - 
+ - Version 0.3 - 
 
 Includes a sample program and doxygen configuration and documentation
 
@@ -8,3 +8,5 @@ Libraries needed:
 - glfw
 - glm
 - soil
+
+Used and included: JSON for modern C++ by Niels Lohmann: https://github.com/nlohmann/json

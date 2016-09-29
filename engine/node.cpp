@@ -128,6 +128,10 @@ void node::set_parent(node *new_parent) {
     parent_node = new_parent;
 }
 
+node* node::get_parent() {
+	return parent_node;
+}
+
 bool node::remove_child(node *child) {
     for(unsigned int i = 0; i < children.size(); i++) {
         if(children[i] == child) {
@@ -155,6 +159,19 @@ std::vector< node * > node::enumerate() {
     return rst;
 }
 
+std::vector<node*> node::get_children() {
+	return children;
+}
+
+string node::set_name(const string arg_name) {
+	name_manager::get_instance()->remove(name);
+	name = name_manager::get_instance()->insert(arg_name, this);
+	return name;
+}
+
+string node::get_name() {
+	return name;
+}
 
 //Private
 void node::load_model(const std::string &path, int model_index) {

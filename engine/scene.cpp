@@ -30,5 +30,5 @@ std::vector< node * > scene::enumerate_nodes() {
 
 //private
 void scene::init() {
-
+	
 }

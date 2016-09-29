@@ -1,10 +1,15 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <fstream>
+#include <string>
+#include <glm/glm.hpp>
 #include <cassert>
 #include <cmath>
 
 #define DEG_TO_RAD 0.017453294
+
+using namespace std;
 
 template<typename T>
 T clamp(const T &val, const T &min, const T &max) {
@@ -26,5 +31,10 @@ template<typename T>
 T log2(T x) {
     return std::log(x) / std::log(2);
 }
+
+string serialize(glm::vec3 vec);
+string serialize(glm::mat4 mat);
+
+void write_to_file(const char* filename, const char* text);
 
 #endif

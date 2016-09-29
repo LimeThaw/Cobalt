@@ -10,21 +10,27 @@ int main() {
 	//Creating scene and light(s)
     cs::std_scene demo_world;
     demo_world.set_skybox("demo/res/textures/skybox.png");
-    auto light = std::make_shared<directional_light>(glm::vec3(100, 100, 100), 0.5f, glm::vec3(0, 1, 1));
+    auto light = std::make_shared<directional_light>(glm::vec3(100, 100, 100), 0.5f, glm::vec3(0, 1, 1), "rotating_light");
 	//demo_world.add_directional_light(std::make_shared<directional_light>(glm::vec3(100, 100, 100), 0.0f, glm::vec3(1, 1, 1)));
-	//demo_world.add_directional_light(light);
-    demo_world.add_point_light(std::make_shared<point_light>(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(0, 1.8, 0), 10.0f));
+	demo_world.add_directional_light(light);
+    demo_world.add_point_light(std::make_shared<point_light>(glm::vec3(0.3, 0.3, 1.0), 3.0f, glm::vec3(0, 1.8, 0), 10.0f, "inner_light"));
 	
-	// Loading sample mesh
-	auto sample_mat = std::make_shared<cs::std_material>();
-	mesh* sample_mesh = new mesh("demo/res/models/untitled.obj");
+	// Loading sample meshes
+	auto sample_mat = std::make_shared<cs::std_material>("sample_mat");
+	mesh* sample_mesh = new mesh("demo/res/models/untitled.obj", "untitled");
 	sample_mesh->set_scale(0.3f);
 	sample_mesh->set_material(sample_mat);
 	demo_world.append_node(sample_mesh);
 	
-	sample_mat = std::make_shared<cs::std_material>();
+	auto terrain_mat = std::make_shared<cs::std_material>("terrain_mat");
+	terrain_mat->set_color_map(texture2d::load_file("demo/res/textures/testmapTex_small.png", "terrain_tex"));
+	mesh* terrain_mesh = new mesh("demo/res/models/testmap.obj", "terrain_mesh");
+	terrain_mesh->set_material(terrain_mat);
+	demo_world.append_node(terrain_mesh);
+	
+	sample_mat = std::make_shared<cs::std_material>("sphere_mat");
 	sample_mat->set_shadow_cast(false);
-	mesh* test_mesh = new mesh("demo/test_sphere.obj");
+	mesh* test_mesh = new mesh("demo/test_sphere.obj", "sphere");
 	test_mesh->set_scale(0.3);
 	test_mesh->place(0, 1.8, 0);
 	test_mesh->set_material(sample_mat);
@@ -32,11 +38,15 @@ int main() {
 	
 	// Creating the camera
 	auto main_camera = std::make_shared<camera>(glm::vec3(0, 10, -8), glm::vec3(0, 1.5, 0));
+	main_camera->set_name("main_camera");
 	demo_world.set_camera(main_camera);
 	
 	// Declaring variables used for framerate counting
 	float fpsc = glfwGetTime();
 	int fps = 0;
+	
+	// Write scene to file "test.scene"
+	demo_world.save("test.scene");
 	
 	// Main loop
 	bool quit = false;

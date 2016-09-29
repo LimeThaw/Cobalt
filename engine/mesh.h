@@ -30,6 +30,7 @@ class mesh : public node {
     public:
         mesh();
         mesh(const std::string &file_path);
+        mesh(const std::string &file_path, const std::string &arg_name);
         ~mesh();
         bool load_model(const std::string &model_path);
         bool load_model(const std::string &scene_path, int model_index);
@@ -39,6 +40,7 @@ class mesh : public node {
         void render_no_bind();
         bool is_shadow_caster();
         bounding_box get_bounding_box();
+        const string &get_path();
 
     private:
         void load_model(aiMesh *inmesh);
@@ -58,6 +60,7 @@ class mesh : public node {
         std::shared_ptr<material> mat;
         bool has_uvs;
         bounding_box box;
+        string path;
 };
 
 #endif // MESH_H

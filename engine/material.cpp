@@ -1,11 +1,16 @@
 #include "material.h"
 
-material::material(bool shadow_caster) : shadow_caster(shadow_caster) {
+material::material(std::string arg_name, bool shadow_caster) : shadow_caster(shadow_caster) {
 	mat_is_standard = false;
+	if(arg_name == "") {
+		name = name_manager::get_instance()->insert(this);
+	} else {
+		name = name_manager::get_instance()->insert(arg_name, this);
+	}
 }
 
-material::material(const texture_bindings &textures, bool shadow_caster) : textures(textures), shadow_caster(shadow_caster) {
-	mat_is_standard = false;
+material::material(const texture_bindings &textures, std::string arg_name, bool shadow_caster) : textures(textures) {
+	material(arg_name, shadow_caster);
 }
 
 void material::set_uniform(std::string name, uniform::ptr new_uniform) {
@@ -18,6 +23,16 @@ void material::remove_uniform(std::string name) {
 	}
 }
 
+json material::get_uniforms_json() {
+	json uniforms;
+	for(auto u : this->uniforms) {
+		if(auto uni = dynamic_cast<float_uniform*>(u.second.get())) {
+			uniforms[u.first] = *uni->get_data();
+		}
+	}
+	return uniforms;
+}
+
 void material::add_texture(std::string uniform_name, std::shared_ptr<texture> tex) {
 	for(unsigned int i = 0; i < textures.size(); ++i) {
 		if(textures[i].first == uniform_name) {
@@ -26,6 +41,10 @@ void material::add_texture(std::string uniform_name, std::shared_ptr<texture> te
 		}
 	}
     textures.push_back(std::pair<std::string, std::shared_ptr<texture>>(uniform_name, tex));
+}
+
+const material::texture_bindings &material::get_textures() {
+	return textures;
 }
 
 void material::use() {
@@ -51,4 +70,14 @@ bool material::is_shadow_caster() {
 
 void material::set_shadow_cast(bool shadow) {
 	shadow_caster = shadow;
+}
+
+string material::set_name(const string arg_name) {
+	name_manager::get_instance()->remove(name);
+	name = name_manager::get_instance()->insert(arg_name, this);
+	return name;
+}
+
+string material::get_name() {
+	return name;
 }

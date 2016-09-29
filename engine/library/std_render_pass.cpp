@@ -1,5 +1,4 @@
 #include "std_render_pass.h"
-#include "../mesh.h"
 using namespace cs;
 
 #define bias glm::mat4(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0)
@@ -52,7 +51,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 		
 		for(unsigned int i = 0; i < num_d_lights; ++i) {
 			auto shadow_map = std::make_shared<texture2d>(
-				shadow_map_resolution, shadow_map_resolution, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+				shadow_map_resolution, shadow_map_resolution, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 			auto shadow_map_attachment = std::make_shared<texture_framebuffer_attachment>(shadow_map);
 			auto shadow_map_framebuffer = std::make_shared<framebuffer>(
 				framebuffer::attachments(), framebuffer::optional_attachment(shadow_map_attachment));
@@ -67,7 +66,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 		point_shadow_maps.clear();
 		point_shadow_map_framebuffers.clear();
 		for(unsigned int i = 0; i < num_p_lights; ++i) {
-			auto shadow_map = std::make_shared<cubemap>(shadow_map_resolution/4.0f, shadow_map_resolution/4.0f, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+			auto shadow_map = std::make_shared<cubemap>(shadow_map_resolution/4.0f, shadow_map_resolution/4.0f, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 			point_shadow_maps.push_back(shadow_map);
 			
 			for(GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; ++face) {
@@ -76,7 +75,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 			}
 		}
 	} else {
-		// Update light matrices
+		// Update directional light matrices to fit the scene
 		for(unsigned int i = 0; i < num_d_lights; ++i) {
 			directional_shadow_map_view_projections[i] = get_light_matrix(d_lights[i]->get_direction(), a_scene);
 		}
@@ -140,6 +139,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
     glViewport(viewport_variables[0], viewport_variables[1], viewport_variables[2], viewport_variables[3]);
     glDrawBuffer(GL_BACK);
 	
+	// Calculate and set general matrix uniforms
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
     glm::mat4 view_matrix = the_camera.get_view();
     glm::mat4 inverse_view_matrix = glm::inverse(view_matrix);
@@ -161,7 +161,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
     
     for(auto node : a_scene.enumerate_nodes()) {
         if(mesh *m = dynamic_cast<mesh*>(node)) {
-            if(m->get_material()->is_standard()) {
+            if(m->get_material() != nullptr && m->get_material()->is_standard()) {
             	for(unsigned int i = 0; i < directional_shadow_maps.size(); ++i) {
             		m->get_material()->add_texture("directional_shadow_map[" + std::to_string(i) + "]", directional_shadow_maps[i]);
             	}
@@ -201,7 +201,7 @@ void std_render_pass::render(scene &a_scene, camera the_camera, std::vector<std:
 	// Render individual meshes
     for(auto node : a_scene.enumerate_nodes()) {
         if(mesh *m = dynamic_cast<mesh*>(node)) {
-            if(m->get_material()->is_standard()) {
+            if(m->get_material() != nullptr && m->get_material()->is_standard()) {
                 glm::mat4 render_model = m->get_node_matrix();
                 glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
                 glUniformMatrix4fv(model_id, 1, GL_FALSE, &render_model[0][0]);

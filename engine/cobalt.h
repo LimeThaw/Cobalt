@@ -11,7 +11,6 @@
 #include "node.h"
 #include "uniforms.h"
 #include "shader.h"
-#include "util.h"
 #include "gl_exception.h"
 #include "render_pass.h"
 #include "camera.h"

@@ -5,6 +5,11 @@ T *material_uniform<T>::get_data() {
 	return &data;
 }
 
+template<>
+float* material_uniform<float>::get_data() {
+	return &data;
+}
+
 template<typename T>
 void material_uniform<T>::set_data(T &new_data) {
 	data = new_data;

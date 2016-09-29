@@ -26,6 +26,8 @@ struct texture_data_source {
     static texture_data_source create_normals_from_height(const texture_data_source &height_map);
 
     static texture_data_source create_null_data_source(GLsizei width, GLsizei height);
+    
+    bool operator==(const texture_data_source &other);
 };
 
 

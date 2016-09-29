@@ -3,6 +3,7 @@
 
 #include "../cobalt.h"
 #include "../framebuffer.h"
+#include "../mesh.h"
 #include <vector>
 #include <memory>
 #include <glm/gtx/transform.hpp>

@@ -4,12 +4,12 @@
 
 #include "cubemap.h"
 
-cubemap::cubemap(GLsizei width, GLsizei height, GLenum internalformat,
+cubemap::cubemap(GLsizei width, GLsizei height, std::string arg_name, GLenum internalformat,
                  GLenum wrap_r, GLenum wrap_s, GLenum wrap_t,
-                 GLenum mag_filter, GLenum min_filter) : cubemap(width, height, internalformat, GL_RGBA, wrap_r, wrap_s, wrap_t, mag_filter, min_filter) {
+                 GLenum mag_filter, GLenum min_filter) : cubemap(width, height, arg_name, internalformat, GL_RGBA, wrap_r, wrap_s, wrap_t, mag_filter, min_filter) {
 }
 
-cubemap::cubemap(GLsizei width, GLsizei height, GLenum internalformat, GLenum format,
+cubemap::cubemap(GLsizei width, GLsizei height, std::string arg_name, GLenum internalformat, GLenum format,
 	    	GLenum wrap_r, GLenum wrap_s, GLenum wrap_t,
 	    	GLenum mag_filter, GLenum min_filter) {
     bind();
@@ -23,6 +23,7 @@ cubemap::cubemap(GLsizei width, GLsizei height, GLenum internalformat, GLenum fo
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, wrap_s);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, wrap_t);
 	    	
+	name_manager::get_instance()->insert(arg_name, this);
 }
 
 
