@@ -10,6 +10,11 @@ float* material_uniform<float>::get_data() {
 	return &data;
 }
 
+template<>
+glm::vec3* material_uniform<glm::vec3>::get_data() {
+	return &data;
+}
+
 template<typename T>
 void material_uniform<T>::set_data(T &new_data) {
 	data = new_data;

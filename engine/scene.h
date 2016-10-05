@@ -23,6 +23,7 @@ class scene {
         void append_mesh(const std::string &file_path);
         node *get_parent_node();
         std::vector< node * > enumerate_nodes();
+        node* find_node(string name);
 
     private:
         void init();

@@ -53,7 +53,7 @@ texture_data_source texture_data_source::load_from_file(std::string filename) {
     if(data == nullptr) {
         throw std::runtime_error("error loading texture " + filename + ": " + SOIL_last_result());
     } else {
-    	std::clog << "- Loaded texture " << filename << "\n";
+    	std::clog << "- Loaded texture " << filename << "\n\n";
     }
     return texture_data_source(width, height, num_channels_to_format((uint) channels), GL_UNSIGNED_BYTE,
                                std::shared_ptr<void>(data));

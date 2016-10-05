@@ -18,6 +18,7 @@ class std_scene : public scene {
 		void add_directional_light(std::shared_ptr<directional_light> new_light);
 		void set_skybox(std::string path);
         void save(const char* file_path, bool pretty = true);
+        void load(const char* file_path);
 		void render();
 	private:
 		std::shared_ptr<std_render_pass> render_pass;

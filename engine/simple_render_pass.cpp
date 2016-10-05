@@ -55,7 +55,7 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
                 ambient_light_color.g, ambient_light_color.b);
 
     for(auto node : the_scene.enumerate_nodes()) {
-        if(mesh *m = dynamic_cast<mesh*>(node)) {
+        if(mesh* m = dynamic_cast<mesh*>(node)) {
             if(m->get_material() && std::find(render_materials.begin(), render_materials.end(), m->get_material()) !=
                     render_materials.end()) {
                 m->render();

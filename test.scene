@@ -1,0 +1,115 @@
+{
+    "cameras": {
+        "main_camera": {
+            "node_matrix": "-1.000000 -0.000000 0.000000 -0.000000 0.000000 0.685365 0.728200 0.000000 0.000000 0.728200 -0.685365 -0.000000 -0.000000 10.000000 -8.000000 1.000000",
+            "projection_matrix": "1.008332 0.000000 0.000000 0.000000 0.000000 1.792591 0.000000 0.000000 0.000000 0.000000 -1.002002 -1.000000 0.000000 0.000000 -0.200200 0.000000"
+        }
+    },
+    "dir_lights": {
+        "rotating_light": {
+            "color": "1.000000 1.000000 1.000000",
+            "direction": "0.000000 0.707107 0.707107",
+            "intensity": 0.5
+        }
+    },
+    "main_camera": "main_camera",
+    "materials": {
+        "sample_mat": {
+            "shadow_caster": true,
+            "uniforms": {
+                "material_color": [
+                    "vec3",
+                    "1.000000 1.000000 1.000000"
+                ],
+                "material_luminosity": [
+                    "float",
+                    0.0
+                ],
+                "material_reflectivity": [
+                    "float",
+                    1
+                ],
+                "material_roughness": [
+                    "float",
+                    0.5
+                ]
+            }
+        },
+        "sphere_mat": {
+            "shadow_caster": false,
+            "uniforms": {
+                "material_color": [
+                    "vec3",
+                    "1.000000 1.000000 1.000000"
+                ],
+                "material_luminosity": [
+                    "float",
+                    0.0
+                ],
+                "material_reflectivity": [
+                    "float",
+                    1
+                ],
+                "material_roughness": [
+                    "float",
+                    0.5
+                ]
+            }
+        },
+        "terrain_mat": {
+            "shadow_caster": true,
+            "textures": {
+                "color_map": "terrain_tex"
+            },
+            "uniforms": {
+                "material_color": [
+                    "vec3",
+                    "1.000000 1.000000 1.000000"
+                ],
+                "material_luminosity": [
+                    "float",
+                    0.0
+                ],
+                "material_reflectivity": [
+                    "float",
+                    1
+                ],
+                "material_roughness": [
+                    "float",
+                    0.5
+                ]
+            }
+        }
+    },
+    "meshes": {
+        "sphere": {
+            "material": "sphere_mat",
+            "node_matrix": "0.300000 0.000000 0.000000 0.000000 0.000000 0.300000 0.000000 0.000000 0.000000 0.000000 0.300000 0.000000 0.000000 1.800000 0.000000 1.000000",
+            "path": "demo/test_sphere.obj"
+        },
+        "terrain_mesh": {
+            "material": "terrain_mat",
+            "node_matrix": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "path": "demo/res/models/testmap.obj"
+        },
+        "untitled": {
+            "material": "sample_mat",
+            "node_matrix": "0.300000 0.000000 0.000000 0.000000 0.000000 0.300000 0.000000 0.000000 0.000000 0.000000 0.300000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "path": "demo/res/models/untitled.obj"
+        }
+    },
+    "point_lights": {
+        "inner_light": {
+            "color": "0.300000 0.300000 1.000000",
+            "intensity": 3,
+            "position": "0.000000 1.800000 0.000000",
+            "radius": 10
+        }
+    },
+    "skybox": "demo/res/textures/skybox.png",
+    "textures": {
+        "terrain_tex": {
+            "path": "demo/res/textures/testmapTex_small.png"
+        }
+    }
+}

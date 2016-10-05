@@ -46,6 +46,8 @@ class node {
         node* get_parent();
         bool remove_child(node *child);///< Removes a child node from this node.
         glm::mat4 get_node_matrix() const;///< Returns the transformation matrix affecting all of the node's children. It includes the transformation of it's parents.
+        glm::mat4 get_isolated_matrix() const;///< Returns the matrix describing the transformation of this node relative to its parent.
+        void set_node_matrix(glm::mat4 matrix);///< Sets the matrix describing the node's relative transformation.
         std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
         std::vector<node*> get_children();
         string set_name(const string arg_name);

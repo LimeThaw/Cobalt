@@ -10,10 +10,10 @@
 
 namespace cs {
 
-class std_render_pass : public render_pass<scene, camera, std::vector<std::shared_ptr<directional_light>>, std::vector<std::shared_ptr<point_light>>> {
+class std_render_pass : public render_pass<scene, camera&, std::vector<std::shared_ptr<directional_light>>, std::vector<std::shared_ptr<point_light>>> {
 	public:
 		std_render_pass();
-		void render(scene &a_scene, camera the_camera, std::vector<std::shared_ptr<directional_light>> d_lights, std::vector<std::shared_ptr<point_light>> p_lights) override;
+		void render(scene &a_scene, camera &the_camera, std::vector<std::shared_ptr<directional_light>> d_lights, std::vector<std::shared_ptr<point_light>> p_lights) override;
 		
 	private:
 		std::shared_ptr<shader> std_shader, depth_shader, point_light_shader;

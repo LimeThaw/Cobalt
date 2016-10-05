@@ -8,6 +8,7 @@ texture::texture(std::string arg_name) {
 
 texture::~texture() {
     glDeleteTextures(1, &openGL_id);
+    name_manager::get_instance()->remove(name);
 }
 
 GLuint texture::get_openGL_id() {

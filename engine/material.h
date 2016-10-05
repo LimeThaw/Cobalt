@@ -15,6 +15,7 @@ Material objects are meant to be handled by the material_manager.
 #include "texture.h"
 #include "uniforms.h"
 #include "name_manager.h"
+#include "util.h"
 #include "json.hpp"
 using json = nlohmann::json;
 

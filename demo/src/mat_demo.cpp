@@ -47,6 +47,8 @@ int main() {
 	
 	// Write scene to file "test.scene"
 	demo_world.save("test.scene");
+	cs::std_scene second_scene;
+	second_scene.load("test.scene");
 	
 	// Main loop
 	bool quit = false;
@@ -91,7 +93,7 @@ int main() {
 		
 		// Rendering the scene
 		win.clear();
-		demo_world.render();
+		second_scene.render();
 		win.update();
 		
         // Counting and displaying the current framerate

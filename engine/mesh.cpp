@@ -42,7 +42,7 @@ bool mesh::load_model(const std::string &model_path) {
 }
 
 bool mesh::load_model(const std::string &scene_path, int model_index) {
-    std::clog << " - Loading mesh " << scene_path << " [" << model_index << "]\n";
+    std::clog << "- Loading mesh " << scene_path << " [" << model_index << "]\n";
     float start_time = glfwGetTime();
 
     Assimp::Importer importer;      //Create importer object
@@ -133,7 +133,7 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
     
 	path = scene_path;
 
-    std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n";
+    if(DEBUG_INFO) std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n\n";
 
     return true;        //Function finished properly
 }
@@ -218,7 +218,7 @@ void mesh::load_model(aiMesh *inmesh) {
         }
     } else {
         has_uvs = false;
-        std::cerr << "   ! Could not find texture coordinates or generate tangents\n";
+        if(DEBUG_INFO) std::cerr << "   ! Could not find texture coordinates or generate tangents\n";
     }
 
     if(inmesh->HasNormals()) {      //Get normals
@@ -228,7 +228,7 @@ void mesh::load_model(aiMesh *inmesh) {
             if(MESH_INFO)std::clog << "  - Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
         }
     } else {
-        std::cerr << "   ! Could not find normals\n";
+        if(DEBUG_INFO) std::cerr << "   ! Could not find normals\n";
     }
 
     if(inmesh->HasTangentsAndBitangents()) {      //Get tangents

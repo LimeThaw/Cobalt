@@ -7,8 +7,7 @@ node::node() {
     name = name_manager::get_instance()->insert(this);
 }
 
-node::node(const std::string &scene_path) {
-    node();
+node::node(const std::string &scene_path) : node() {
     load_scene(scene_path);
 }
 
@@ -17,6 +16,7 @@ node::~node() {
         delete children[i];
     }
     children.clear();
+    name_manager::get_instance()->remove(name);
 }
 
 void node::load_model(const std::string &path) {
@@ -147,6 +147,14 @@ glm::mat4 node::get_node_matrix() const {
     temp_matrix = node_matrix;
     if(parent_node != nullptr)temp_matrix = parent_node->get_node_matrix() * temp_matrix;
     return temp_matrix;
+}
+
+glm::mat4 node::get_isolated_matrix() const {
+	return node_matrix;
+}
+
+void node::set_node_matrix(glm::mat4 matrix) {
+	node_matrix = matrix;
 }
 
 std::vector< node * > node::enumerate() {

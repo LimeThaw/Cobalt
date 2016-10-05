@@ -27,7 +27,11 @@ json material::get_uniforms_json() {
 	json uniforms;
 	for(auto u : this->uniforms) {
 		if(auto uni = dynamic_cast<float_uniform*>(u.second.get())) {
-			uniforms[u.first] = *uni->get_data();
+			uniforms[u.first].push_back("float");
+			uniforms[u.first].push_back(*uni->get_data());
+		} else if(auto uni = dynamic_cast<vec3_uniform*>(u.second.get())) {
+			uniforms[u.first].push_back("vec3");
+			uniforms[u.first].push_back(serialize(*uni->get_data()));
 		}
 	}
 	return uniforms;

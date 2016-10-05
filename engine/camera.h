@@ -23,6 +23,7 @@ class camera : public node {
         void setup(glm::vec3 arg_pos, glm::vec3 arg_point);///< Combines the functions set_position() and point_at()
         const glm::mat4 get_view() const;///< Returns the view matrix of the camera.
         const glm::mat4 &get_projection() const;///< Returns the projection matrix of the camera.
+        void set_projection(const glm::mat4 &matrix);
 
     private:
         glm::mat4 projection;

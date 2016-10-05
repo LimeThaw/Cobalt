@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+#include <sstream>
 #include <glm/glm.hpp>
 #include <cassert>
 #include <cmath>
@@ -33,8 +35,13 @@ T log2(T x) {
 }
 
 string serialize(glm::vec3 vec);
+glm::vec3 deserialize_vec3(string text);
 string serialize(glm::mat4 mat);
+glm::mat4 deserialize_mat4(string text);
 
 void write_to_file(const char* filename, const char* text);
+string read_from_file(const char* filename);
+
+vector<string> split(const string &s, char delim);
 
 #endif

@@ -28,6 +28,13 @@ std::vector< node * > scene::enumerate_nodes() {
     return parent_node.enumerate();
 }
 
+node* scene::find_node(string name) {
+	for(node* n : enumerate_nodes()) {
+		if(n->get_name().compare(name) == 0) return n;
+	}
+	return nullptr;
+}
+
 //private
 void scene::init() {
 	
