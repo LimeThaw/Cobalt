@@ -13,7 +13,7 @@ glm::vec3 deserialize_vec3(string text) {
 	glm::vec3 ret;
 	auto words = split(text, ' ');
 	assert(words.size() >= 3);
-	
+
 	for(short i = 0; i < 3; ++i) {
 		ret[i] = stof(words[i]);
 	}
@@ -36,10 +36,10 @@ glm::mat4 deserialize_mat4(string text) {
 	glm::mat4 ret;
 	auto words = split(text, ' ');
 	assert(words.size() >= 16);
-	
+
 	for(short i = 0; i < 4; ++i) {
 		for(short j = 0; j < 4; ++j) {
-			ret[i][j] = stof(words[i + 4*j]);
+			ret[i][j] = stof(words[4*i + j]);
 		}
 	}
 	return ret;
@@ -78,4 +78,9 @@ vector<string> split(const string &s, char delim) {
         elems.push_back(item);
     }
     return elems;
+}
+
+string filename(string source) {
+	auto list = split(source, '/');
+	return list[list.size() - 1];
 }

@@ -17,10 +17,10 @@ class simple_render_pass :
     private:
         std::vector<std::shared_ptr<material>> render_materials;
     public:
-        simple_render_pass(std::shared_ptr<shader> new_shader, std::vector<std::shared_ptr<material>> render_materials);
+        simple_render_pass(shader *new_shader, std::vector<std::shared_ptr<material>> render_materials);
 
         ///< Creating a render pass mith multiple materials.
-        simple_render_pass(std::shared_ptr<shader> new_shader, std::shared_ptr<material> render_materials);
+        simple_render_pass(shader *new_shader, std::shared_ptr<material> render_materials);
 
         ///< Creating a render pass with a single material.
         void render(scene &the_scene, camera the_camera, std::vector<directional_light> d_lights,

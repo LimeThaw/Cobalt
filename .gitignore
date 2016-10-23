@@ -11,3 +11,6 @@ cobalt.kdev4
 *.cbp
 wiki/
 .idea/
+*.o
+*/CMakeFiles
+*.cmake

@@ -12,9 +12,6 @@ node::node(const std::string &scene_path) : node() {
 }
 
 node::~node() {
-    for(unsigned int i = 0; i < children.size(); i++) {
-        delete children[i];
-    }
     children.clear();
     name_manager::get_instance()->remove(name);
 }

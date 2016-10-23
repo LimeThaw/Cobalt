@@ -16,6 +16,8 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 
+#include "util.h"
+
 class shader {
     public:
         shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix = "");

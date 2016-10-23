@@ -21,7 +21,7 @@ string name_manager::insert(string name, void* item) {
 	}
 	if(found) printf("! Two Items had the same name, one has been renamed\n");
 	dictionary.insert(pair<string, void*>(name, item));
-	printf(" -> Inserted item %s\n", name.c_str());
+	if(DEBUG_INFO) printf(" -> Inserted item %s\n", name.c_str());
 	return name;
 }
 
@@ -39,7 +39,7 @@ bool name_manager::remove(string name) {
 		return false;
 	} else {
 		dictionary.erase(name);
-		printf(" -> Removed %s\n", name.c_str());
+		if(DEBUG_INFO) printf(" -> Removed %s\n", name.c_str());
 		return true;
 	}
 }

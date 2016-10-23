@@ -43,5 +43,6 @@ void write_to_file(const char* filename, const char* text);
 string read_from_file(const char* filename);
 
 vector<string> split(const string &s, char delim);
+string filename(string source);
 
 #endif

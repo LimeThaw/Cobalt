@@ -1,7 +1,7 @@
 #include "shader.h"
 
 static GLuint load_shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix) {
-    std::clog << "- Loading shader\n";//" << vertex_path << " | " << fragment_path << "\n";
+    std::clog << "- Loading shader " << filename(vertex_path) << " | " << filename(fragment_path) << "\n";
     float start_time = glfwGetTime();
 
     // Create the shaders
@@ -88,7 +88,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
 
     GLuint shader_id = program_id;
 
-    if(DEBUG_INFO) std::clog << " - Finished loading shader in " << glfwGetTime() - start_time << " seconds\n\n";
+    if(DEBUG_INFO) std::clog << " - Finished loading shader " << shader_id << " in " << glfwGetTime() - start_time << " seconds\n\n";
 
     return shader_id;
 }
@@ -108,7 +108,7 @@ void shader::use() {
 std::string shader::process_shader(std::string source) {
 
 	std::string term, value;
-	
+
 	// Substitute defines
 	unsigned int a = 0, b, c, length;
 	while(source.find("#define", a) < source.length()) {
@@ -117,17 +117,17 @@ std::string shader::process_shader(std::string source) {
 		c = source.find_first_of(" ", b);
 		length = c - b;
 		term = source.substr(b, length);
-		
+
 		b = source.find_first_not_of(" ", c);
 		c = std::min(std::min(source.find_first_of(" ", b), source.find_first_of("	", b)), source.find_first_of("\n", b));
 		value = source.substr(b, c - b);
-		
+
 		while(source.find(term, c) < source.length()) {
 			b = source.find(term, c);
 			source = source.substr(0, b) + value + source.substr(b + length);
 		}
 	}
-	
+
 	// Process commands
 	unsigned int d, e;
 	std::string command, data, result;
@@ -139,10 +139,10 @@ std::string shader::process_shader(std::string source) {
 			c = source.find(";;", b);
 			if(c > source.length()) break;
 		} else break;
-		
+
 		command = source.substr(a+2, b-a-2);
 		data = source.substr(b+2, c-b-2);
-		
+
 		if(command.substr(0, 3) == "for") {
 			b = command.find_first_not_of(" ", 3);
 			d = command.find_first_of(" ", b);
@@ -151,7 +151,7 @@ std::string shader::process_shader(std::string source) {
 			d = std::min(command.find_first_of(" ", b), command.find_first_of("-", b));
 			value = command.substr(b, d - b);
 			std::stringstream(value) >> d;
-			
+
 			for(unsigned int i = 0; i < d; ++i) {
 				result += data;
 				while(result.find(" " + term + " ") < result.length()) {
@@ -161,11 +161,11 @@ std::string shader::process_shader(std::string source) {
 				}
 			}
 		}
-		
+
 		source = source.substr(0, a) + result + source.substr(c + 2);
 	}
-	
+
 	// ::for i 5--print(i);;  ==  for(int i = 0; i < 5, ++i) print(i);
-	
+
 	return source;
 }

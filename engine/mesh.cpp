@@ -130,7 +130,7 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
     );
 
     glBindVertexArray(0);
-    
+
 	path = scene_path;
 
     if(DEBUG_INFO) std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n\n";
@@ -156,13 +156,37 @@ void mesh::render() {
 
     glBindVertexArray(vertex_array_object_id);
 
+	// Debug error Checking
+	if(DEBUG_INFO) {
+		GLint shader_id;
+		glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
+		glValidateProgram(shader_id);
+		GLsizei length;
+		char log_buffer[512];
+		glGetProgramInfoLog(shader_id, 512, &length, log_buffer);
+		if(length > 0) std::cerr << "! Shader error: " << log_buffer << '\n';
+	}
+
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
 
     glBindVertexArray(0);
+
+	mat->unbind();
 }
 
 void mesh::render_no_bind() {
     glBindVertexArray(vertex_array_object_id);
+
+	// Debug error Checking
+	if(DEBUG_INFO) {
+		GLint shader_id;
+	    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
+		glValidateProgram(shader_id);
+		GLsizei length;
+		char log_buffer[512];
+		glGetProgramInfoLog(shader_id, 512, &length, log_buffer);
+		if(length > 0) std::cerr << "! Shader error: " << log_buffer << '\n';
+	}
 
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
 
@@ -185,7 +209,7 @@ const string &mesh::get_path() {
 void mesh::load_model(aiMesh *inmesh) {
 
     if(MESH_INFO)std::clog << "  - Loading model\n";
-    
+
     glm::vec3 min_vertex = glm::vec3(0, 0, 0), max_vertex = glm::vec3(0, 0, 0);
 
     std::vector<glm::vec3> vertices;
@@ -197,14 +221,14 @@ void mesh::load_model(aiMesh *inmesh) {
     for(unsigned int i = 0; i < inmesh->mNumVertices; i++) { //Get vertices
         glm::vec3 vertex = glm::vec3(inmesh->mVertices[i].x, inmesh->mVertices[i].y, inmesh->mVertices[i].z);     //Get vertices and push them into vector
         vertices.push_back(vertex);
-        
+
         if(vertex.x < min_vertex.x) min_vertex.x = vertex.x;
         if(vertex.x > max_vertex.x) max_vertex.x = vertex.x;
         if(vertex.y < min_vertex.y) min_vertex.y = vertex.y;
         if(vertex.y > max_vertex.y) max_vertex.y = vertex.y;
         if(vertex.z < min_vertex.z) min_vertex.z = vertex.z;
         if(vertex.z > max_vertex.z) max_vertex.z = vertex.z;
-        
+
         if(MESH_INFO)std::clog << "   - Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
     }
     box = bounding_box(min_vertex, max_vertex);

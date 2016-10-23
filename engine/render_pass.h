@@ -12,16 +12,20 @@ Template used as  a basis for custom render passes.
 template<typename scene_type, typename... additional_render_parameter_types>
 class render_pass {
 private:
-    std::shared_ptr<shader> render_pass_shader;
+    shader* render_pass_shader;
 public:
-    render_pass(std::shared_ptr<shader> render_pass_shader_id) : render_pass_shader(render_pass_shader_id) {
+    render_pass(shader *render_pass_shader_id) : render_pass_shader(render_pass_shader_id) {
     }///< Constructor defining the shader to be used in the render pass.
+
+	virtual ~render_pass() {
+		
+	}
 
     void prepare_render() {
         render_pass_shader->use();
     }///< Function binding the shader associated with the render pass.
 
-	void set_shader(std::shared_ptr<shader> new_render_pass_shader) {
+	void set_shader(shader *new_render_pass_shader) {
 		render_pass_shader = new_render_pass_shader;
 	}
 

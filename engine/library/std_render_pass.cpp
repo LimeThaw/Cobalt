@@ -23,52 +23,58 @@ const glm::vec3 cubemap_ups[6] = {
 };
 
 std_render_pass::std_render_pass() :
-		render_pass<scene, camera&, std::vector<std::shared_ptr<directional_light>>, std::vector<std::shared_ptr<point_light>>>(std::make_shared<shader>(shader_dir + "std_shader.vertex",
-			shader_dir + "std_shader.fragment", std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"))) {
-	depth_shader = std::make_shared<shader>(shader_dir + "/depthOnlyVertexShader.glsl",
-			shader_dir + "depthOnlyFragmentShader.glsl");
-	point_light_shader = std::make_shared<shader>(shader_dir + "/point_light_shadow_shader.vertex",
-			shader_dir + "depthOnlyFragmentShader.glsl");
+		render_pass<scene, camera&, std::vector<directional_light*>, std::vector<point_light*>>(nullptr) {
+	std_shader = new shader(shader_dir + "std_shader.vertex", shader_dir + "std_shader.fragment",
+		std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"));
+	depth_shader = new shader(shader_dir + "depthOnlyVertexShader.glsl", shader_dir + "depthOnlyFragmentShader.glsl");
+	point_light_shader = new shader(shader_dir + "point_light_shadow_shader.vertex", shader_dir + "depthOnlyFragmentShader.glsl");
 }
 
-void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std::shared_ptr<directional_light>> d_lights, std::vector<std::shared_ptr<point_light>> p_lights) {
+std_render_pass::~std_render_pass() {
+	delete std_shader;
+	delete depth_shader;
+	delete point_light_shader;
+}
+
+void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<directional_light*> d_lights, std::vector<point_light*> p_lights) {
 
 	// Reload shaders and shadowmaps in case number of lights has changed
 	if(d_lights.size() != num_d_lights || p_lights.size() != num_p_lights) {
 		num_d_lights = d_lights.size();
 		num_p_lights = p_lights.size();
-		
+
 		// Reload shaders
-		std_shader = std::make_shared<shader>(shader_dir + "std_shader.vertex",
+		delete std_shader;
+		std_shader = new shader(shader_dir + "std_shader.vertex",
 			shader_dir + "std_shader.fragment",
 			std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(num_d_lights) +
 			"\n#define NUM_POINT_LIGHTS " + std::to_string(num_p_lights) + "\n"));
-			
+
 		// Generate directional shadow maps and framebuffers
 		directional_shadow_maps.clear();
 		directional_shadow_map_framebuffers.clear();
 		directional_shadow_map_view_projections.clear();
-		
+
 		for(unsigned int i = 0; i < num_d_lights; ++i) {
 			auto shadow_map = std::make_shared<texture2d>(
 				shadow_map_resolution, shadow_map_resolution, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 			auto shadow_map_attachment = std::make_shared<texture_framebuffer_attachment>(shadow_map);
 			auto shadow_map_framebuffer = std::make_shared<framebuffer>(
 				framebuffer::attachments(), framebuffer::optional_attachment(shadow_map_attachment));
-			
+
 			directional_shadow_map_view_projections.push_back(get_light_matrix(d_lights[i]->get_direction(), a_scene));
-			
+
 			directional_shadow_maps.push_back(shadow_map);
 			directional_shadow_map_framebuffers.push_back(shadow_map_framebuffer);
 		}
-		
+
 		// Generate point-light shadow maps and framebuffers
 		point_shadow_maps.clear();
 		point_shadow_map_framebuffers.clear();
 		for(unsigned int i = 0; i < num_p_lights; ++i) {
 			auto shadow_map = std::make_shared<cubemap>(shadow_map_resolution/4.0f, shadow_map_resolution/4.0f, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 			point_shadow_maps.push_back(shadow_map);
-			
+
 			for(GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; ++face) {
 				auto shadow_map_attachment = std::make_shared<texture_framebuffer_attachment>(shadow_map, face);
 				point_shadow_map_framebuffers.push_back(std::make_shared<framebuffer>(framebuffer::attachments(), framebuffer::optional_attachment(shadow_map_attachment)));
@@ -80,11 +86,11 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std
 			directional_shadow_map_view_projections[i] = get_light_matrix(d_lights[i]->get_direction(), a_scene);
 		}
 	}
-	
+
 	// Save viewport variables
 	int viewport_variables[4];
 	glGetIntegerv(GL_VIEWPORT, viewport_variables);
-	
+
 	// Render directional shadow maps
 	set_shader(depth_shader);
 	prepare_render();
@@ -93,7 +99,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
 	GLuint model_view_projection_id = glGetUniformLocation(active_shader_id, "model_view_projection_matrix");
 	glDrawBuffer(GL_NONE);
-	
+
 	for(unsigned int i = 0; i < num_d_lights; ++i) {
 		directional_shadow_map_framebuffers[i]->bind();
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -108,7 +114,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std
 		}
 	}
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	
+
 	//Render point light shadow maps
 	glViewport(0, 0, shadow_map_resolution/4, shadow_map_resolution/4);
 	assert(point_shadow_map_framebuffers.size() == 6 * num_p_lights);
@@ -131,14 +137,14 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std
 			}
 		}
 	}
-	
+
 	// Render scene
 	set_shader(std_shader);
 	prepare_render();
     framebuffer::get_screen()->bind();
     glViewport(viewport_variables[0], viewport_variables[1], viewport_variables[2], viewport_variables[3]);
     glDrawBuffer(GL_BACK);
-	
+
 	// Calculate and set general matrix uniforms
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
     glm::mat4 view_matrix = the_camera.get_view();
@@ -152,13 +158,13 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std
     glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
     GLuint model_id = glGetUniformLocation(active_shader_id, "model");
     GLuint normal_id = glGetUniformLocation(active_shader_id, "normal_to_view_matrix");
-    
+
     // Set shadow uniforms
     for(unsigned int i = 0; i < num_d_lights; ++i) {
     	GLuint mat_id = glGetUniformLocation(active_shader_id, ("shadow_map_view_projection_matrix[" + std::to_string(i) + "]").c_str());
     	glUniformMatrix4fv(mat_id, 1, GL_FALSE, &(bias * directional_shadow_map_view_projections[i])[0][0]);
     }
-    
+
     for(auto node : a_scene.enumerate_nodes()) {
         if(mesh *m = dynamic_cast<mesh*>(node)) {
             if(m->get_material() != nullptr && m->get_material()->is_standard()) {
@@ -171,7 +177,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<std
             }
         }
     }
-    
+
 	// Set directional light uniforms
     for(unsigned int i = 0; i < d_lights.size(); ++i) {
         directional_light &d_light = *d_lights[i];
@@ -219,7 +225,7 @@ glm::mat4 std_render_pass::get_light_matrix(glm::vec3 direction, scene& a_scene)
 			if(m->is_shadow_caster()) {
 				light_box.add_bounding_box(m->get_node_matrix() * m->get_bounding_box());
 			}
-	
+
 		}
 	}
 	return light_box.get_light_matrix();

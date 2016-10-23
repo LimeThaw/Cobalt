@@ -32,6 +32,7 @@ class material {
         void add_texture(std::string uniform_name, std::shared_ptr<texture> tex);
         const texture_bindings &get_textures();
         void use();///< Gives all associated textures to the currently active shader.
+		void unbind();
         bool is_standard();
         bool is_shadow_caster();
         void set_shadow_cast(bool shadow);
@@ -42,7 +43,7 @@ class material {
         texture_bindings textures;
         std::map<std::string, std::shared_ptr<uniform>> uniforms;
         bool shadow_caster;
-        
+
     protected:
         bool mat_is_standard;
         std::string name;

@@ -64,6 +64,14 @@ void material::use() {
     }
 }
 
+void material::unbind() {
+    GLint shader_id;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
+    for(unsigned int i = 0; i < textures.size(); i++) {
+        glUniform1i(glGetUniformLocation((GLuint) shader_id, textures[i].first.c_str()), 0);
+    }
+}
+
 bool material::is_standard() {
 	return mat_is_standard;
 }
