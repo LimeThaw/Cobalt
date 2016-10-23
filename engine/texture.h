@@ -14,6 +14,10 @@
 #include "gl_exception.h"
 #include <glm/glm.hpp>
 
+/**
+ *  Abstract class representing a texture buffered by OpenGL. Holds the OpenGL id, the name and the source path
+ *  of the texture.
+ */
 class texture {
 
         friend class texture_framebuffer_attachment;
