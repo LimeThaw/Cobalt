@@ -42,7 +42,8 @@ bool mesh::load_model(const std::string &model_path) {
 }
 
 bool mesh::load_model(const std::string &scene_path, int model_index) {
-    std::clog << "- Loading mesh " << scene_path << " [" << model_index << "]\n";
+    std::clog << indent::get() << "- Loading mesh " << scene_path << " [" << model_index << "]\n";
+	indent::increase();
     float start_time = glfwGetTime();
 
     Assimp::Importer importer;      //Create importer object
@@ -54,7 +55,7 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
                            aiProcess_GenSmoothNormals);    //Load scene
 
     if(!scene) {        //Check for loading errors
-        std::cerr << "  ! Failed to load model " << scene_path << ": " << importer.GetErrorString();
+        std::cerr << indent::get() << "! Failed to load model " << scene_path << ": " << importer.GetErrorString();
         return false;
     }
 
@@ -133,7 +134,8 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
 
 	path = scene_path;
 
-    if(DEBUG_INFO) std::clog << "  - Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n\n";
+    if(DEBUG_INFO) std::clog << indent::get() << "- Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n\n";
+	indent::decrease();
 
     return true;        //Function finished properly
 }
@@ -150,7 +152,7 @@ void mesh::render() {
     if(mat) {
         mat->use();
     } else {
-        std::cerr << " ! Tried to render model without assigned material\n";
+        std::cerr << indent::get() << "! Tried to render model without assigned material\n";
         return;
     }
 
@@ -164,7 +166,7 @@ void mesh::render() {
 		GLsizei length;
 		char log_buffer[512];
 		glGetProgramInfoLog(shader_id, 512, &length, log_buffer);
-		if(length > 0) std::cerr << "! Shader error: " << log_buffer << '\n';
+		if(length > 0) std::cerr << indent::get() << "! Shader error: " << log_buffer << '\n';
 	}
 
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
@@ -185,7 +187,7 @@ void mesh::render_no_bind() {
 		GLsizei length;
 		char log_buffer[512];
 		glGetProgramInfoLog(shader_id, 512, &length, log_buffer);
-		if(length > 0) std::cerr << "! Shader error: " << log_buffer << '\n';
+		if(length > 0) std::cerr << indent::get() << "! Shader error: " << log_buffer << '\n';
 	}
 
     glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
@@ -208,7 +210,7 @@ const string &mesh::get_path() {
 //Private
 void mesh::load_model(aiMesh *inmesh) {
 
-    if(MESH_INFO)std::clog << "  - Loading model\n";
+    if(MESH_INFO)std::clog << indent::get() << "- Loading model\n";
 
     glm::vec3 min_vertex = glm::vec3(0, 0, 0), max_vertex = glm::vec3(0, 0, 0);
 
@@ -229,7 +231,7 @@ void mesh::load_model(aiMesh *inmesh) {
         if(vertex.z < min_vertex.z) min_vertex.z = vertex.z;
         if(vertex.z > max_vertex.z) max_vertex.z = vertex.z;
 
-        if(MESH_INFO)std::clog << "   - Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
+        if(MESH_INFO)std::clog << indent::get() << "- Read Vertex [" << i << "] at " << vertex.x << ", " << vertex.y << ", " << vertex.z << '\n';
     }
     box = bounding_box(min_vertex, max_vertex);
 
@@ -238,28 +240,28 @@ void mesh::load_model(aiMesh *inmesh) {
         for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec2 uv = glm::vec2(inmesh->mTextureCoords[0][i].x, inmesh->mTextureCoords[0][i].y);
             uvs.push_back(uv);
-            if(MESH_INFO)std::clog << "   - Read UV [" << i << "] at " << uv.x << ", " << uv.y << '\n';
+            if(MESH_INFO)std::clog << indent::get() << "- Read UV [" << i << "] at " << uv.x << ", " << uv.y << '\n';
         }
     } else {
         has_uvs = false;
-        if(DEBUG_INFO) std::cerr << "   ! Could not find texture coordinates or generate tangents\n";
+        if(DEBUG_INFO) std::cerr << indent::get() << "! Could not find texture coordinates or generate tangents\n";
     }
 
     if(inmesh->HasNormals()) {      //Get normals
         for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec3 normal = glm::vec3(inmesh->mNormals[i].x, inmesh->mNormals[i].y, inmesh->mNormals[i].z);
             normals.push_back(normal);
-            if(MESH_INFO)std::clog << "  - Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
+            if(MESH_INFO)std::clog << indent::get() << "- Read Normal [" << i << "] at " << normal.x << ", " <<  normal.y << ", " << normal.z << '\n';
         }
     } else {
-        if(DEBUG_INFO) std::cerr << "   ! Could not find normals\n";
+        if(DEBUG_INFO) std::cerr << indent::get() << "! Could not find normals\n";
     }
 
     if(inmesh->HasTangentsAndBitangents()) {      //Get tangents
         for(unsigned int i = 0; i < inmesh->mNumVertices; i++) {
             glm::vec3 tangent = glm::vec3(inmesh->mTangents[i].x, inmesh->mTangents[i].y, inmesh->mTangents[i].z);
             tangents.push_back(tangent);
-            if(MESH_INFO)std::clog << "   - Read Tangent [" << i << "] at " << tangent.x << ", " <<  tangent.y << ", " << tangent.z << '\n';
+            if(MESH_INFO)std::clog << indent::get() << "- Read Tangent [" << i << "] at " << tangent.x << ", " <<  tangent.y << ", " << tangent.z << '\n';
         }
     } else {
         //std::cerr << "   ! Could not generate tangents\n";
@@ -269,7 +271,7 @@ void mesh::load_model(aiMesh *inmesh) {
         aiFace face = inmesh->mFaces[i];
         glm::vec3 vec = glm::vec3(face.mIndices[0], face.mIndices[1], face.mIndices[2]);    //Get faces and put them into vector
         faces.push_back(vec);
-        if(MESH_INFO)std::clog << "   - Read face [" << i << "] with vertices " << vec.x << ", " << vec.y << ", " << vec.z << '\n';
+        if(MESH_INFO)std::clog << indent::get() << "- Read face [" << i << "] with vertices " << vec.x << ", " << vec.y << ", " << vec.z << '\n';
     }
 
     //Put data into float arrays

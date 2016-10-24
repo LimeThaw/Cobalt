@@ -23,7 +23,7 @@ std_scene::~std_scene() {
 				delete (light*)p.second;
 				break;
 			default:
-				printf("! Invalid pointer format: Could not delete\n");
+				printf("%s! Invalid pointer format: Could not delete\n", indent::get().c_str());
 				break;
 		}
 	}
@@ -169,7 +169,8 @@ void std_scene::save(const char* file_path, bool pretty) {
 
 
 void std_scene::load(const char* file_path) {
-	printf("+ Loading scene %s\n", file_path);
+	printf("%s- Loading scene %s\n", indent::get().c_str(), file_path);
+	indent::increase();
 
 	string input = read_from_file(file_path);
 	if(input == "") return;
@@ -182,9 +183,6 @@ void std_scene::load(const char* file_path) {
 	// Loading all textures for the scene
 	for(json::iterator it = scene["textures"].begin(); it != scene["textures"].end(); ++it) {
 		texs.insert(pair<string, shared_ptr<texture2d>>(it.key(), texture2d::load_file((*it)["path"].get<string>().c_str(), it.key())));
-
-		// DEBUG INFO
-		printf("  + Loaded texture %s from path %s\n", it.key().c_str(), (*it)["path"].get<string>().c_str());
 	}
 
 	// Loading all materials for the scene
@@ -204,7 +202,7 @@ void std_scene::load(const char* file_path) {
 				mat->add_texture(jt.key(), texs.find(*jt)->second);
 			}
 			// DEBUG_INFO
-			printf("  + Added texture %s as %s to material %s\n", (*jt).get<string>().c_str(), jt.key().c_str(), it.key().c_str());
+			printf("%s- Added texture %s as %s to material %s\n", indent::get().c_str(), (*jt).get<string>().c_str(), jt.key().c_str(), it.key().c_str());
 		}
 
 		// Add uniforms to material
@@ -215,7 +213,7 @@ void std_scene::load(const char* file_path) {
 			} else if(type == "vec3") {
 				mat->set_uniform(jt.key(), make_shared<vec3_uniform>(deserialize_vec3((*jt)[1].get<string>())));
 			} else {
-				printf("! Found uniform %s of unknown type %s\n", jt.key().c_str(), type.c_str());
+				printf("%s! Found uniform %s of unknown type %s\n", indent::get().c_str(), jt.key().c_str(), type.c_str());
 			}
 		}
 
@@ -255,13 +253,13 @@ void std_scene::load(const char* file_path) {
 
 	// Set main camera
 	if(scene["main_camera"] == NULL) {
-		printf("! Loaded scene does not define a main camera\n");
+		printf("%s! Loaded scene does not define a main camera\n", indent::get().c_str());
 	} else {
 		string mc = scene["main_camera"].get<string>();
 		if(camera* c = dynamic_cast<camera*>(find_node(mc))) {
 			set_camera(c);
 		} else {
-			printf("! Loaded scene scpecified undefined camera as main camera\n");
+			printf("%s! Loaded scene scpecified undefined camera as main camera\n", indent::get().c_str());
 		}
 	}
 
@@ -305,7 +303,7 @@ void std_scene::load(const char* file_path) {
 		to_delete.push_back(pair<char, void*>('n', temp));
 
 		// DEBUG INFO
-		printf("  + Loaded mesh %s from path %s\n", it.key().c_str(), (*it)["path"].get<string>().c_str());
+		printf("%s- Loaded mesh %s from path %s\n", indent::get().c_str(), it.key().c_str(), (*it)["path"].get<string>().c_str());
 	}
 
 	// Now create scene graph structure by setting parenthood relationships
@@ -331,7 +329,8 @@ void std_scene::load(const char* file_path) {
 	// Load skybox if it exists
 	if(scene["skybox"] != NULL) set_skybox(scene["skybox"]);
 
-	printf("- Finished loading scene\n");
+	printf("%s- Finished loading scene\n\n", indent::get().c_str());
+	indent::decrease();
 }
 
 void std_scene::render() {

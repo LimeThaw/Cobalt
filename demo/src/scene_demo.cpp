@@ -1,5 +1,4 @@
 /* TODO:
-*	Indentation management for output
 *	Fix point light shadows being only on one side and not rotating properly with the parent node
 */
 

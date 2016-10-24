@@ -1,47 +1,51 @@
 #include "window.h"
 
-window::window(int width, int height, std::string title) : width(width), height(height), title(title), samples(4) {
+window::window(int width, int height, std::string title) : width(width), height(height), samples(4), title(title) {
 
-	std::clog << "- Creating new window...\n";
+	std::clog << indent::get() << "- Creating new window...\n";
+	indent::increase();
 
     //init GLFW
     if(!glfwInit()) {
-        std::cerr << " ! Window could not be created: Failed to initialize GLFW\n";
+        std::cerr << indent::get() << "! Window could not be created: Failed to initialize GLFW\n";
+		indent::decrease();
         return;
     } else {
-        if(WINDOW_INFO)std::clog << " - Initialized GLFW\n";
+        if(WINDOW_INFO)std::clog << indent::get() << "- Initialized GLFW\n";
     }
-    
+
 	//Give GLFW some info
 	glfwWindowHint(GLFW_SAMPLES, samples);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	
+
     //init window
     glfw_window = glfwCreateWindow(width, height, title.c_str(), NULL, 0);
     if(glfw_window == NULL) {
-        std::cerr << " ! Failed to open window\n";
+        std::cerr << indent::get() << "! Failed to open window\n";
+		indent::decrease();
         return;
     } else {
-        std::cout << " - Opened window\n";
+        std::cout << indent::get() << "- Opened window\n";
     }
-    
+
     //Setup key capturing
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(glfw_window, GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE);
-    
+
     //Make window current
     make_current();
-	
+
     //init GLEW
     if(glewInit() != GLEW_OK) {
-        std::cerr << " ! Window could not be created: Failed to initialize GLEW\n";
+        std::cerr << indent::get() << "! Window could not be created: Failed to initialize GLEW\n";
+		indent::decrease();
         return;
     } else {
-        if(WINDOW_INFO)std::clog << " - Initialized GLEW\n";
+        if(WINDOW_INFO)std::clog << indent::get() << "- Initialized GLEW\n";
     }
     std::clog << "\n";
-    
+
     //setup some OpneGL functions
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -50,6 +54,7 @@ window::window(int width, int height, std::string title) : width(width), height(
 	//setup framerate limiting
 	fps = 0; //0 fps -> unlimited
 	last_frame_time = glfwGetTime();
+	indent::decrease();
 }
 
 window::~window() {

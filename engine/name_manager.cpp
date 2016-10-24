@@ -19,9 +19,9 @@ string name_manager::insert(string name, void* item) {
 		found = true;
 		name = string("Item_") + to_string(count++);
 	}
-	if(found) printf("! Two Items had the same name, one has been renamed\n");
+	if(found) printf("%s! Two Items had the same name, one has been renamed\n", indent::get().c_str());
 	dictionary.insert(pair<string, void*>(name, item));
-	if(DEBUG_INFO) printf(" -> Inserted item %s\n", name.c_str());
+	if(DEBUG_INFO) printf("%s-> Inserted item %s\n", indent::get().c_str(), name.c_str());
 	return name;
 }
 
@@ -35,11 +35,11 @@ bool name_manager::contains(string name) {
 
 bool name_manager::remove(string name) {
 	if(!contains(name)) {
-		printf("! Could not remove %s: Element does not exist\n", name.c_str());
+		printf("%s! Could not remove %s: Element does not exist\n", indent::get().c_str(), name.c_str());
 		return false;
 	} else {
 		dictionary.erase(name);
-		if(DEBUG_INFO) printf(" -> Removed %s\n", name.c_str());
+		if(DEBUG_INFO) printf("%s-> Removed %s\n", indent::get().c_str(), name.c_str());
 		return true;
 	}
 }

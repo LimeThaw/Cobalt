@@ -5,6 +5,7 @@
 #include "../material.h"
 #include "std_material.h"
 #include "std_render_pass.h"
+#include "../indent.h"
 #include <memory>
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>

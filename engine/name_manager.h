@@ -8,6 +8,8 @@
 #include <string>
 #include <map>
 
+#include "indent.h"
+
 using namespace std;
 class node;
 

@@ -17,6 +17,7 @@
 #include <math.h>
 
 #include "util.h"
+#include "indent.h"
 
 class shader {
     public:

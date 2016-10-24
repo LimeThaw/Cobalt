@@ -27,6 +27,6 @@ std::string texture_cache::get_path(const texture_data_source &source) {
 		if (it->second == source)
 			return it->first;
 	}
-	printf("! Could not find path of a texture. Returned empty string.\n");
-	return "";	 
+	printf("%s! Could not find path of a texture. Returned empty string.\n", indent::get().c_str());
+	return "";
 }
