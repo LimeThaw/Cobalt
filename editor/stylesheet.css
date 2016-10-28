@@ -1,0 +1,89 @@
+QMainWindow  * {
+	color:		#002;
+}
+
+/* Background style */
+QMainWindow > QWidget {
+	background:	@color-0;
+}
+
+/* General widget style */
+QWidget {
+	background:	@color-2;
+	border:		none;
+}
+
+/* Console widget style */
+QTextEdit {
+	background:	@color-4;
+	color:		#fff;
+	border:		none;
+}
+
+/* Object browser style */
+QTabWidget::pane {
+	border:		none;
+}
+
+QTabBar::tab {
+	background:	@color-4;
+	color:		@color-1;
+	padding:	5px;
+	border:		1px solid @color-1;
+	border-bottom:		1px solid @color-3;
+}
+
+QTabBar::tab:selected {
+	background:	@color-1;
+	color:		@color-4;
+}
+
+QTreeWidget {
+	alternate-background-color: 	@light-color-2;
+}
+
+QTreeWidget QHeaderView::section {
+	height:		0px;
+}
+
+QTreeWidget::item:selected {
+	background-color: @color-3;
+}
+
+QTreeWidget::branch:open {
+	image:		url(branch-open.png);
+}
+
+QTreeWidget::branch:closed:has-children {
+	image:		url(branch-closed.png);
+}
+
+QTreeWidget::branch:selected {
+	background-color: @color-3;
+}
+
+/* Properties tab style */
+QTableWidget {
+	alternate-background-color: 	@light-color-2;
+	gridline-color:		@color-2;
+}
+
+QTableWidget::item:selected {
+	background-color: @color-3;
+}
+
+QHeaderView::section {
+	background:	@color-4;
+	color:		@color-1;
+}
+
+/* Context menu style */
+QMainWindow QMenu {
+	background-color:	@color-3;
+	color:		@color-1;
+}
+
+QMainWindow QMenu::selected {
+	background-color:	@color-4;
+	color:		@color-1;
+}
