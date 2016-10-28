@@ -3,12 +3,21 @@
 
 #include <QMenuBar>
 
+namespace ce {
+
+class MainWindow;
+
 class MenuBar : public QMenuBar {
 	Q_OBJECT
 
 	public:
-		explicit MenuBar(QWidget *parent = 0);
+		explicit MenuBar(MainWindow *window, QWidget *parent = 0);
 		~MenuBar();
+
+	private:
+		MainWindow *window;
 };
+
+}
 
 #endif

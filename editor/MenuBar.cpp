@@ -1,15 +1,26 @@
 #include "MenuBar.h"
+using namespace ce;
 
-MenuBar::MenuBar(QWidget *parent) : QMenuBar(parent) {
+MenuBar::MenuBar(MainWindow *window, QWidget *parent) : QMenuBar(parent) {
 
 		// Add "File" menu
 		QMenu *fileMenu = addMenu("File");
+			// Add "New" option
+			QAction *newAction = fileMenu->addAction("New");
+			newAction->setShortcuts(QKeySequence::New);
+			newAction->setObjectName("newAction");
 			// Add "Open" option
 			QAction *openAction = fileMenu->addAction("Open");
+			openAction->setShortcuts(QKeySequence::Open);
+			openAction->setObjectName("openAction");
 			// Add "Save" option
 			QAction *saveAction = fileMenu->addAction("Save");
+			saveAction->setShortcuts(QKeySequence::Save);
+			saveAction->setObjectName("saveAction");
 			// Add "Close" option
 			QAction *closeAction = fileMenu->addAction("Close");
+			closeAction->setShortcuts(QKeySequence::Close);
+			closeAction->setObjectName("closeAction");
 
 		// Add "Import" menu
 		QMenu *importMenu = addMenu("Import");

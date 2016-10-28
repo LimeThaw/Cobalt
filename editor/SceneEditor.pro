@@ -4,7 +4,8 @@
 
 TEMPLATE = app
 TARGET = SceneEditor
-INCLUDEPATH += .
+CONFIG += c++14
+LIBS += ../engine/libCobalt.a -L"/usr/lib/x86_64-linux-gnu" -L"/usr/lib" -lGLEW -lglfw -lSOIL -lassimp -lGLU
 
 QT += gui core widgets opengl
 

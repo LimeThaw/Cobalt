@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H_INCLUDED
 #define MAINWINDOW_H_INCLUDED
 
+#include "../engine/library/standard.h"
+
 #include <QMainWindow>
 #include <QEvent>
 #include <QKeyEvent>
@@ -8,6 +10,7 @@
 #include <QGLWidget>
 #include <QTextEdit>
 #include <QLayout>
+#include <QApplication>
 
 #include "MenuBar.h"
 #include "ObjectBrowser.h"
@@ -23,7 +26,18 @@ namespace ce {
 			~MainWindow();
 
 			bool event(QEvent *event) Q_DECL_OVERRIDE;
-			void contextMenuEvent(QContextMenuEvent *e);
+			void contextMenuEvent(QContextMenuEvent *e) Q_DECL_OVERRIDE;
+
+		public slots:
+			void newScene();
+			void openScene();
+			void saveScene();
+
+		private:
+			void connectActions();
+			cs::std_scene *scene;
+			QTextEdit *consoleWidget;
+			QWidget *containerWidget;
 
 	};
 
