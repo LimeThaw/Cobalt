@@ -17,7 +17,7 @@ add_library(Cobalt camera.cpp gl_exception.cpp lights.cpp material.h material.cp
 			texture2d.cpp texture2d.h cubemap.cpp cubemap.h window.cpp window.h bounding_box.cpp
 			bounding_box.h name_manager.cpp library/standard.h library/std_material.h
 			library/std_material.cpp library/std_render_pass.h library/std_render_pass.cpp
-		library/std_scene.h library/std_scene.cpp indent.cpp)
+		library/std_scene.h library/std_scene.cpp indent.cpp named.cpp)
 			# CLion ignores header files that are not named like the corresponding .cpp file, so enumerate them manually
 target_include_directories(Cobalt PUBLIC ${SOIL_INCLUDE_DIRS})
 target_include_directories(Cobalt PRIVATE ${GLFW_INCLUDE_DIRS})

@@ -22,8 +22,8 @@ cubemap::cubemap(GLsizei width, GLsizei height, std::string arg_name, GLenum int
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, wrap_r);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, wrap_s);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, wrap_t);
-	    	
-	name_manager::get_instance()->insert(arg_name, this);
+
+	set_name(arg_name);
 }
 
 

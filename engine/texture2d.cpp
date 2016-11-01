@@ -28,8 +28,8 @@ texture2d::texture2d(const texture_data_source &source, std::string arg_name, bo
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-    
-	name = name_manager::get_instance()->insert(arg_name, this);
+
+	set_name(arg_name);
 	path = texture_cache::get_instance().get_path(source);
 }
 
@@ -47,8 +47,8 @@ texture2d::texture2d(GLsizei width, GLsizei height, std::string arg_name, GLenum
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-    
-	name = name_manager::get_instance()->insert(arg_name, this);
+
+	set_name(arg_name);
 }
 
 void texture2d::bind() {

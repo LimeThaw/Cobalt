@@ -2,7 +2,7 @@
 #include "gl_exception.h"
 #include "shader.h"
 
-mesh::mesh() {
+mesh::mesh() : node() {
     node_matrix = glm::mat4(1.0f);
     parent_node = nullptr;
     vertex_data = nullptr;
@@ -14,7 +14,7 @@ mesh::mesh() {
     has_uvs = false;
     box = bounding_box();
     path = "";
-    name = name_manager::get_instance()->insert(this);
+
 }
 
 mesh::mesh(const std::string &file_path) : mesh() {

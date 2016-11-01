@@ -32,6 +32,8 @@ namespace ce {
 			void newScene();
 			void openScene();
 			void saveScene();
+			void loadMesh();
+			void loadTexture();
 
 		private:
 			void connectActions();

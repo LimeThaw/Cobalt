@@ -19,15 +19,19 @@ MenuBar::MenuBar(MainWindow *window, QWidget *parent) : QMenuBar(parent) {
 			saveAction->setObjectName("saveAction");
 			// Add "Close" option
 			QAction *closeAction = fileMenu->addAction("Close");
-			closeAction->setShortcuts(QKeySequence::Close);
+			closeAction->setShortcuts(QKeySequence::Quit);
 			closeAction->setObjectName("closeAction");
 
 		// Add "Import" menu
 		QMenu *importMenu = addMenu("Import");
 			// Add "Mesh" option
 			QAction *meshAction = importMenu->addAction("Mesh");
+			meshAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+			meshAction->setObjectName("meshAction");
 			// Add "Texture" option
 			QAction *textureAction = importMenu->addAction("Texture");
+			textureAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+			textureAction->setObjectName("textureAction");
 
 		// Add "Add" menu
 		QMenu *addMenu = this->addMenu("Add");

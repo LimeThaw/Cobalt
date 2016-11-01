@@ -9,25 +9,23 @@
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <string>
+#include "named.h"
 #include "texture_data_source.h"
 #include "name_manager.h"
 #include "gl_exception.h"
 #include <glm/glm.hpp>
 
-class texture {
+class texture : public named {
 
         friend class texture_framebuffer_attachment;
 
     private:
         GLuint openGL_id;
     protected:
-    	string name;
     	string path;
         GLuint get_openGL_id();
     public:
         texture(std::string arg_name = "");
-        std::string set_name(const std::string arg_name);
-        std::string get_name();
         std::string get_path();
 
         virtual ~texture();

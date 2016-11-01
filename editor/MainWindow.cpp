@@ -69,8 +69,14 @@ bool MainWindow::event(QEvent *event) {
 			case Qt::Key_S: // Ctrl-S
 				if(QApplication::keyboardModifiers() & Qt::ControlModifier) saveScene();
 				break;
-			case Qt::Key_W: // Ctrl-W
+			case Qt::Key_Q: // Ctrl-Q
 				if(QApplication::keyboardModifiers() & Qt::ControlModifier) close();
+				break;
+			case Qt::Key_M: // Ctrl-M
+				if(QApplication::keyboardModifiers() & Qt::ControlModifier) loadMesh();
+				break;
+			case Qt::Key_T: // Ctrl-T
+				if(QApplication::keyboardModifiers() & Qt::ControlModifier) loadTexture();
 				break;
 			default:
 				break;
@@ -106,21 +112,45 @@ void MainWindow::saveScene() {
 	consoleWidget->append("Saved scene to path");
 }
 
+void MainWindow::loadMesh() {
+	//open filepicker
+	//mesh* temp = new mesh(path, filename(path));
+	//scene->append_node(temp);
+	//to_delete.push_back(temp);
+	consoleWidget->append("Imported mesh filename(path) from path");
+}
+
+void MainWindow::loadTexture() {
+	//open filepicker
+	//texture2D* temp = new texture2D(path, filename(path));
+	//textures.push_back(temp);
+	//to_delete.push_back(temp);
+	consoleWidget->append("Imported texture filename(path) from path");
+}
+
 // private
 void MainWindow::connectActions() {
 	// Connect "New" action
 	QAction *action = findChild<QAction*>("newAction");
 	connect(action, &QAction::triggered, this, &MainWindow::newScene);
 
-		// Connect "Close" action
-	action = findChild<QAction*>("closeAction");
-	connect(action, &QAction::triggered, this, &MainWindow::close);
-
-		// Connect "Save" action
+	// Connect "Save" action
 	action = findChild<QAction*>("saveAction");
 	connect(action, &QAction::triggered, this, &MainWindow::saveScene);
 
-		// Connect "Open" action
+	// Connect "Open" action
 	action = findChild<QAction*>("openAction");
 	connect(action, &QAction::triggered, this, &MainWindow::openScene);
+
+	// Connect "Close" action
+	action = findChild<QAction*>("closeAction");
+	connect(action, &QAction::triggered, this, &MainWindow::close);
+
+	// Connect "Mesh" action
+	action = findChild<QAction*>("meshAction");
+	connect(action, &QAction::triggered, this, &MainWindow::loadMesh);
+
+	// Connect "Mesh" action
+	action = findChild<QAction*>("textureAction");
+	connect(action, &QAction::triggered, this, &MainWindow::loadTexture);
 }

@@ -1,12 +1,7 @@
 #include "material.h"
 
-material::material(std::string arg_name, bool shadow_caster) : shadow_caster(shadow_caster) {
+material::material(std::string arg_name, bool shadow_caster) : named(arg_name), shadow_caster(shadow_caster) {
 	mat_is_standard = false;
-	if(arg_name == "") {
-		name = name_manager::get_instance()->insert(this);
-	} else {
-		name = name_manager::get_instance()->insert(arg_name, this);
-	}
 }
 
 material::material(const texture_bindings &textures, std::string arg_name, bool shadow_caster) : textures(textures) {
@@ -82,14 +77,4 @@ bool material::is_shadow_caster() {
 
 void material::set_shadow_cast(bool shadow) {
 	shadow_caster = shadow;
-}
-
-string material::set_name(const string arg_name) {
-	name_manager::get_instance()->remove(name);
-	name = name_manager::get_instance()->insert(arg_name, this);
-	return name;
-}
-
-string material::get_name() {
-	return name;
 }

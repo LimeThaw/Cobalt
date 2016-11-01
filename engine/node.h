@@ -18,13 +18,14 @@ Can have other node objects as children or parents.
 #include <memory>
 
 #include "material.h"
+#include "named.h"
 
 class mesh;
 
-class node {
+class node : public named {
     public:
-        node();///< Default constructor.
-        node(const std::string &scene_path);///< Constructor loading all meshes from a file and appending them to the node.
+        node(std::string name = "");///< Default constructor.
+        node(const std::string &scene_path, std::string name);///< Constructor loading all meshes from a file and appending them to the node.
         virtual ~node();///< Default destructor.
         void load_model(const std::string &path);///< Loads the first mesh in the specified file and appends it to the node.
         bool load_scene(const std::string &path);///< Loads all meshes from the specified file and appends them to the node.
@@ -50,15 +51,12 @@ class node {
         void set_node_matrix(glm::mat4 matrix);///< Sets the matrix describing the node's relative transformation.
         std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
         std::vector<node*> get_children();
-        string set_name(const string arg_name);
-        string get_name();
 
     protected:
         node *parent_node;
         void load_model(const std::string &path, int model_index);
         glm::mat4 node_matrix;
         std::vector<node *> children;
-        string name;
 };
 
 #endif // NODE_H

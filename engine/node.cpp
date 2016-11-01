@@ -1,19 +1,17 @@
 #include "node.h"
 #include "mesh.h"
 
-node::node() {
+node::node(std::string name) : named(name) {
     node_matrix = glm::mat4(1.0f);
     parent_node = nullptr;
-    name = name_manager::get_instance()->insert(this);
 }
 
-node::node(const std::string &scene_path) : node() {
+node::node(const std::string &scene_path, std::string name) : node(name) {
     load_scene(scene_path);
 }
 
 node::~node() {
     children.clear();
-    name_manager::get_instance()->remove(name);
 }
 
 void node::load_model(const std::string &path) {
@@ -166,16 +164,6 @@ std::vector< node * > node::enumerate() {
 
 std::vector<node*> node::get_children() {
 	return children;
-}
-
-string node::set_name(const string arg_name) {
-	name_manager::get_instance()->remove(name);
-	name = name_manager::get_instance()->insert(arg_name, this);
-	return name;
-}
-
-string node::get_name() {
-	return name;
 }
 
 //Private
