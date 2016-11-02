@@ -62,7 +62,7 @@ void std_scene::save(const char* file_path, bool pretty) {
 		auto name = node->get_name().c_str();
 
 		// Is the node a mesh?
-		if(mesh *m = dynamic_cast<mesh*>(node)) {
+		if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
 			auto item = scene["meshes"][name];
 	 		item["path"] = m->get_path();
 	 		item["node_matrix"] = serialize(m->get_isolated_matrix());
@@ -91,7 +91,7 @@ void std_scene::save(const char* file_path, bool pretty) {
  			}
 
  		// Or is it a camera?
-	 	} else if(camera *c = dynamic_cast<camera*>(node)) {
+	} else if(camera *c = dynamic_cast<camera*>(node.get().get())) {
 			auto item = scene["cameras"][name];
 	 		item["node_matrix"] = serialize(c->get_isolated_matrix());
 	 		item["projection_matrix"] = serialize(c->get_projection());
@@ -100,7 +100,7 @@ void std_scene::save(const char* file_path, bool pretty) {
  			scene["cameras"][name] = item;
 
  		// Or is it a light?
-	 	} else if(point_light *p = dynamic_cast<point_light*>(node)) {
+	} else if(point_light *p = dynamic_cast<point_light*>(node.get().get())) {
 	 		auto item = scene["point_lights"][name];
 			item["position"] = serialize(p->get_position());
 			item["color"] = serialize(p->get_color());
@@ -222,33 +222,31 @@ void std_scene::load(const char* file_path) {
 
 	// Remember the parenthood relations - Name of the parent first,
 	// pointer to the child second
-	map<string, node*> parents;
+	map<string, node_ptr> parents;
 	// Also remember all nodes for setting parent
-	vector<node*> nodes;
+	vector<node_ptr> nodes;
 
 	// Loading abstract nodes as groups
 	for(json::iterator it = scene["groups"].begin(); it != scene["groups"].end(); ++it) {
-		auto temp = new node();
+		node_ptr temp;
 		temp->set_name(it.key());
 		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), temp));
 		nodes.push_back(temp);
 		append_node(temp);
-		to_delete.push_back(pair<char, void*>('n', temp));
 	}
 
 	// Loading cameras in scene
 	for(json::iterator it = scene["cameras"].begin(); it != scene["cameras"].end(); ++it) {
-		auto temp = new camera();
+		auto temp = std::make_shared<camera>();
 		temp->set_name(it.key());
 		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
 		temp->set_projection(deserialize_mat4((*it)["projection_matrix"].get<string>()));
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
-		nodes.push_back(temp);
-		append_node(temp);
-		to_delete.push_back(pair<char, void*>('n', temp));
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
+		nodes.push_back(node_ptr(temp));
+		append_node(node_ptr(temp));
 	}
 
 	// Set main camera
@@ -256,7 +254,7 @@ void std_scene::load(const char* file_path) {
 		printf("%s! Loaded scene does not define a main camera\n", indent::get().c_str());
 	} else {
 		string mc = scene["main_camera"].get<string>();
-		if(camera* c = dynamic_cast<camera*>(find_node(mc))) {
+		if(camera* c = dynamic_cast<camera*>(find_node(mc).get().get())) {
 			set_camera(c);
 		} else {
 			printf("%s! Loaded scene scpecified undefined camera as main camera\n", indent::get().c_str());
@@ -266,7 +264,7 @@ void std_scene::load(const char* file_path) {
 	// Load point_lights
 	for(json::iterator it = scene["point_lights"].begin(); it != scene["point_lights"].end(); ++it) {
 		// Create new point_light
-		auto temp = new point_light(
+		auto temp = make_shared<point_light>(
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["position"].get<string>()),
@@ -275,18 +273,16 @@ void std_scene::load(const char* file_path) {
 		);
 		// Set parent node if present
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
-		nodes.push_back(temp);
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
+		nodes.push_back(node_ptr(temp));
 		// Insert into scene graph and list of lights
-		append_node(temp);
-		p_lights.push_back(temp);
-		// Remember to delete
-		to_delete.push_back(pair<char, void*>('n', temp));
+		append_node(node_ptr(temp));
+		p_lights.push_back(temp.get()); // TODO: Make this point_light_ptr or at least shared_ptr
 	}
 
 	// Loading all meshes in scene
 	for(json::iterator it = scene["meshes"].begin(); it != scene["meshes"].end(); ++it) {
-		auto temp = new mesh();
+		auto temp = make_shared<mesh>();
 		temp->set_name(it.key());
 		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
 		if((*it)["path"] != NULL) {
@@ -294,20 +290,19 @@ void std_scene::load(const char* file_path) {
 		}
 		// Set parent node if present
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
 		// Set material if found
 		if((*it)["material"] != NULL && mats.find((*it)["material"].get<string>()) != mats.end())
 			temp->set_material(mats.find((*it)["material"].get<string>())->second);
-		nodes.push_back(temp);
-		append_node(temp);
-		to_delete.push_back(pair<char, void*>('n', temp));
+		nodes.push_back(node_ptr(temp));
+		append_node(node_ptr(temp));
 
 		// DEBUG INFO
 		printf("%s- Loaded mesh %s from path %s\n", indent::get().c_str(), it.key().c_str(), (*it)["path"].get<string>().c_str());
 	}
 
 	// Now create scene graph structure by setting parenthood relationships
-	map<string, node*>::iterator it;
+	map<string, node_ptr>::iterator it;
 	for(auto n : nodes) {
 		if((it = parents.find(n->get_name())) != parents.end()) {
 			n->append_node((*it).second);

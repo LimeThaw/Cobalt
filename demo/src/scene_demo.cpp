@@ -1,6 +1,4 @@
-/* TODO:
-*	Fix point light shadows being only on one side and not rotating properly with the parent node
-*/
+//FIXME: Fix point light shadows being only on one side and not rotating properly with the parent node
 
 #include "cobalt.h"
 #include "library/standard.h"
@@ -17,7 +15,7 @@ int main() {
 	// Exit condition
 	bool quit = false;
 
-	node* camera_node = scene.find_node("camera_node");
+	node_ptr camera_node = scene.find_node("camera_node");
 
 	// Main loop
 	while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {

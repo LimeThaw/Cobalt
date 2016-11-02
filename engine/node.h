@@ -19,10 +19,13 @@ Can have other node objects as children or parents.
 
 #include "material.h"
 #include "named.h"
+#include "pointer_wrapper.h"
+
+typedef intern::pointer_wrapper<node> node_ptr;
 
 class mesh;
 
-class node : public named {
+class node : public named, public std::enable_shared_from_this<node> {
     public:
         node(std::string name = "");///< Default constructor.
         node(const std::string &scene_path, std::string name);///< Constructor loading all meshes from a file and appending them to the node.
@@ -41,22 +44,22 @@ class node : public named {
         void look_at(float x, float y, float z, glm::vec3 up_vector = glm::vec3(0, 1, 0));///< Rotates the node to face the specified point in space.
         void look_at(glm::vec3 arg_look, glm::vec3 up_vector = glm::vec3(0, 1, 0));///< See member look_at(float x, float y, float z).
         void append_node(const std::string &file_path);///< Basically append_node(new node(file_path)).
-        void append_node(node *new_child);///< Appends the given node as its child.
+        void append_node(node_ptr new_child);///< Appends the given node as its child.
         void append_mesh(const std::string &file_path);
-        void set_parent(node *new_parent);///< Set the node's parent.
-        node* get_parent();
-        bool remove_child(node *child);///< Removes a child node from this node.
+        void set_parent(node_ptr new_parent);///< Set the node's parent.
+        node_ptr get_parent();
+        bool remove_child(node_ptr child);///< Removes a child node from this node.
         glm::mat4 get_node_matrix() const;///< Returns the transformation matrix affecting all of the node's children. It includes the transformation of it's parents.
         glm::mat4 get_isolated_matrix() const;///< Returns the matrix describing the transformation of this node relative to its parent.
         void set_node_matrix(glm::mat4 matrix);///< Sets the matrix describing the node's relative transformation.
-        std::vector< node*> enumerate();///< Returns a list of itself and all its child nodes.
-        std::vector<node*> get_children();
+        std::vector<node_ptr> enumerate();///< Returns a list of itself and all its child nodes.
+        std::vector<node_ptr> get_children();
 
     protected:
-        node *parent_node;
+        node_ptr parent_node;
         void load_model(const std::string &path, int model_index);
         glm::mat4 node_matrix;
-        std::vector<node *> children;
+        std::vector<node_ptr> children;
 };
 
 #endif // NODE_H
