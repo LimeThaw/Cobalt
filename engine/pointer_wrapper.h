@@ -12,30 +12,49 @@ namespace intern {
  */
 
 template<class T>
-class pointer_wrapper { //TODO: Fix documentation
+class pointer_wrapper : public shared_ptr<T> {
 	public:
+
 		/**
-		 *  Constructor which creates a shared pointer to an object of class
-		 *  T and calls the constructor with the given arguments. The created shared
-		 *  pointer is represented by the instance of pointer_wrapper.
+		 *  Constructor creating a new object of class T. It is allocated by std::make_shared<T>()
+		 *  and this object acts as the shared_ptr to it.
+		 */
+		pointer_wrapper() : shared_ptr<T>(make_shared<T>()) {}
+
+		/**
+		 *  nullptr - constructor. Used to assign a nullptr to the object. Creates an empty
+		 *  instance of shared_ptr<T>.
+		 */
+		pointer_wrapper(nullptr_t other) : shared_ptr<T>() {}
+		/** Assignment operator version of the nullptr - constructor. */
+		auto operator=(nullptr_t other) { return shared_ptr<T>(); }
+
+		/**
+		 *  Constructor used to create a pointer_wrapper as/from a shared_pointer<T>.
+		 *  This hopefully makes it easy to use shared_ptr and pointer_wrapper together.
+		 */
+		template<class S>
+		pointer_wrapper(const shared_ptr<S> &other) : shared_ptr<T>(other) {}
+		/** Same as the other, just without constant modifyer. */
+		template<class S>
+		pointer_wrapper(shared_ptr<S> &other) : shared_ptr<T>(other) {}
+
+		/** Copy constructor to create a pointer_wrapper from another instance. */
+		template<class S>
+		pointer_wrapper(const pointer_wrapper<S> &other) : shared_ptr<T>(other) {}
+		/** Same as the other, just without constant modifyer. */
+		template<class S>
+		pointer_wrapper(pointer_wrapper<S> &other) : shared_ptr<T>(other) {}
+
+		/**
+		 *  Constructor meant for direct object initialization. If the first argument is not
+		 *  of class pointer_wrapper<T> or std::nullptr_t all arguments are forwarded to
+		 *  std::make_shared<T> to create the new object pointed to by this.
 		 */
 		template<class... Args>
-		void make(Args&&... args) { ptr = std::make_shared<T>(args...); }
-
-		pointer_wrapper(std::shared_ptr<T> other) { ptr = other; }
-		pointer_wrapper(std::nullptr_t other) {}
-		pointer_wrapper() { make(); }
-
-		const shared_ptr<T> &get() const { return ptr; } // IDEA: make get return T* to avoid .get().get()
-		shared_ptr<T> operator->() const { return ptr; }
-		bool operator==(nullptr_t other) const { return other==ptr; }
-		bool operator!=(nullptr_t other) const { return other!=ptr; }
-		template<class S>
-		bool operator==(pointer_wrapper<S> other) const { return other.get()==ptr; }
-		template<class S>
-		bool operator!=(pointer_wrapper<S> other) const { return other.get()!=ptr; }
-	private:
-		shared_ptr<T> ptr;
+		explicit pointer_wrapper(Args&... args) : shared_ptr<T>() {
+				*this = make_shared<T>(args...);
+		}
 };
 
 }

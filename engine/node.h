@@ -56,7 +56,7 @@ class node : public named, public std::enable_shared_from_this<node> {
         std::vector<node_ptr> get_children();
 
     protected:
-        node_ptr parent_node;
+        shared_ptr<node> parent_node;
         void load_model(const std::string &path, int model_index);
         glm::mat4 node_matrix;
         std::vector<node_ptr> children;

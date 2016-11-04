@@ -62,7 +62,7 @@ void std_scene::save(const char* file_path, bool pretty) {
 		auto name = node->get_name().c_str();
 
 		// Is the node a mesh?
-		if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
+		if(mesh *m = dynamic_cast<mesh*>(node.get())) {
 			auto item = scene["meshes"][name];
 	 		item["path"] = m->get_path();
 	 		item["node_matrix"] = serialize(m->get_isolated_matrix());
@@ -91,7 +91,7 @@ void std_scene::save(const char* file_path, bool pretty) {
  			}
 
  		// Or is it a camera?
-	} else if(camera *c = dynamic_cast<camera*>(node.get().get())) {
+	} else if(camera *c = dynamic_cast<camera*>(node.get())) {
 			auto item = scene["cameras"][name];
 	 		item["node_matrix"] = serialize(c->get_isolated_matrix());
 	 		item["projection_matrix"] = serialize(c->get_projection());
@@ -100,7 +100,7 @@ void std_scene::save(const char* file_path, bool pretty) {
  			scene["cameras"][name] = item;
 
  		// Or is it a light?
-	} else if(point_light *p = dynamic_cast<point_light*>(node.get().get())) {
+	} else if(point_light *p = dynamic_cast<point_light*>(node.get())) {
 	 		auto item = scene["point_lights"][name];
 			item["position"] = serialize(p->get_position());
 			item["color"] = serialize(p->get_color());
@@ -254,7 +254,7 @@ void std_scene::load(const char* file_path) {
 		printf("%s! Loaded scene does not define a main camera\n", indent::get().c_str());
 	} else {
 		string mc = scene["main_camera"].get<string>();
-		if(camera* c = dynamic_cast<camera*>(find_node(mc).get().get())) {
+		if(camera* c = dynamic_cast<camera*>(find_node(mc).get())) {
 			set_camera(c);
 		} else {
 			printf("%s! Loaded scene scpecified undefined camera as main camera\n", indent::get().c_str());

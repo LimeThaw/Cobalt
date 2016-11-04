@@ -104,7 +104,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
 		directional_shadow_map_framebuffers[i]->bind();
         glClear(GL_DEPTH_BUFFER_BIT);
 		for(auto node : a_scene.enumerate_nodes()) {
-			if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
+			if(mesh *m = dynamic_cast<mesh*>(node.get())) {
 				if(m->is_shadow_caster()) {
 					auto model_view_projection = directional_shadow_map_view_projections[i] * m->get_node_matrix();
 					glUniformMatrix4fv(model_view_projection_id, 1, GL_FALSE, &model_view_projection[0][0]);
@@ -127,7 +127,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
 		    glUniform3f(glGetUniformLocation(active_shader_id, "light_position"), p_lights[i]->get_position().x, p_lights[i]->get_position().y, p_lights[i]->get_position().z);
 			glUniform1f(glGetUniformLocation(active_shader_id, "radius"), p_lights[i]->get_radius());
 			for(auto node : a_scene.enumerate_nodes()) {
-				if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
+				if(mesh *m = dynamic_cast<mesh*>(node.get())) {
 					if(m->is_shadow_caster()) {
 						auto model_view_projection = view_projection * m->get_node_matrix();
 						glUniformMatrix4fv(model_view_projection_id, 1, GL_FALSE, &model_view_projection[0][0]);
@@ -166,7 +166,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
     }
 
     for(auto node : a_scene.enumerate_nodes()) {
-        if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
+        if(mesh *m = dynamic_cast<mesh*>(node.get())) {
             if(m->get_material() != nullptr && m->get_material()->is_standard()) {
             	for(unsigned int i = 0; i < directional_shadow_maps.size(); ++i) {
             		m->get_material()->add_texture("directional_shadow_map[" + std::to_string(i) + "]", directional_shadow_maps[i]);
@@ -206,7 +206,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
 
 	// Render individual meshes
     for(auto node : a_scene.enumerate_nodes()) {
-        if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
+        if(mesh *m = dynamic_cast<mesh*>(node.get())) {
             if(m->get_material() != nullptr && m->get_material()->is_standard()) {
                 glm::mat4 render_model = m->get_node_matrix();
                 glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(view_matrix * render_model)));
@@ -221,7 +221,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
 glm::mat4 std_render_pass::get_light_matrix(glm::vec3 direction, scene& a_scene) {
 	bounding_box light_box = bounding_box(direction);
 	for(auto node : a_scene.enumerate_nodes()) {
-		if(mesh *m = dynamic_cast<mesh*>(node.get().get())) {
+		if(mesh *m = dynamic_cast<mesh*>(node.get())) {
 			if(m->is_shadow_caster()) {
 				light_box.add_bounding_box(m->get_node_matrix() * m->get_bounding_box());
 			}

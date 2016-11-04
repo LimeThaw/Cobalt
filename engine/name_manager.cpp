@@ -12,7 +12,7 @@ name_manager* name_manager::get_instance() {
 }
 
 string name_manager::insert(string name, void* item) {
-	if(name == "") return insert(item);
+	if(name == "") name = string("Item_") + to_string(count++);
 
 	bool found = false;
 	while(dictionary.find(name) != dictionary.end()) {
