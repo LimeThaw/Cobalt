@@ -3,7 +3,7 @@
 
 node::node(std::string name) : named(name) {
     node_matrix = glm::mat4(1.0f);
-    parent_node = nullptr;
+    parent_node = weak_ptr<node>();
 }
 
 node::node(const std::string &scene_path, std::string name) : node(name) {
@@ -15,9 +15,9 @@ node::~node() {
 }
 
 void node::load_model(const std::string &path) {
-    auto temp_mesh = std::make_shared<mesh>(); // TODO: make mesh_ptr
+    mesh_ptr temp_mesh;
     temp_mesh->load_model(path);
-    append_node(static_cast<node_ptr>(temp_mesh));
+    append_node(node_ptr(temp_mesh));
 }
 
 bool node::load_scene(const std::string &path) {
@@ -119,15 +119,16 @@ void node::append_node(node_ptr new_child) {
 }
 
 void node::append_mesh(const std::string &file_path) {
-	auto temp_mesh = make_shared<mesh>(); // TODO: make mesh_ptr
+	mesh_ptr temp_mesh;
 	temp_mesh->load_model(file_path);
 	append_node(node_ptr(temp_mesh));
 }
 
 void node::set_parent(node_ptr new_parent) {
-    if(parent_node != nullptr) {
+	shared_ptr<node> pn;
+    if(!parent_node.expired() && (pn = parent_node.lock()) != nullptr) {
 		try {
-        	parent_node->remove_child(shared_from_this());
+        	pn->remove_child(shared_from_this());
 		} catch(std::bad_weak_ptr) {
 			printf("%s! Error: Failed to update parent of node %s: Please use the pointer wrappers.",
 				indent::get().c_str(), get_name().c_str());
@@ -137,7 +138,7 @@ void node::set_parent(node_ptr new_parent) {
 }
 
 node_ptr node::get_parent() {
-	return parent_node;
+	return parent_node.lock();
 }
 
 bool node::remove_child(node_ptr child) {
@@ -153,7 +154,7 @@ bool node::remove_child(node_ptr child) {
 glm::mat4 node::get_node_matrix() const {
     glm::mat4 temp_matrix;
     temp_matrix = node_matrix;
-    if(parent_node != nullptr)temp_matrix = parent_node->get_node_matrix() * temp_matrix;
+    if(!parent_node.expired() && parent_node.lock() != nullptr)temp_matrix = parent_node.lock()->get_node_matrix() * temp_matrix;
     return temp_matrix;
 }
 
@@ -186,7 +187,7 @@ std::vector<node_ptr> node::get_children() {
 
 //Private
 void node::load_model(const std::string &path, int model_index) {
-    auto temp_mesh = make_shared<mesh>(); // TODO: Make mesh_ptr
+    mesh_ptr temp_mesh;
     temp_mesh->load_model(path, model_index);
-    append_node(static_cast<node_ptr>(temp_mesh));
+    append_node(node_ptr(temp_mesh));
 }

@@ -21,6 +21,9 @@
 #include "node.h"
 #include "scene.h"
 #include "bounding_box.h"
+#include "pointer_wrapper.h"
+
+typedef pointer_wrapper<mesh> mesh_ptr;
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes

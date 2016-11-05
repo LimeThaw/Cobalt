@@ -2,14 +2,13 @@
 using namespace cs;
 
 std_scene::std_scene() : scene() {
-	skybox = NULL;
-	skybox_shader = NULL;
-	render_pass = new std_render_pass();
+	skybox = nullptr;
+	skybox_shader = nullptr;
+	render_pass = new std_render_pass(); //TODO: render_pass_ptr
 	skybox_texture_path = "";
 }
 std_scene::~std_scene() {
-	if(skybox != NULL) {
-		delete skybox;
+	if(skybox != nullptr) {
 		delete skybox_shader;
 	}
 	delete render_pass;
@@ -42,14 +41,14 @@ void std_scene::add_directional_light(directional_light* new_light) {
 }
 
 void std_scene::set_skybox(std::string path) {
-	if(skybox == NULL) {
-		skybox = new mesh("engine/library/skybox.obj", "");
-		skybox_shader = new shader("./engine/library/shader/skybox_shader.vertex", "engine/library/shader/skybox_shader.fragment");
+	if(skybox == nullptr) {
+		skybox = mesh_ptr("engine/library/skybox.obj", "");
+		skybox_shader = new shader("./engine/library/shader/skybox_shader.vertex", "engine/library/shader/skybox_shader.fragment"); //TODO: Make shader_ptr
 	}
 	skybox_texture_path = path;
-	auto skybox_mat = std::make_shared<material>();
+	auto skybox_mat = std::make_shared<material>(); //TODO: material_ptr
 	skybox_mat->add_texture("color_map", std::make_shared<texture2d>(
-            texture_cache::get_instance().get_texture_from_filename(path)));
+            texture_cache::get_instance().get_texture_from_filename(path))); //TODO: texture_ptr
     skybox->set_material(skybox_mat);
 }
 
@@ -264,7 +263,7 @@ void std_scene::load(const char* file_path) {
 	// Load point_lights
 	for(json::iterator it = scene["point_lights"].begin(); it != scene["point_lights"].end(); ++it) {
 		// Create new point_light
-		auto temp = make_shared<point_light>(
+		auto temp = make_shared<point_light>( //TODO: point_light_ptr
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["position"].get<string>()),
@@ -311,7 +310,7 @@ void std_scene::load(const char* file_path) {
 
 	// Load directional lights
 	for(json::iterator it = scene["dir_lights"].begin(); it != scene["dir_lights"].end(); ++it) {
-		directional_light *temp = new directional_light(
+		directional_light *temp = new directional_light( // TODO: dir_light_ptr
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["direction"].get<string>()),
@@ -330,7 +329,7 @@ void std_scene::load(const char* file_path) {
 
 void std_scene::render() {
 	if(main_camera) {
-		if(skybox) {
+		if(skybox != nullptr) {
 			skybox_shader->use();
 			GLint active_shader_id;
 			glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);

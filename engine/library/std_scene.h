@@ -31,7 +31,7 @@ class std_scene : public scene {
 		camera* main_camera;
 		std::vector<directional_light*> d_lights;
 		std::vector<point_light*> p_lights;
-		mesh* skybox;
+		mesh_ptr skybox;
 		std::string skybox_texture_path;
 		shader* skybox_shader;
 		std::vector<std::pair<char, void*>> to_delete;

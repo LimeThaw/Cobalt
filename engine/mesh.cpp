@@ -4,7 +4,7 @@
 
 mesh::mesh() : node() {
     node_matrix = glm::mat4(1.0f);
-    parent_node = nullptr;
+    parent_node = weak_ptr<node>();
     vertex_data = nullptr;
     uv_data = nullptr;
     tangent_data = nullptr;

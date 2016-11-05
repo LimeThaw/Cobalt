@@ -21,7 +21,7 @@ Can have other node objects as children or parents.
 #include "named.h"
 #include "pointer_wrapper.h"
 
-typedef intern::pointer_wrapper<node> node_ptr;
+typedef pointer_wrapper<node> node_ptr;
 
 class mesh;
 
@@ -56,7 +56,7 @@ class node : public named, public std::enable_shared_from_this<node> {
         std::vector<node_ptr> get_children();
 
     protected:
-        shared_ptr<node> parent_node;
+        weak_ptr<node> parent_node;
         void load_model(const std::string &path, int model_index);
         glm::mat4 node_matrix;
         std::vector<node_ptr> children;

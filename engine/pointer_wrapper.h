@@ -3,8 +3,6 @@
 #ifndef PTRW_H_INCLUDED
 #define PTRW_H_INCLUDED
 
-namespace intern {
-
 /**
  *  Wrapper class around std::shared_ptr. Made for convenience while typing.
  *  Meant to be instantiated with specific type in the header of that class
@@ -27,7 +25,7 @@ class pointer_wrapper : public shared_ptr<T> {
 		 */
 		pointer_wrapper(nullptr_t other) : shared_ptr<T>() {}
 		/** Assignment operator version of the nullptr - constructor. */
-		auto operator=(nullptr_t other) { return shared_ptr<T>(); }
+		auto operator=(nullptr_t other) { shared_ptr<T>::reset(); }
 
 		/**
 		 *  Constructor used to create a pointer_wrapper as/from a shared_pointer<T>.
@@ -55,8 +53,9 @@ class pointer_wrapper : public shared_ptr<T> {
 		explicit pointer_wrapper(Args&... args) : shared_ptr<T>() {
 				*this = make_shared<T>(args...);
 		}
-};
 
-}
+		bool operator==(const nullptr_t &other) { return std::operator==(static_cast<shared_ptr<T>>(*this), other); }
+		bool operator!=(const nullptr_t &other) { return std::operator!=(static_cast<shared_ptr<T>>(*this), other); }
+};
 
 #endif //PTRW_H_INCLUDED
