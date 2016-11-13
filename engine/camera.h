@@ -30,4 +30,6 @@ class camera : public node {
         bool first_person;
 };
 
+typedef pointer_wrapper<camera> camera_ptr;
+
 #endif // CAMERA_H

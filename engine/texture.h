@@ -14,6 +14,7 @@
 #include "name_manager.h"
 #include "gl_exception.h"
 #include <glm/glm.hpp>
+#include "pointer_wrapper.h"
 
 class texture : public named {
 
@@ -32,5 +33,7 @@ class texture : public named {
 
         virtual void bind() = 0;
 };
+
+typedef pointer_wrapper<texture> texture_ptr;
 
 #endif // TEXTURE_H

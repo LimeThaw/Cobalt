@@ -4,51 +4,34 @@ using namespace cs;
 std_scene::std_scene() : scene() {
 	skybox = nullptr;
 	skybox_shader = nullptr;
-	render_pass = new std_render_pass(); //TODO: render_pass_ptr
+	render_pass.make();
 	skybox_texture_path = "";
 }
 std_scene::~std_scene() {
-	if(skybox != nullptr) {
-		delete skybox_shader;
-	}
-	delete render_pass;
-
-	for(auto p : to_delete) {
-		switch(p.first) {
-			case 'n':
-				delete (mesh*)p.second;
-				break;
-			case 'l':
-				delete (light*)p.second;
-				break;
-			default:
-				printf("%s! Invalid pointer format: Could not delete\n", indent::get().c_str());
-				break;
-		}
-	}
 }
 
-void std_scene::set_camera(camera* new_camera) {
+void std_scene::set_camera(camera_ptr new_camera) {
 	main_camera = new_camera;
 }
 
-void std_scene::add_point_light(point_light* new_light) {
+void std_scene::add_point_light(point_light_ptr new_light) {
 	p_lights.push_back(new_light);
 }
 
-void std_scene::add_directional_light(directional_light* new_light) {
+void std_scene::add_directional_light(directional_light_ptr new_light) {
 	d_lights.push_back(new_light);
 }
 
 void std_scene::set_skybox(std::string path) {
 	if(skybox == nullptr) {
 		skybox = mesh_ptr("engine/library/skybox.obj", "");
-		skybox_shader = new shader("./engine/library/shader/skybox_shader.vertex", "engine/library/shader/skybox_shader.fragment"); //TODO: Make shader_ptr
+		skybox_shader = shader_ptr("./engine/library/shader/skybox_shader.vertex", "engine/library/shader/skybox_shader.fragment");
 	}
 	skybox_texture_path = path;
-	auto skybox_mat = std::make_shared<material>(); //TODO: material_ptr
-	skybox_mat->add_texture("color_map", std::make_shared<texture2d>(
-            texture_cache::get_instance().get_texture_from_filename(path))); //TODO: texture_ptr
+	auto skybox_mat = material_ptr();
+	skybox_mat.make();
+	skybox_mat->add_texture("color_map", texture2d_ptr(
+            texture_cache::get_instance().get_texture_from_filename(path)));
     skybox->set_material(skybox_mat);
 }
 
@@ -227,8 +210,7 @@ void std_scene::load(const char* file_path) {
 
 	// Loading abstract nodes as groups
 	for(json::iterator it = scene["groups"].begin(); it != scene["groups"].end(); ++it) {
-		node_ptr temp;
-		temp->set_name(it.key());
+		node_ptr temp(it.key());
 		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
 		if((*it)["parent"] != NULL)
 			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), temp));
@@ -238,10 +220,9 @@ void std_scene::load(const char* file_path) {
 
 	// Loading cameras in scene
 	for(json::iterator it = scene["cameras"].begin(); it != scene["cameras"].end(); ++it) {
-		auto temp = std::make_shared<camera>();
+		camera_ptr temp(deserialize_mat4((*it)["node_matrix"].get<string>()),
+			deserialize_mat4((*it)["projection_matrix"].get<string>()));
 		temp->set_name(it.key());
-		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
-		temp->set_projection(deserialize_mat4((*it)["projection_matrix"].get<string>()));
 		if((*it)["parent"] != NULL)
 			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
 		nodes.push_back(node_ptr(temp));
@@ -253,8 +234,9 @@ void std_scene::load(const char* file_path) {
 		printf("%s! Loaded scene does not define a main camera\n", indent::get().c_str());
 	} else {
 		string mc = scene["main_camera"].get<string>();
-		if(camera* c = dynamic_cast<camera*>(find_node(mc).get())) {
-			set_camera(c);
+		camera_ptr cp;
+		if((cp = find_node(mc)) != nullptr && dynamic_cast<camera*>(cp.get()) != nullptr) {
+			set_camera(cp);
 		} else {
 			printf("%s! Loaded scene scpecified undefined camera as main camera\n", indent::get().c_str());
 		}
@@ -263,11 +245,11 @@ void std_scene::load(const char* file_path) {
 	// Load point_lights
 	for(json::iterator it = scene["point_lights"].begin(); it != scene["point_lights"].end(); ++it) {
 		// Create new point_light
-		auto temp = make_shared<point_light>( //TODO: point_light_ptr
+		point_light_ptr temp(
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["position"].get<string>()),
-			(*it)["radius"].get<float>(),
+			float((*it)["radius"].get<float>()),
 			it.key()
 		);
 		// Set parent node if present
@@ -276,7 +258,7 @@ void std_scene::load(const char* file_path) {
 		nodes.push_back(node_ptr(temp));
 		// Insert into scene graph and list of lights
 		append_node(node_ptr(temp));
-		p_lights.push_back(temp.get()); // TODO: Make this point_light_ptr or at least shared_ptr
+		p_lights.push_back(temp);
 	}
 
 	// Loading all meshes in scene
@@ -310,14 +292,13 @@ void std_scene::load(const char* file_path) {
 
 	// Load directional lights
 	for(json::iterator it = scene["dir_lights"].begin(); it != scene["dir_lights"].end(); ++it) {
-		directional_light *temp = new directional_light( // TODO: dir_light_ptr
+		directional_light_ptr temp(
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["direction"].get<string>()),
 			it.key()
 		);
 		add_directional_light(temp);
-		to_delete.push_back(pair<char, void*>('l', (void*)temp));
 	}
 
 	// Load skybox if it exists
@@ -345,7 +326,7 @@ void std_scene::render() {
 			skybox->render();
 			glDepthMask(true);
 		}
-		render_pass -> render(*this, *main_camera, d_lights, p_lights);
+		render_pass -> render(*this, main_camera, d_lights, p_lights);
 	} else {
 		std::cerr << "! Tried to render scene without active camera\n";
 	}

@@ -2,6 +2,7 @@
 
 scene::scene() {
     init();
+	parent_node.make();
 }
 
 scene::~scene() {

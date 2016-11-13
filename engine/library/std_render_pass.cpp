@@ -23,20 +23,25 @@ const glm::vec3 cubemap_ups[6] = {
 };
 
 std_render_pass::std_render_pass() :
-		render_pass<scene, camera&, std::vector<directional_light*>, std::vector<point_light*>>(nullptr) {
-	std_shader = new shader(shader_dir + "std_shader.vertex", shader_dir + "std_shader.fragment",
+		render_pass<scene, camera_ptr, std::vector<directional_light_ptr>, std::vector<point_light_ptr>>(shader_ptr()) {
+	std_shader = shader_ptr(shader_dir + "std_shader.vertex", shader_dir + "std_shader.fragment",
 		std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"));
-	depth_shader = new shader(shader_dir + "depthOnlyVertexShader.glsl", shader_dir + "depthOnlyFragmentShader.glsl");
-	point_light_shader = new shader(shader_dir + "point_light_shadow_shader.vertex", shader_dir + "depthOnlyFragmentShader.glsl");
+	depth_shader = shader_ptr(shader_dir + "depthOnlyVertexShader.glsl", shader_dir + "depthOnlyFragmentShader.glsl");
+	point_light_shader = shader_ptr(shader_dir + "point_light_shadow_shader.vertex", shader_dir + "depthOnlyFragmentShader.glsl");
 }
 
 std_render_pass::~std_render_pass() {
-	delete std_shader;
-	delete depth_shader;
-	delete point_light_shader;
 }
 
-void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<directional_light*> d_lights, std::vector<point_light*> p_lights) {
+void std_render_pass::render(scene &a_scene, camera_ptr the_camera, std::vector<directional_light_ptr> d_lights, std::vector<point_light_ptr> p_lights) {
+
+	// Remove all nullptr entries from light arrays
+	for(auto l = d_lights.begin(); l != d_lights.end(); ++l) {
+		if(*l == nullptr) d_lights.erase(l);
+	}
+	for(auto l = p_lights.begin(); l != p_lights.end(); ++l) {
+		if(*l == nullptr) p_lights.erase(l);
+	}
 
 	// Reload shaders and shadowmaps in case number of lights has changed
 	if(d_lights.size() != num_d_lights || p_lights.size() != num_p_lights) {
@@ -44,8 +49,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
 		num_p_lights = p_lights.size();
 
 		// Reload shaders
-		delete std_shader;
-		std_shader = new shader(shader_dir + "std_shader.vertex",
+		std_shader = shader_ptr(shader_dir + "std_shader.vertex",
 			shader_dir + "std_shader.fragment",
 			std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(num_d_lights) +
 			"\n#define NUM_POINT_LIGHTS " + std::to_string(num_p_lights) + "\n"));
@@ -147,7 +151,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
 
 	// Calculate and set general matrix uniforms
     glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
-    glm::mat4 view_matrix = the_camera.get_view();
+    glm::mat4 view_matrix = the_camera->get_view();
     glm::mat4 inverse_view_matrix = glm::inverse(view_matrix);
 
     GLuint view_id = glGetUniformLocation(active_shader_id, "view");
@@ -155,7 +159,7 @@ void std_render_pass::render(scene &a_scene, camera &the_camera, std::vector<dir
     GLuint inverse_view_id = glGetUniformLocation(active_shader_id, "inverse_view");
     glUniformMatrix4fv(inverse_view_id, 1, GL_FALSE, &inverse_view_matrix[0][0]);
     GLuint projection_id = glGetUniformLocation(active_shader_id, "projection");
-    glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera.get_projection()[0][0]);
+    glUniformMatrix4fv(projection_id, 1, GL_FALSE, &the_camera->get_projection()[0][0]);
     GLuint model_id = glGetUniformLocation(active_shader_id, "model");
     GLuint normal_id = glGetUniformLocation(active_shader_id, "normal_to_view_matrix");
 

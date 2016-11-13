@@ -9,6 +9,7 @@
 
 #include "util.h"
 #include "node.h"
+#include "pointer_wrapper.h"
 
 class light {
     public:
@@ -44,5 +45,8 @@ class point_light : public light, public node {
     private:
         float radius;
 };
+
+typedef pointer_wrapper<directional_light> directional_light_ptr;
+typedef pointer_wrapper<point_light> point_light_ptr;
 
 #endif // LIGHT_H

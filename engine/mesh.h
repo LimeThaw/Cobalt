@@ -60,7 +60,7 @@ class mesh : public node {
         GLuint uv_id;
         GLuint normal_id;
         GLuint tangent_id;
-        std::shared_ptr<material> mat;
+        material_ptr mat;
         bool has_uvs;
         bounding_box box;
         string path;
