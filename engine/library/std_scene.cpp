@@ -270,6 +270,7 @@ void std_scene::load(const char* file_path) {
 			temp->load_model((*it)["path"]);
 		}
 		// Set parent node if present
+		// FIXME: Fix parents data structure to allow multiple children of one node
 		if((*it)["parent"] != NULL)
 			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
 		// Set material if found

@@ -18,7 +18,7 @@ class std_render_pass : public render_pass<scene, camera_ptr, std::vector<direct
 		void render(scene &a_scene, camera_ptr the_camera, std::vector<directional_light_ptr> d_lights, std::vector<point_light_ptr> p_lights) override;
 
 	private:
-		shader_ptr std_shader, depth_shader, point_light_shader;
+		shader_ptr std_shader, depth_shader;
 		unsigned int num_d_lights;
 		unsigned int num_p_lights;
 		std::vector<std::shared_ptr<texture2d>> directional_shadow_maps;

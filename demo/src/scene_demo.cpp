@@ -15,13 +15,13 @@ int main() {
 	// Exit condition
 	bool quit = false;
 
-	node_ptr camera_node = scene.find_node("camera_node");
+	node_ptr camera_node = scene.find_node("untitled");
 
 	// Main loop
 	while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
 
-			if(win.key_pressed(GLFW_KEY_A)) camera_node->rotate(0, -.05, 0);
-			if(win.key_pressed(GLFW_KEY_D)) camera_node->rotate(0, .05, 0);
+			if(win.key_pressed(GLFW_KEY_A)) /*camera_node->move(0, .1, 0);*/camera_node->rotate(0, -.05, 0);
+			if(win.key_pressed(GLFW_KEY_D)) /*camera_node->move(0, -.1, 0);*/camera_node->rotate(.05, 0, 0);
 
 		// Rendering the scene
 		win.clear();

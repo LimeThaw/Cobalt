@@ -8,18 +8,18 @@ const int shadow_map_resolution = 2048;
 const glm::vec3 cubemap_directions[6] = {
 	glm::vec3(1, 0, 0),
 	glm::vec3(-1, 0, 0),
-	glm::vec3(0, -1, 0),
 	glm::vec3(0, 1, 0),
+	glm::vec3(0, -1, 0),
 	glm::vec3(0, 0, 1),
 	glm::vec3(0, 0, -1),
 };
 const glm::vec3 cubemap_ups[6] = {
-	glm::vec3(0, 1, 0),
-	glm::vec3(0, 1, 0),
+	glm::vec3(0, -1, 0),
+	glm::vec3(0, -1, 0),
 	glm::vec3(0, 0, 1),
 	glm::vec3(0, 0, -1),
-	glm::vec3(0, 1, 0),
-	glm::vec3(0, 1, 0),
+	glm::vec3(0, -1, 0),
+	glm::vec3(0, -1, 0),
 };
 
 std_render_pass::std_render_pass() :
@@ -27,7 +27,6 @@ std_render_pass::std_render_pass() :
 	std_shader = shader_ptr(shader_dir + "std_shader.vertex", shader_dir + "std_shader.fragment",
 		std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"));
 	depth_shader = shader_ptr(shader_dir + "depthOnlyVertexShader.glsl", shader_dir + "depthOnlyFragmentShader.glsl");
-	point_light_shader = shader_ptr(shader_dir + "point_light_shadow_shader.vertex", shader_dir + "depthOnlyFragmentShader.glsl");
 }
 
 std_render_pass::~std_render_pass() {
@@ -128,9 +127,7 @@ void std_render_pass::render(scene &a_scene, camera_ptr the_camera, std::vector<
 			point_shadow_map_framebuffers[i * 6 + j]->bind();
 		    glClear(GL_DEPTH_BUFFER_BIT);
 		    glm::mat4 view_projection = projection * glm::lookAt(p_lights[i]->get_position(), p_lights[i]->get_position() + cubemap_directions[j], cubemap_ups[j]);
-		    glUniform3f(glGetUniformLocation(active_shader_id, "light_position"), p_lights[i]->get_position().x, p_lights[i]->get_position().y, p_lights[i]->get_position().z);
-			glUniform1f(glGetUniformLocation(active_shader_id, "radius"), p_lights[i]->get_radius());
-			for(auto node : a_scene.enumerate_nodes()) {
+		    for(auto node : a_scene.enumerate_nodes()) {
 				if(mesh *m = dynamic_cast<mesh*>(node.get())) {
 					if(m->is_shadow_caster()) {
 						auto model_view_projection = view_projection * m->get_node_matrix();
