@@ -37,17 +37,27 @@ MenuBar::MenuBar(MainWindow *window, QWidget *parent) : QMenuBar(parent) {
 		QMenu *addMenu = this->addMenu("Add");
 			// Add "Point light" option
 			QAction *plAction = addMenu->addAction("Point light");
+			plAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
+			plAction->setObjectName("plAction");
 			// Add "Directional light" option
 			QAction *dlAction = addMenu->addAction("Directional light");
+			dlAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
+			dlAction->setObjectName("dlAction");
 			// Add "Group node" option
 			QAction *gnAction = addMenu->addAction("Group node");
+			gnAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_G));
+			gnAction->setObjectName("gnAction");
 
 		// Add "Help" menu
 		QMenu *helpMenu = this->addMenu("Help");
 			// Add "Wiki" option
 			QAction *wikiAction = helpMenu->addAction("Wiki");
+			wikiAction->setShortcut(QKeySequence(Qt::Key_F11));
+			wikiAction->setObjectName("wikiAction");
 			// Add "About" option
 			QAction *aboutAction = helpMenu->addAction("About");
+			aboutAction->setShortcut(QKeySequence(Qt::Key_F10));
+			aboutAction->setObjectName("aboutAction");
 
 }
 

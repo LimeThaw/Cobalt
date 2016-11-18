@@ -11,4 +11,4 @@ QT += gui core widgets opengl
 
 # Input
 SOURCES += main.cpp MainWindow.cpp MenuBar.cpp ObjectBrowser.cpp PropertiesWidget.cpp
-HEADERS += MainWindow.h MenuBar.h ObjectBrowser.h PropertiesWidget.h
+HEADERS += MainWindow.h MenuBar.h ObjectBrowser.h PropertiesWidget.h AboutWindow.h

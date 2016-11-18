@@ -12,6 +12,7 @@
 #include <QLayout>
 #include <QApplication>
 
+#include "AboutWindow.h"
 #include "MenuBar.h"
 #include "ObjectBrowser.h"
 #include "PropertiesWidget.h"
@@ -34,12 +35,16 @@ namespace ce {
 			void saveScene();
 			void loadMesh();
 			void loadTexture();
+			void add();
+			void openWiki();
+			void showAbout();
 
 		private:
 			void connectActions();
 			cs::std_scene *scene;
 			QTextEdit *consoleWidget;
 			QWidget *containerWidget;
+			AboutWindow* awin;
 
 	};
 

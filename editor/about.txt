@@ -1,0 +1,8 @@
+Cobalt Engine Scene Editor
+
+© LimeThaw 2016
+
+For further information on the engine
+visit bitbucket.org/bcc1731/cobalt or
+generate the wiki. Intructions can be
+found in the README file.

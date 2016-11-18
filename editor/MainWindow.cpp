@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	containerWidget->setLayout(layout);
 	setCentralWidget(containerWidget);
 
+	awin = new AboutWindow();
+
 	connectActions();
 
 	scene = nullptr;
@@ -77,6 +79,21 @@ bool MainWindow::event(QEvent *event) {
 				break;
 			case Qt::Key_T: // Ctrl-T
 				if(QApplication::keyboardModifiers() & Qt::ControlModifier) loadTexture();
+				break;
+			case Qt::Key_P: // Ctrl-P
+				if(QApplication::keyboardModifiers() & Qt::ControlModifier) findChild<QAction*>("plAction")->activate(QAction::Trigger);
+				break;
+			case Qt::Key_D: // Ctrl-D
+				if(QApplication::keyboardModifiers() & Qt::ControlModifier) findChild<QAction*>("dlAction")->activate(QAction::Trigger);
+				break;
+			case Qt::Key_G: // Ctrl-G
+				if(QApplication::keyboardModifiers() & Qt::ControlModifier) findChild<QAction*>("gnAction")->activate(QAction::Trigger);
+				break;
+			case Qt::Key_F10: // F10
+				findChild<QAction*>("aboutAction")->activate(QAction::Trigger);
+				break;
+			case Qt::Key_F11: // F11
+				findChild<QAction*>("wikiAction")->activate(QAction::Trigger);
 				break;
 			default:
 				break;
@@ -128,6 +145,41 @@ void MainWindow::loadTexture() {
 	consoleWidget->append("Imported texture filename(path) from path");
 }
 
+void MainWindow::add() {
+	if(sender() == findChild<QObject*>("plAction")) {
+		// Add point light
+
+		// Create new point light
+		// Add it to the scene
+		// Update tree view
+		consoleWidget->append("Added plight to scene");
+
+	} else if(sender() == findChild<QObject*>("dlAction")) {
+		// Add directional light
+
+		consoleWidget->append("Added dlign to scene");
+
+	} else if(sender() == findChild<QObject*>("gnAction")) {
+		// Add group node
+
+		consoleWidget->append("Added group node to scene");
+
+	} else {
+		// Unknown source
+		consoleWidget->append("!Error: Uncategorized access to MainWindow::add()");
+	}
+}
+
+void MainWindow::openWiki() {
+	int ret = system("firefox ../wiki/html/index.html");
+	ret += 1;
+}
+
+void MainWindow::showAbout() {
+	// Open new window with about information
+	awin->show();
+}
+
 // private
 void MainWindow::connectActions() {
 	// Connect "New" action
@@ -150,7 +202,27 @@ void MainWindow::connectActions() {
 	action = findChild<QAction*>("meshAction");
 	connect(action, &QAction::triggered, this, &MainWindow::loadMesh);
 
-	// Connect "Mesh" action
+	// Connect "Texture" action
 	action = findChild<QAction*>("textureAction");
 	connect(action, &QAction::triggered, this, &MainWindow::loadTexture);
+
+	// Connect "Point Light" action
+	action = findChild<QAction*>("plAction");
+	connect(action, &QAction::triggered, this, &MainWindow::add);
+
+	// Connect "Directional Light" action
+	action = findChild<QAction*>("dlAction");
+	connect(action, &QAction::triggered, this, &MainWindow::add);
+
+	// Connect "Group Node" action
+	action = findChild<QAction*>("gnAction");
+	connect(action, &QAction::triggered, this, &MainWindow::add);
+
+	// Connect "Group Node" action
+	action = findChild<QAction*>("wikiAction");
+	connect(action, &QAction::triggered, this, &MainWindow::openWiki);
+
+	// Connect "Group Node" action
+	action = findChild<QAction*>("aboutAction");
+	connect(action, &QAction::triggered, this, &MainWindow::showAbout);
 }
