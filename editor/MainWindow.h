@@ -1,21 +1,23 @@
 #ifndef MAINWINDOW_H_INCLUDED
 #define MAINWINDOW_H_INCLUDED
 
+#include "../engine/cobalt.h"
 #include "../engine/library/standard.h"
 
 #include <QMainWindow>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QListWidget>
-#include <QGLWidget>
 #include <QTextEdit>
 #include <QLayout>
 #include <QApplication>
+#include <QFileDialog>
 
 #include "AboutWindow.h"
 #include "MenuBar.h"
 #include "ObjectBrowser.h"
 #include "PropertiesWidget.h"
+#include "PreviewWidget.h"
 
 namespace ce {
 
@@ -44,8 +46,10 @@ namespace ce {
 			cs::std_scene *scene;
 			QTextEdit *consoleWidget;
 			QWidget *containerWidget;
-			AboutWindow* awin;
+			AboutWindow *awin;
 
+			// Temp for debug
+			::window *win;
 	};
 
 }

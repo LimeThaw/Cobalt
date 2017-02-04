@@ -6,6 +6,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	setWindowTitle("Cobalt Editor");
 	resize(1280, 720);
 
+	// debug
+	//win = new ::window(500, 500, "window");
+
 	// Add menu bar
 	MenuBar *menuBar = new MenuBar(this);
 	setMenuBar(menuBar);
@@ -22,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	layout->addWidget(objectBrowser, 1, 1, 1, 1);
 
 	// Add preview widget
-	QGLWidget *previewWidget = new QGLWidget();
+	PreviewWidget *previewWidget = new PreviewWidget();
 	layout->addWidget(previewWidget, 1, 2, 1, 1);
 
 	// Add console widget
@@ -51,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 MainWindow::~MainWindow() {
 	if(scene != nullptr) delete scene;
+	delete win;
 }
 
 bool MainWindow::event(QEvent *event) {
@@ -117,10 +121,30 @@ void MainWindow::newScene() {
 }
 
 void MainWindow::openScene() {
-	//if(scene != nullptr) delete scene;
-	//scene = new cs::std_scene();
-	//scene->load(path);
-	consoleWidget->append("Loaded scene path");
+	// Create the file picker dialog
+	QFileDialog picker;
+
+	// Add the file type filters
+	QStringList filters;
+	filters << "Scene files (*.scene)"
+			<< "All files (*)";
+	//picker.setNameFilters(filters);
+
+	// Set additional options
+	picker.setAcceptMode(QFileDialog::AcceptOpen);
+	picker.setFileMode(QFileDialog::ExistingFile);
+
+	// Execute the dialog and retrieve the result
+	if(!picker.exec()) return;
+	QString path = picker.selectedFiles()[0];
+
+	// Load the selected scene
+	if(scene != nullptr) delete scene;
+	scene = new cs::std_scene();
+	//scene->load(path.toLatin1().data());
+
+	// Log to console widget
+	consoleWidget->append(QString("Loaded scene ") + path);
 }
 
 void MainWindow::saveScene() {

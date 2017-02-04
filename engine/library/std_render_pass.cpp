@@ -3,7 +3,7 @@ using namespace cs;
 
 #define bias glm::mat4(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0)
 
-const std::string shader_dir = "./engine/library/shader/";
+const std::string shader_dir = HOME_DIR + string("engine/library/shader/");
 const int shadow_map_resolution = 2048;
 const glm::vec3 cubemap_directions[6] = {
 	glm::vec3(1, 0, 0),

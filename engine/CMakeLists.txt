@@ -6,7 +6,7 @@ find_package(GLM REQUIRED)
 find_package(Assimp REQUIRED)
 find_package(GLEW REQUIRED)
 
-#SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_INFO")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_INFO")
 
 add_library(Cobalt camera.cpp gl_exception.cpp lights.cpp material.h material.cpp mesh.cpp node.cpp
             scene.cpp shader.cpp uniforms.h uniforms.cpp simple_render_pass.cpp texture.cpp util.cpp

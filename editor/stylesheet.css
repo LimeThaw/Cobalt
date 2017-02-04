@@ -87,3 +87,22 @@ QMainWindow QMenu::selected {
 	background-color:	@color-4;
 	color:		@color-1;
 }
+
+/* File dialog styles */
+QFileDialog {
+	background-color:	@color-0;
+}
+
+QFileDialog QWidget {
+	background-color:	#eee;
+}
+
+QFileDialog QHeaderView::section {
+	background-color:	#ccc;
+	color:				#333;
+}
+
+QFileDialog QLabel {
+	background-color:	@color-0;
+	color:				#333;
+}

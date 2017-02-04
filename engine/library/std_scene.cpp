@@ -24,8 +24,8 @@ void std_scene::add_directional_light(directional_light_ptr new_light) {
 
 void std_scene::set_skybox(std::string path) {
 	if(skybox == nullptr) {
-		skybox = mesh_ptr("engine/library/skybox.obj", "");
-		skybox_shader = shader_ptr("./engine/library/shader/skybox_shader.vertex", "engine/library/shader/skybox_shader.fragment");
+		skybox = mesh_ptr(HOME_DIR + string("engine/library/skybox.obj"), "");
+		skybox_shader = shader_ptr(HOME_DIR + string("engine/library/shader/skybox_shader.vertex"), "engine/library/shader/skybox_shader.fragment");
 	}
 	skybox_texture_path = path;
 	auto skybox_mat = material_ptr();

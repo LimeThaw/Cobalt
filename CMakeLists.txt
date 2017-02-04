@@ -8,5 +8,7 @@ link_directories(${SOIL_LIB_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y")
 
+add_definitions(-DHOME_DIR="${CMAKE_CURRENT_LIST_DIR}/")
+
 add_subdirectory(engine/)
 add_subdirectory(demo/)

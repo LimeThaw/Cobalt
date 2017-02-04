@@ -5,10 +5,11 @@
 TEMPLATE = app
 TARGET = SceneEditor
 CONFIG += c++14
-LIBS += ../engine/libCobalt.a -L"/usr/lib/x86_64-linux-gnu" -L"/usr/lib" -lGLEW -lglfw -lSOIL -lassimp -lGLU
+QMAKE_C++FLAGS += -g
+LIBS += ../engine/libCobalt.a -L"/usr/lib/x86_64-linux-gnu" -L"/usr/lib" -lGL -lGLEW -lglfw -lSOIL -lassimp -lGLU
 
 QT += gui core widgets opengl
 
 # Input
-SOURCES += main.cpp MainWindow.cpp MenuBar.cpp ObjectBrowser.cpp PropertiesWidget.cpp
-HEADERS += MainWindow.h MenuBar.h ObjectBrowser.h PropertiesWidget.h AboutWindow.h
+SOURCES += main.cpp MainWindow.cpp MenuBar.cpp ObjectBrowser.cpp PropertiesWidget.cpp PreviewWidget.cpp
+HEADERS += MainWindow.h MenuBar.h ObjectBrowser.h PropertiesWidget.h AboutWindow.h PreviewWidget.h
