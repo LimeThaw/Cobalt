@@ -28,6 +28,12 @@ typedef pointer_wrapper<mesh> mesh_ptr;
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
 
+struct vertex_data {
+	glm::vec3 position;
+	glm::vec2 uv;
+	glm::vec3 tangent;
+	glm::vec3 normal;
+};
 
 class mesh : public node {
     public:
@@ -47,10 +53,13 @@ class mesh : public node {
 
     private:
         void load_model(aiMesh *inmesh);
-        GLfloat *vertex_data;
-        GLfloat *uv_data;
-        GLfloat *normal_data;
-        GLfloat *tangent_data;
+		void buffer_vertices(glm::mat4 *bone_transformations = nullptr, bool keep_size = false);
+	    std::vector<vertex_data> vertices;
+	    std::vector<glm::vec3> faces;
+        GLfloat *vertex_buffer;
+        GLfloat *uv_buffer;
+        GLfloat *normal_buffer;
+        GLfloat *tangent_buffer;
         unsigned int vertex_count;
         unsigned int uv_count;
         unsigned int normal_count;
