@@ -1,5 +1,3 @@
-//FIXME: Fix point light shadows being only on one side and not rotating properly with the parent node
-
 #include "cobalt.h"
 #include "library/standard.h"
 
@@ -7,6 +5,9 @@ int main() {
 
 	// Create window
 	window win(1280, 620, "Cobalt Scene Demo");
+
+    //init framerate counting
+    int fps = 0, fpsc = glfwGetTime();
 
 	// Load scene
 	cs::std_scene scene;
@@ -34,6 +35,16 @@ int main() {
         } catch(gl_exception &e) {
             std::cerr << "! Detected GL Error: " << e.what() << '\n';
             quit = true;
+        }
+
+        //count framerate
+        if(glfwGetTime() - fpsc >= 1.0f) {
+            std::clog << "-FPS: " << fps << "   \r";
+
+            fps = 0;
+            fpsc = glfwGetTime();
+        } else {
+            fps += 1;
         }
 
 	}

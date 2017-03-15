@@ -13,7 +13,7 @@ int main() {
 
 	//Initialize window
 	window win(1280, 640, "Cobalt Demo");
-	
+
     //init framerate counting
     int fps = 0, fpsc = glfwGetTime();
 
@@ -236,7 +236,7 @@ int main() {
                         *screen);
         mirror_pass.render(my_world, the_camera, directional_lights, point_lights, glm::vec3(1.0, 1.0, 1.0),
                                   *screen);
-                                  
+
         if(use_parallax) {
             parallax_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
                                         *screen);
@@ -244,7 +244,7 @@ int main() {
             no_parallax_render_pass.render(my_world, the_camera, directional_lights, point_lights, ambient_light_color,
                                            *screen);
         }
-        
+
         //Update window and events
         win.update();
 

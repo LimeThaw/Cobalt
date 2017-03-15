@@ -63,77 +63,6 @@ bool mesh::load_model(const std::string &scene_path, int model_index) {
 
     load_model(scene->mMeshes[model_index]);
 
-    glGenBuffers(1, &vertex_id);      //Buffer vertices
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(GLfloat), vertex_buffer, GL_STATIC_DRAW);
-
-    if(has_uvs) {
-        glGenBuffers(1, &uv_id);      //Buffer uvs
-        glBindBuffer(GL_ARRAY_BUFFER, uv_id);
-        glBufferData(GL_ARRAY_BUFFER, uv_count * sizeof(GLfloat), uv_buffer, GL_STATIC_DRAW);
-
-        glGenBuffers(1, &tangent_id);       //Buffer tangents
-        glBindBuffer(GL_ARRAY_BUFFER, tangent_id);
-        glBufferData(GL_ARRAY_BUFFER, tangent_count * sizeof(GLfloat), tangent_buffer, GL_STATIC_DRAW);
-    }
-
-    glGenBuffers(1, &normal_id);      //Buffer normals
-    glBindBuffer(GL_ARRAY_BUFFER, normal_id);
-    glBufferData(GL_ARRAY_BUFFER, normal_count * sizeof(GLfloat), normal_buffer, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glGenVertexArrays(1, &vertex_array_object_id);
-    glBindVertexArray(vertex_array_object_id);
-
-    glEnableVertexAttribArray(shader_vertex_location);       //Give vertices to OGL (location = 0)
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
-    glVertexAttribPointer(
-        shader_vertex_location,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        0,
-        (void *)0
-    );
-
-    if(has_uvs) {
-        glEnableVertexAttribArray(shader_uv_location);       //Give uvs to OGL (location = 1)
-        glBindBuffer(GL_ARRAY_BUFFER, uv_id);
-        glVertexAttribPointer(
-            shader_uv_location,
-            2,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void *)0
-        );
-
-        glEnableVertexAttribArray(shader_tangent_location);       //Give tangents to OGL (location = 3)
-        glBindBuffer(GL_ARRAY_BUFFER, tangent_id);
-        glVertexAttribPointer(
-            shader_tangent_location,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void *)0
-        );
-    }
-
-    glEnableVertexAttribArray(shader_normal_location);       //Give normals to OGL (location = 2)
-    glBindBuffer(GL_ARRAY_BUFFER, normal_id);
-    glVertexAttribPointer(
-        shader_normal_location,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        0,
-        (void *)0
-    );
-
-    glBindVertexArray(0);
-
 	path = scene_path;
 
     if(DEBUG_INFO) std::clog << indent::get() << "- Finished loading mesh " /*<< model_path*/ << " with " /*<< vertices.size() << " vertices and " */ << vertex_count / 3 << " triangles in " << glfwGetTime() - start_time << " seconds\n\n";
@@ -158,27 +87,13 @@ void mesh::render() {
         return;
     }
 
-    glBindVertexArray(vertex_array_object_id);
-
-	// Debug error Checking
-	if(DEBUG_INFO) {
-		GLint shader_id;
-		glGetIntegerv(GL_CURRENT_PROGRAM, &shader_id);
-		glValidateProgram(shader_id);
-		GLsizei length;
-		char log_buffer[512];
-		glGetProgramInfoLog(shader_id, 512, &length, log_buffer);
-		if(length > 0) std::cerr << indent::get() << "! Shader error: " << log_buffer << '\n';
-	}
-
-    glDrawArrays(GL_TRIANGLES, 0, vertex_count / 3);    //draw the mesh
-
-    glBindVertexArray(0);
+	render_no_bind();
 
 	mat->unbind();
 }
 
 void mesh::render_no_bind() {
+
     glBindVertexArray(vertex_array_object_id);
 
 	// Debug error Checking
@@ -258,6 +173,16 @@ void mesh::load_model(aiMesh *inmesh) {
     }
     box = bounding_box(min_vertex, max_vertex); // Generate AABB for mesh, used for scaling shadow mao frustum
 
+	// Load bones to animate mesh, if present
+	for(unsigned int i = 0; i < inmesh->mNumBones; ++i) {
+		aiBone *bone = inmesh->mBones[i];
+		bones.push_back(aiMatrix4x4ToGlm(&bone->mOffsetMatrix));
+		for(unsigned int j = 0; j < bone->mNumWeights; ++j) {
+			auto weight = bone->mWeights[j];
+			vertices[weight.mVertexId].weights.push_back(weight.mWeight);
+		}
+	}
+
     for(unsigned int i = 0; i < inmesh->mNumFaces; i++) { //Get faces
         aiFace face = inmesh->mFaces[i];
         glm::vec3 vec = glm::vec3(face.mIndices[0], face.mIndices[1], face.mIndices[2]);    //Get faces and put them into vector
@@ -266,12 +191,13 @@ void mesh::load_model(aiMesh *inmesh) {
     }
 
 	buffer_vertices();
+
 }
 
 // Puts vertex data in OpenGL-readable float buffers
 // Doesn't need to be exectuted if data is already properly buffered
 // 		(e.g. in last frame)
-void mesh::buffer_vertices(glm::mat4 *bone_transformations, bool keep_size) {
+void mesh::buffer_vertices(bool keep_size) {
 	//Put data into float arrays
 	std::vector<GLfloat> vbuffer;     //vertices
 	std::vector<GLfloat> ubuffer;     //uvs
@@ -356,4 +282,82 @@ void mesh::buffer_vertices(glm::mat4 *bone_transformations, bool keep_size) {
 	std::copy(nbuffer.begin(), nbuffer.end(), normal_buffer);
 	normal_count = nbuffer.size();
 	nbuffer.clear();
+
+	// Create OpenGL buffers on GPU and buffer data
+    if(vertex_id != 0) glDeleteBuffers(1, &vertex_id);
+    glGenBuffers(1, &vertex_id);      //Buffer vertices
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(GLfloat), vertex_buffer, GL_STATIC_DRAW);
+
+    if(has_uvs) {
+    	if(uv_id != 0) glDeleteBuffers(1, &uv_id);
+        glGenBuffers(1, &uv_id);      //Buffer uvs
+        glBindBuffer(GL_ARRAY_BUFFER, uv_id);
+        glBufferData(GL_ARRAY_BUFFER, uv_count * sizeof(GLfloat), uv_buffer, GL_STATIC_DRAW);
+
+		if(tangent_id != 0)glDeleteBuffers(1, &tangent_id);
+        glGenBuffers(1, &tangent_id);       //Buffer tangents
+        glBindBuffer(GL_ARRAY_BUFFER, tangent_id);
+        glBufferData(GL_ARRAY_BUFFER, tangent_count * sizeof(GLfloat), tangent_buffer, GL_STATIC_DRAW);
+    }
+
+	if(normal_id != 0) glDeleteBuffers(1, &normal_id);
+    glGenBuffers(1, &normal_id);      //Buffer normals
+    glBindBuffer(GL_ARRAY_BUFFER, normal_id);
+    glBufferData(GL_ARRAY_BUFFER, normal_count * sizeof(GLfloat), normal_buffer, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Generate VAO and give it appropriate values
+	if(vertex_array_object_id != 0) glDeleteVertexArrays(1, &vertex_array_object_id);
+    glGenVertexArrays(1, &vertex_array_object_id);
+    glBindVertexArray(vertex_array_object_id);
+
+    glEnableVertexAttribArray(shader_vertex_location);       //Give vertices to OGL (location = 0)
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
+    glVertexAttribPointer(
+        shader_vertex_location,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void *)0
+    );
+
+    if(has_uvs) {
+        glEnableVertexAttribArray(shader_uv_location);       //Give uvs to OGL (location = 1)
+        glBindBuffer(GL_ARRAY_BUFFER, uv_id);
+        glVertexAttribPointer(
+            shader_uv_location,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void *)0
+        );
+
+        glEnableVertexAttribArray(shader_tangent_location);       //Give tangents to OGL (location = 3)
+        glBindBuffer(GL_ARRAY_BUFFER, tangent_id);
+        glVertexAttribPointer(
+            shader_tangent_location,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void *)0
+        );
+    }
+
+    glEnableVertexAttribArray(shader_normal_location);       //Give normals to OGL (location = 2)
+    glBindBuffer(GL_ARRAY_BUFFER, normal_id);
+    glVertexAttribPointer(
+        shader_normal_location,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void *)0
+    );
+
+    glBindVertexArray(0);
 }

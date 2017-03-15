@@ -33,6 +33,7 @@ struct vertex_data {
 	glm::vec2 uv;
 	glm::vec3 tangent;
 	glm::vec3 normal;
+	std::vector<float> weights; //Bone weights for animation - assumes every vertex has a weight for every bone
 };
 
 class mesh : public node {
@@ -53,9 +54,10 @@ class mesh : public node {
 
     private:
         void load_model(aiMesh *inmesh);
-		void buffer_vertices(glm::mat4 *bone_transformations = nullptr, bool keep_size = false);
+		void buffer_vertices(bool keep_size = false);
 	    std::vector<vertex_data> vertices;
 	    std::vector<glm::vec3> faces;
+		std::vector<glm::mat4> bones;
         GLfloat *vertex_buffer;
         GLfloat *uv_buffer;
         GLfloat *normal_buffer;
