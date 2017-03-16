@@ -40,7 +40,6 @@ int main() {
         //count framerate
         if(glfwGetTime() - fpsc >= 1.0f) {
             std::clog << "-FPS: " << fps << "   \r";
-
             fps = 0;
             fpsc = glfwGetTime();
         } else {

@@ -6,7 +6,7 @@ find_package(GLM REQUIRED)
 find_package(Assimp REQUIRED)
 find_package(GLEW REQUIRED)
 
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_INFO")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_INFO -ggdb")
 
 add_library(Cobalt camera.cpp gl_exception.cpp lights.cpp material.h material.cpp mesh.cpp node.cpp
             scene.cpp shader.cpp uniforms.h uniforms.cpp simple_render_pass.cpp texture.cpp util.cpp
@@ -20,6 +20,7 @@ add_library(Cobalt camera.cpp gl_exception.cpp lights.cpp material.h material.cp
 		library/std_scene.h library/std_scene.cpp indent.cpp named.cpp)
 			# CLion ignores header files that are not named like the corresponding .cpp file, so enumerate them manually
 target_include_directories(Cobalt PUBLIC ${SOIL_INCLUDE_DIRS})
+target_link_libraries(Cobalt ${SOIL_LIBRARIES})
 target_include_directories(Cobalt PRIVATE ${GLFW_INCLUDE_DIRS})
 target_link_libraries(Cobalt ${GLFW_LIBRARIES})
 target_include_directories(Cobalt PRIVATE ${GLUT_INCLUDE_DIRS})
@@ -27,7 +28,6 @@ target_link_libraries(Cobalt ${GLUT_LIBRARIES})
 target_include_directories(Cobalt PRIVATE ${OPENGL_INCLUDE_DIR})
 target_link_libraries(Cobalt ${OPENGL_LIBRARIES})
 target_include_directories(Cobalt PRIVATE ${GLM_INCLUDE_DIR})
-target_link_libraries(Cobalt "-lSOIL")
 target_include_directories(Cobalt PRIVATE ${ASSIMP_INCLUDE_DIRS})
 target_link_libraries(Cobalt ${ASSIMP_LIBRARIES})
 target_include_directories(Cobalt PRIVATE ${GLEW_INCLUDE_DIRS})

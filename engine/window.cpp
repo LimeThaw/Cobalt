@@ -16,8 +16,8 @@ window::window(int width, int height, std::string title) : width(width), height(
 
 	//Give GLFW some info
 	glfwWindowHint(GLFW_SAMPLES, samples);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     //init window
     glfw_window = glfwCreateWindow(width, height, title.c_str(), NULL, 0);
@@ -37,6 +37,7 @@ window::window(int width, int height, std::string title) : width(width), height(
     make_current();
 
     //init GLEW
+	glewExperimental = GL_TRUE;
     if(glewInit() != GLEW_OK) {
         std::cerr << indent::get() << "! Window could not be created: Failed to initialize GLEW\n";
 		indent::decrease();

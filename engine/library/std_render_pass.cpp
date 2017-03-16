@@ -50,7 +50,7 @@ void std_render_pass::render(scene &a_scene, camera_ptr the_camera, std::vector<
 		// Reload shaders
 		std_shader = shader_ptr(shader_dir + "std_shader.vertex",
 			shader_dir + "std_shader.fragment",
-			std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(num_d_lights) +
+			std::string("#version 430\n#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(num_d_lights) +
 			"\n#define NUM_POINT_LIGHTS " + std::to_string(num_p_lights) + "\n"));
 
 		// Generate directional shadow maps and framebuffers
@@ -60,7 +60,7 @@ void std_render_pass::render(scene &a_scene, camera_ptr the_camera, std::vector<
 
 		for(unsigned int i = 0; i < num_d_lights; ++i) {
 			auto shadow_map = std::make_shared<texture2d>(
-				shadow_map_resolution, shadow_map_resolution, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+				shadow_map_resolution, shadow_map_resolution, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
 			auto shadow_map_attachment = std::make_shared<texture_framebuffer_attachment>(shadow_map);
 			auto shadow_map_framebuffer = std::make_shared<framebuffer>(
 				framebuffer::attachments(), framebuffer::optional_attachment(shadow_map_attachment));
@@ -75,7 +75,7 @@ void std_render_pass::render(scene &a_scene, camera_ptr the_camera, std::vector<
 		point_shadow_maps.clear();
 		point_shadow_map_framebuffers.clear();
 		for(unsigned int i = 0; i < num_p_lights; ++i) {
-			auto shadow_map = std::make_shared<cubemap>(shadow_map_resolution/4.0f, shadow_map_resolution/4.0f, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP, GL_CLAMP, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+			auto shadow_map = std::make_shared<cubemap>(shadow_map_resolution/4.0f, shadow_map_resolution/4.0f, "", GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
 			point_shadow_maps.push_back(shadow_map);
 
 			for(GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; ++face) {

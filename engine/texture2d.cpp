@@ -16,8 +16,11 @@ texture2d::texture2d(const texture_data_source &source, std::string arg_name, bo
         if(compress) {
             flags |= SOIL_FLAG_COMPRESS_TO_DXT;
         }
-        SOIL_create_OGL_texture((const unsigned char *) source.data.get(), source.width, source.height, source.num_channels,
-                                get_openGL_id(), flags);
+        //SOIL_create_OGL_texture((const unsigned char *) source.data.get(), source.width,
+		//	source.height, source.num_channels, get_openGL_id(), flags);
+		glTexImage2D(GL_TEXTURE_2D, 0, source.format, source.width, source.height, 0, source.format,
+			GL_UNSIGNED_BYTE, (const unsigned char *) source.data.get());
+		if(generate_mipmaps) glGenerateMipmap(GL_TEXTURE_2D);
         clear_gl_error();
     } else {
         glTexImage2D(GL_TEXTURE_2D, 0, source.format, source.width, source.height, 0, source.format,
