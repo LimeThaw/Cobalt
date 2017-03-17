@@ -1,5 +1,11 @@
 #include "window.h"
 
+/**
+ *  The constructor of the window. Calling this creates an OpenGL context, ideally of version 4.30,
+ *  initializes helper libraries (GLFW, GLEW), and opens a new window.
+ *  @param	width, height	The dimensions of the window that is opened and its canvas.
+ *  @param	title			The title of the window. This will be displayedin the title bar.
+ */
 window::window(int width, int height, std::string title) : width(width), height(height), samples(4), title(title) {
 
 	std::clog << indent::get() << "- Creating new window...\n";
@@ -47,7 +53,7 @@ window::window(int width, int height, std::string title) : width(width), height(
     }
     std::clog << "\n";
 
-    //setup some OpneGL functions
+    //setup some OpenGL functions
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_CUBE_MAP);
@@ -58,14 +64,26 @@ window::window(int width, int height, std::string title) : width(width), height(
 	indent::decrease();
 }
 
+/**
+ *  Destructor. Makes sure everything is tidied up.
+ */
 window::~window() {
 	glfwTerminate();
 }
 
+/**
+ *  Makes the window's context current. This means that all drawing and rendering by OpenGL will
+ *  reference this context. Use this before rendering if you have more than one window.
+ */
 void window::make_current() {
     glfwMakeContextCurrent(glfw_window);
 }
 
+/**
+ *  Updates the window and it's context. It flips the buffers to make the current frame visible and
+ *  polls events to ensure the window remains responsive. This should be called in a main loop.
+ *  If it is never called the window will not respond to anything.
+ */
 void  window::update() {
 		//Limit framerate
 		if(fps > 0) {
@@ -77,21 +95,40 @@ void  window::update() {
         glfwPollEvents();
 }
 
+/**
+ *  Checks for keypresses on the given key. Use GLFW keycodes
+ *  (http://www.glfw.org/docs/latest/group__keys.html).
+ */
 bool window::key_pressed(int key_code) {
 	return glfwGetKey(glfw_window, key_code) == GLFW_PRESS;
 }
 
+/**
+ *  Checks wether the window was closed. If someone clicked the red X in the corner, then this
+ *  returns true. Check it if you have a main loop.
+ */
 bool window::should_close() {
 	return glfwWindowShouldClose(glfw_window);
 }
 
+/**
+ *  Returns the current FPS limit. If no limit is set it will return 0.
+ */
 unsigned int window::get_fps() {
 	return fps;
 }
+
+/**
+ *  Sets the FPS limit of the window. Set to 0 for UNLIMITED SPEED!!!!!1elf
+ */
 void window::set_fps(unsigned int new_fps) {
 	fps = new_fps;
 }
 
+/**
+ *  Clears the window's canvas. Usually good to use before rendering to avoid leftovers, artifacs
+ *  and stuff like that.
+ */
 void window::clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

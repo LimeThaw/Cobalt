@@ -1,7 +1,3 @@
-/**
-The window class is used to initialize an OpenGL context and open a window
-*/
-
 #ifndef WINDOW_H
 #define WINDOW_H
 
@@ -13,6 +9,9 @@ The window class is used to initialize an OpenGL context and open a window
 
 #define WINDOW_INFO true
 
+/**
+*  The window class is used to initialize an OpenGL context and open a window.
+*/
 class window {
 	public:
 		window(int width, int height, std::string title);
