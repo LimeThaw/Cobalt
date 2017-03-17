@@ -1,8 +1,3 @@
-/**
-The material class defines a set of textures used to render an object.
-Material objects are meant to be handled by the material_manager.
-*/
-
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
@@ -21,6 +16,10 @@ Material objects are meant to be handled by the material_manager.
 #include "json.hpp"
 using json = nlohmann::json;
 
+/**
+ *  The material class defines a set of textures and shader uniforms used to render an object.
+ *  In essence it holds all the information needed to give a mesh a specific look.
+ */
 class material : public named {
     public:
         typedef std::pair<std::string, texture_ptr> texture_binding;
@@ -33,7 +32,7 @@ class material : public named {
         json get_uniforms_json();
         void add_texture(std::string uniform_name, std::shared_ptr<texture> tex);
         const texture_bindings &get_textures();
-        void use();///< Gives all associated textures to the currently active shader.
+        void use();
 		void unbind();
         bool is_standard();
         bool is_shadow_caster();
