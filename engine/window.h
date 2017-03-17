@@ -9,8 +9,9 @@ The window class is used to initialize an OpenGL context and open a window
 #include <GLFW/glfw3.h>
 #include <string>
 #include <iostream>
+#include "indent.h"
 
-#define WINDOW_INFO false
+#define WINDOW_INFO true
 
 class window {
 	public:

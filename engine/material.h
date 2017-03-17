@@ -12,16 +12,18 @@ Material objects are meant to be handled by the material_manager.
 #include <map>
 #include <string>
 
+#include "named.h"
 #include "texture.h"
 #include "uniforms.h"
 #include "name_manager.h"
 #include "util.h"
+#include "pointer_wrapper.h"
 #include "json.hpp"
 using json = nlohmann::json;
 
-class material {
+class material : public named {
     public:
-        typedef std::pair<std::string, std::shared_ptr<texture>> texture_binding;
+        typedef std::pair<std::string, texture_ptr> texture_binding;
         typedef std::vector<texture_binding> texture_bindings;
 
         material(std::string arg_name = "", bool shadow_caster = true);
@@ -36,8 +38,6 @@ class material {
         bool is_standard();
         bool is_shadow_caster();
         void set_shadow_cast(bool shadow);
-        string set_name(const string arg_name);
-        string get_name();
 
     private:
         texture_bindings textures;
@@ -46,7 +46,8 @@ class material {
 
     protected:
         bool mat_is_standard;
-        std::string name;
 };
+
+typedef pointer_wrapper<material> material_ptr;
 
 #endif // MATERIAL_H

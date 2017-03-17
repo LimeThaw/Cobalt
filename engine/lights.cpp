@@ -29,17 +29,13 @@ directional_light::directional_light() : directional_light(glm::vec3(0), 0, glm:
 
 }
 
-directional_light::directional_light(glm::vec3 color, float intensity, glm::vec3 direction, string arg_name) : light(color, intensity) {
+directional_light::directional_light(glm::vec3 color, float intensity, glm::vec3 direction,
+		string name) : light(color, intensity), named(name) {
     set_direction(direction);
-    if(arg_name == "") {
-    	name = name_manager::get_instance()->insert(this);
-    } else {
-    	name = name_manager::get_instance()->insert(arg_name, this);
-    }
 }
 
 directional_light::~directional_light() {
-	name_manager::get_instance()->remove(name);
+
 }
 
 void directional_light::set_direction(glm::vec3 new_direction) {
@@ -53,16 +49,6 @@ void directional_light::set_direction(glm::vec3 new_direction) {
 
 const glm::vec3 &directional_light::get_direction() {
     return direction;
-}
-
-string directional_light::set_name(const string arg_name) {
-	name_manager::get_instance()->remove(name);
-	name = name_manager::get_instance()->insert(arg_name, this);
-	return name;
-}
-
-string directional_light::get_name() {
-	return name;
 }
 
 //point_light

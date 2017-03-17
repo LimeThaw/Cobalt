@@ -2,12 +2,12 @@
 
 #include "simple_render_pass.h"
 
-simple_render_pass::simple_render_pass(shader *new_shader, std::vector<std::shared_ptr<material>> render_materials)
+simple_render_pass::simple_render_pass(shader_ptr new_shader, std::vector<std::shared_ptr<material>> render_materials)
     : render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer&>(
         new_shader), render_materials(render_materials) {
 }
 
-simple_render_pass::simple_render_pass(shader *new_shader, std::shared_ptr<material> render_material)
+simple_render_pass::simple_render_pass(shader_ptr new_shader, std::shared_ptr<material> render_material)
     : render_pass<scene, camera, std::vector<directional_light>, std::vector<point_light>, glm::vec3, const framebuffer&>(
         new_shader), render_materials(std::vector<std::shared_ptr<material>> { render_material }) {
 }
@@ -55,7 +55,7 @@ void simple_render_pass::render(scene &the_scene, camera the_camera, std::vector
                 ambient_light_color.g, ambient_light_color.b);
 
     for(auto node : the_scene.enumerate_nodes()) {
-        if(mesh* m = dynamic_cast<mesh*>(node)) {
+        if(mesh* m = dynamic_cast<mesh*>(node.get())) {
             if(m->get_material() && std::find(render_materials.begin(), render_materials.end(), m->get_material()) !=
                     render_materials.end()) {
                 m->render();

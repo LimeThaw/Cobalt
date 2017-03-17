@@ -9,15 +9,11 @@ texture2d::texture2d(const texture_data_source &source, std::string arg_name, bo
                  GLenum mag_filter, GLenum min_filter) {
     bind();
     if((bool) source.data) {
-        uint flags = SOIL_FLAG_INVERT_Y;
-        if(generate_mipmaps) {
-            flags |= SOIL_FLAG_MIPMAPS;
-        }
-        if(compress) {
-            flags |= SOIL_FLAG_COMPRESS_TO_DXT;
-        }
-        SOIL_create_OGL_texture((const unsigned char *) source.data.get(), source.width, source.height, source.num_channels,
-                                get_openGL_id(), flags);
+        //SOIL_create_OGL_texture((const unsigned char *) source.data.get(), source.width,
+		//	source.height, source.num_channels, get_openGL_id(), flags);
+		glTexImage2D(GL_TEXTURE_2D, 0, source.format, source.width, source.height, 0, source.format,
+			GL_UNSIGNED_BYTE, (const unsigned char *) source.data.get());
+		if(generate_mipmaps) glGenerateMipmap(GL_TEXTURE_2D);
         clear_gl_error();
     } else {
         glTexImage2D(GL_TEXTURE_2D, 0, source.format, source.width, source.height, 0, source.format,
@@ -28,8 +24,8 @@ texture2d::texture2d(const texture_data_source &source, std::string arg_name, bo
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-    
-	name = name_manager::get_instance()->insert(arg_name, this);
+
+	set_name(arg_name);
 	path = texture_cache::get_instance().get_path(source);
 }
 
@@ -47,8 +43,8 @@ texture2d::texture2d(GLsizei width, GLsizei height, std::string arg_name, GLenum
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-    
-	name = name_manager::get_instance()->insert(arg_name, this);
+
+	set_name(arg_name);
 }
 
 void texture2d::bind() {

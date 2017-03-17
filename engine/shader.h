@@ -17,6 +17,8 @@
 #include <math.h>
 
 #include "util.h"
+#include "indent.h"
+#include "pointer_wrapper.h"
 
 class shader {
     public:
@@ -32,5 +34,7 @@ const int shader_vertex_location = 0;
 const int shader_uv_location = 1;
 const int shader_normal_location = 2;
 const int shader_tangent_location = 3;
+
+typedef pointer_wrapper<shader> shader_ptr;
 
 #endif // SHADER_H

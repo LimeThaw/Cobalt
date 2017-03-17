@@ -2,53 +2,35 @@
 using namespace cs;
 
 std_scene::std_scene() : scene() {
-	skybox = NULL;
-	skybox_shader = NULL;
-	render_pass = new std_render_pass();
+	skybox = nullptr;
+	skybox_shader = nullptr;
+	render_pass.make();
 	skybox_texture_path = "";
 }
 std_scene::~std_scene() {
-	if(skybox != NULL) {
-		delete skybox;
-		delete skybox_shader;
-	}
-	delete render_pass;
-
-	for(auto p : to_delete) {
-		switch(p.first) {
-			case 'n':
-				delete (mesh*)p.second;
-				break;
-			case 'l':
-				delete (light*)p.second;
-				break;
-			default:
-				printf("! Invalid pointer format: Could not delete\n");
-				break;
-		}
-	}
 }
 
-void std_scene::set_camera(camera* new_camera) {
+void std_scene::set_camera(camera_ptr new_camera) {
 	main_camera = new_camera;
 }
 
-void std_scene::add_point_light(point_light* new_light) {
+void std_scene::add_point_light(point_light_ptr new_light) {
 	p_lights.push_back(new_light);
 }
 
-void std_scene::add_directional_light(directional_light* new_light) {
+void std_scene::add_directional_light(directional_light_ptr new_light) {
 	d_lights.push_back(new_light);
 }
 
 void std_scene::set_skybox(std::string path) {
-	if(skybox == NULL) {
-		skybox = new mesh("engine/library/skybox.obj", "");
-		skybox_shader = new shader("./engine/library/shader/skybox_shader.vertex", "engine/library/shader/skybox_shader.fragment");
+	if(skybox == nullptr) {
+		skybox = mesh_ptr(HOME_DIR + string("engine/library/skybox.obj"), "");
+		skybox_shader = shader_ptr(HOME_DIR + string("engine/library/shader/skybox_shader.vertex"), "engine/library/shader/skybox_shader.fragment");
 	}
 	skybox_texture_path = path;
-	auto skybox_mat = std::make_shared<material>();
-	skybox_mat->add_texture("color_map", std::make_shared<texture2d>(
+	auto skybox_mat = material_ptr();
+	skybox_mat.make();
+	skybox_mat->add_texture("color_map", texture2d_ptr(
             texture_cache::get_instance().get_texture_from_filename(path)));
     skybox->set_material(skybox_mat);
 }
@@ -62,7 +44,7 @@ void std_scene::save(const char* file_path, bool pretty) {
 		auto name = node->get_name().c_str();
 
 		// Is the node a mesh?
-		if(mesh *m = dynamic_cast<mesh*>(node)) {
+		if(mesh *m = dynamic_cast<mesh*>(node.get())) {
 			auto item = scene["meshes"][name];
 	 		item["path"] = m->get_path();
 	 		item["node_matrix"] = serialize(m->get_isolated_matrix());
@@ -91,7 +73,7 @@ void std_scene::save(const char* file_path, bool pretty) {
  			}
 
  		// Or is it a camera?
-	 	} else if(camera *c = dynamic_cast<camera*>(node)) {
+	} else if(camera *c = dynamic_cast<camera*>(node.get())) {
 			auto item = scene["cameras"][name];
 	 		item["node_matrix"] = serialize(c->get_isolated_matrix());
 	 		item["projection_matrix"] = serialize(c->get_projection());
@@ -100,7 +82,7 @@ void std_scene::save(const char* file_path, bool pretty) {
  			scene["cameras"][name] = item;
 
  		// Or is it a light?
-	 	} else if(point_light *p = dynamic_cast<point_light*>(node)) {
+	} else if(point_light *p = dynamic_cast<point_light*>(node.get())) {
 	 		auto item = scene["point_lights"][name];
 			item["position"] = serialize(p->get_position());
 			item["color"] = serialize(p->get_color());
@@ -169,7 +151,8 @@ void std_scene::save(const char* file_path, bool pretty) {
 
 
 void std_scene::load(const char* file_path) {
-	printf("+ Loading scene %s\n", file_path);
+	printf("%s- Loading scene %s\n", indent::get().c_str(), file_path);
+	indent::increase();
 
 	string input = read_from_file(file_path);
 	if(input == "") return;
@@ -182,9 +165,6 @@ void std_scene::load(const char* file_path) {
 	// Loading all textures for the scene
 	for(json::iterator it = scene["textures"].begin(); it != scene["textures"].end(); ++it) {
 		texs.insert(pair<string, shared_ptr<texture2d>>(it.key(), texture2d::load_file((*it)["path"].get<string>().c_str(), it.key())));
-
-		// DEBUG INFO
-		printf("  + Loaded texture %s from path %s\n", it.key().c_str(), (*it)["path"].get<string>().c_str());
 	}
 
 	// Loading all materials for the scene
@@ -204,7 +184,7 @@ void std_scene::load(const char* file_path) {
 				mat->add_texture(jt.key(), texs.find(*jt)->second);
 			}
 			// DEBUG_INFO
-			printf("  + Added texture %s as %s to material %s\n", (*jt).get<string>().c_str(), jt.key().c_str(), it.key().c_str());
+			printf("%s- Added texture %s as %s to material %s\n", indent::get().c_str(), (*jt).get<string>().c_str(), jt.key().c_str(), it.key().c_str());
 		}
 
 		// Add uniforms to material
@@ -215,7 +195,7 @@ void std_scene::load(const char* file_path) {
 			} else if(type == "vec3") {
 				mat->set_uniform(jt.key(), make_shared<vec3_uniform>(deserialize_vec3((*jt)[1].get<string>())));
 			} else {
-				printf("! Found uniform %s of unknown type %s\n", jt.key().c_str(), type.c_str());
+				printf("%s! Found uniform %s of unknown type %s\n", indent::get().c_str(), jt.key().c_str(), type.c_str());
 			}
 		}
 
@@ -224,92 +204,87 @@ void std_scene::load(const char* file_path) {
 
 	// Remember the parenthood relations - Name of the parent first,
 	// pointer to the child second
-	map<string, node*> parents;
+	map<string, node_ptr> parents;
 	// Also remember all nodes for setting parent
-	vector<node*> nodes;
+	vector<node_ptr> nodes;
 
 	// Loading abstract nodes as groups
 	for(json::iterator it = scene["groups"].begin(); it != scene["groups"].end(); ++it) {
-		auto temp = new node();
-		temp->set_name(it.key());
+		node_ptr temp(it.key());
 		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), temp));
 		nodes.push_back(temp);
 		append_node(temp);
-		to_delete.push_back(pair<char, void*>('n', temp));
 	}
 
 	// Loading cameras in scene
 	for(json::iterator it = scene["cameras"].begin(); it != scene["cameras"].end(); ++it) {
-		auto temp = new camera();
+		camera_ptr temp(deserialize_mat4((*it)["node_matrix"].get<string>()),
+			deserialize_mat4((*it)["projection_matrix"].get<string>()));
 		temp->set_name(it.key());
-		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
-		temp->set_projection(deserialize_mat4((*it)["projection_matrix"].get<string>()));
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
-		nodes.push_back(temp);
-		append_node(temp);
-		to_delete.push_back(pair<char, void*>('n', temp));
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
+		nodes.push_back(node_ptr(temp));
+		append_node(node_ptr(temp));
 	}
 
 	// Set main camera
 	if(scene["main_camera"] == NULL) {
-		printf("! Loaded scene does not define a main camera\n");
+		printf("%s! Loaded scene does not define a main camera\n", indent::get().c_str());
 	} else {
 		string mc = scene["main_camera"].get<string>();
-		if(camera* c = dynamic_cast<camera*>(find_node(mc))) {
-			set_camera(c);
+		camera_ptr cp;
+		if((cp = find_node(mc)) != nullptr && dynamic_cast<camera*>(cp.get()) != nullptr) {
+			set_camera(cp);
 		} else {
-			printf("! Loaded scene scpecified undefined camera as main camera\n");
+			printf("%s! Loaded scene scpecified undefined camera as main camera\n", indent::get().c_str());
 		}
 	}
 
 	// Load point_lights
 	for(json::iterator it = scene["point_lights"].begin(); it != scene["point_lights"].end(); ++it) {
 		// Create new point_light
-		auto temp = new point_light(
+		point_light_ptr temp(
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["position"].get<string>()),
-			(*it)["radius"].get<float>(),
+			float((*it)["radius"].get<float>()),
 			it.key()
 		);
 		// Set parent node if present
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
-		nodes.push_back(temp);
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
+		nodes.push_back(node_ptr(temp));
 		// Insert into scene graph and list of lights
-		append_node(temp);
+		append_node(node_ptr(temp));
 		p_lights.push_back(temp);
-		// Remember to delete
-		to_delete.push_back(pair<char, void*>('n', temp));
 	}
 
 	// Loading all meshes in scene
 	for(json::iterator it = scene["meshes"].begin(); it != scene["meshes"].end(); ++it) {
-		auto temp = new mesh();
+		auto temp = make_shared<mesh>();
 		temp->set_name(it.key());
 		temp->set_node_matrix(deserialize_mat4((*it)["node_matrix"].get<string>()));
 		if((*it)["path"] != NULL) {
 			temp->load_model((*it)["path"]);
 		}
 		// Set parent node if present
+		// FIXME: Fix parents data structure to allow multiple children of one node
 		if((*it)["parent"] != NULL)
-			parents.insert(pair<string, node*>((*it)["parent"].get<string>(), temp));
+			parents.insert(pair<string, node_ptr>((*it)["parent"].get<string>(), node_ptr(temp)));
 		// Set material if found
 		if((*it)["material"] != NULL && mats.find((*it)["material"].get<string>()) != mats.end())
 			temp->set_material(mats.find((*it)["material"].get<string>())->second);
-		nodes.push_back(temp);
-		append_node(temp);
-		to_delete.push_back(pair<char, void*>('n', temp));
+		nodes.push_back(node_ptr(temp));
+		append_node(node_ptr(temp));
 
 		// DEBUG INFO
-		printf("  + Loaded mesh %s from path %s\n", it.key().c_str(), (*it)["path"].get<string>().c_str());
+		printf("%s- Loaded mesh %s from path %s\n", indent::get().c_str(), it.key().c_str(), (*it)["path"].get<string>().c_str());
 	}
 
 	// Now create scene graph structure by setting parenthood relationships
-	map<string, node*>::iterator it;
+	map<string, node_ptr>::iterator it;
 	for(auto n : nodes) {
 		if((it = parents.find(n->get_name())) != parents.end()) {
 			n->append_node((*it).second);
@@ -318,25 +293,25 @@ void std_scene::load(const char* file_path) {
 
 	// Load directional lights
 	for(json::iterator it = scene["dir_lights"].begin(); it != scene["dir_lights"].end(); ++it) {
-		directional_light *temp = new directional_light(
+		directional_light_ptr temp(
 			deserialize_vec3((*it)["color"].get<string>()),
 			(*it)["intensity"].get<float>(),
 			deserialize_vec3((*it)["direction"].get<string>()),
 			it.key()
 		);
 		add_directional_light(temp);
-		to_delete.push_back(pair<char, void*>('l', (void*)temp));
 	}
 
 	// Load skybox if it exists
 	if(scene["skybox"] != NULL) set_skybox(scene["skybox"]);
 
-	printf("- Finished loading scene\n");
+	printf("%s- Finished loading scene\n\n", indent::get().c_str());
+	indent::decrease();
 }
 
 void std_scene::render() {
 	if(main_camera) {
-		if(skybox) {
+		if(skybox != nullptr) {
 			skybox_shader->use();
 			GLint active_shader_id;
 			glGetIntegerv(GL_CURRENT_PROGRAM, &active_shader_id);
@@ -352,7 +327,7 @@ void std_scene::render() {
 			skybox->render();
 			glDepthMask(true);
 		}
-		render_pass -> render(*this, *main_camera, d_lights, p_lights);
+		render_pass -> render(*this, main_camera, d_lights, p_lights);
 	} else {
 		std::cerr << "! Tried to render scene without active camera\n";
 	}

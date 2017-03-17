@@ -19,15 +19,15 @@ class scene {
         scene();
         ~scene();
         void append_node(const std::string &file_path);
-        void append_node(node *new_child);
+        void append_node(node_ptr new_child);
         void append_mesh(const std::string &file_path);
-        node *get_parent_node();
-        std::vector< node * > enumerate_nodes();
-        node* find_node(string name);
+        node_ptr get_parent_node();
+        std::vector<node_ptr> enumerate_nodes();
+        node_ptr find_node(string name);
 
     private:
         void init();
-        node parent_node;
+        node_ptr parent_node;
 };
 
 #endif // SCENE_H

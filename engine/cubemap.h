@@ -7,6 +7,7 @@
 
 
 #include "texture.h"
+#include "pointer_wrapper.h"
 
 /**
  *  Class representing a cubemap texture. Holds the OpenGL id, the name and the source path of the
@@ -26,6 +27,8 @@ class cubemap :
 
         void bind() override;
 };
+
+typedef pointer_wrapper<cubemap> cubemap_ptr;
 
 
 #endif //COBALT_CUBEMAP_H

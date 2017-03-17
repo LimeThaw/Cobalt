@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <cassert>
 #include <cmath>
+#include <assimp/matrix4x4.h>
+#include <GL/gl.h>
 
 #define DEG_TO_RAD 0.017453294
 
@@ -44,5 +46,8 @@ string read_from_file(const char* filename);
 
 vector<string> split(const string &s, char delim);
 string filename(string source);
+
+// Converts 4x4 matrices from Assimp's format to GLM, which is primarily used by the engine
+glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4* from);
 
 #endif

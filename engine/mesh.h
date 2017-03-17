@@ -21,10 +21,20 @@
 #include "node.h"
 #include "scene.h"
 #include "bounding_box.h"
+#include "pointer_wrapper.h"
+
+typedef pointer_wrapper<mesh> mesh_ptr;
 
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
 
+struct vertex_data {
+	glm::vec3 position;
+	glm::vec2 uv;
+	glm::vec3 tangent;
+	glm::vec3 normal;
+	std::vector<float> weights; //Bone weights for animation - assumes every vertex has a weight for every bone
+};
 
 class mesh : public node {
     public:
@@ -44,10 +54,14 @@ class mesh : public node {
 
     private:
         void load_model(aiMesh *inmesh);
-        GLfloat *vertex_data;
-        GLfloat *uv_data;
-        GLfloat *normal_data;
-        GLfloat *tangent_data;
+		void buffer_vertices(bool keep_size = false);
+	    std::vector<vertex_data> vertices;
+	    std::vector<glm::vec3> faces;
+		std::vector<glm::mat4> bones;
+        GLfloat *vertex_buffer;
+        GLfloat *uv_buffer;
+        GLfloat *normal_buffer;
+        GLfloat *tangent_buffer;
         unsigned int vertex_count;
         unsigned int uv_count;
         unsigned int normal_count;
@@ -57,7 +71,7 @@ class mesh : public node {
         GLuint uv_id;
         GLuint normal_id;
         GLuint tangent_id;
-        std::shared_ptr<material> mat;
+        material_ptr mat;
         bool has_uvs;
         bounding_box box;
         string path;
