@@ -18,7 +18,7 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
             vertex_shader_code += "\n" + line;
         vertex_shader_stream.close();
     }
-    vertex_shader_code = shader::process_shader(vertex_shader_code);
+    //vertex_shader_code = shader::process_shader(vertex_shader_code);
 
     // Read the Fragment Shader code from the file
     std::string fragment_shader_source = shader_prefix + "\n";
@@ -107,6 +107,9 @@ void shader::use() {
     glUseProgram(shader_id);
 }
 
+// Processes special commands in the shader code.
+// Primarily used for duplicating codes to achieve semantics of for loops, largely made
+// obsolete by migration to core OpenGL
 std::string shader::process_shader(std::string source) {
 
 	std::string term, value;
