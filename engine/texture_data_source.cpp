@@ -9,9 +9,10 @@
 #include "util.h"
 
 texture_data_source::texture_data_source(GLsizei width, GLsizei height, GLenum format, GLenum type,
-                                         std::shared_ptr<void> data) :
+                                         std::shared_ptr<void> data, bool invert) :
         width(width), height(height), format(format), type(type), data(data) {
     num_channels = format_to_num_channels(format);
+	if(invert) invert_y();
 }
 
 GLenum texture_data_source::num_channels_to_format(uint num_channels) {
@@ -46,7 +47,7 @@ uint texture_data_source::format_to_num_channels(GLenum format) {
     }
 }
 
-texture_data_source texture_data_source::load_from_file(std::string filename) {
+texture_data_source texture_data_source::load_from_file(std::string filename, bool invert_y) {
     GLsizei width, height;
     int channels;
     unsigned char *data = SOIL_load_image(filename.c_str(), &width, &height, &channels, SOIL_LOAD_AUTO);
@@ -56,7 +57,7 @@ texture_data_source texture_data_source::load_from_file(std::string filename) {
     	std::clog << indent::get() << "- Loaded texture " << filename << "\n";
     }
     return texture_data_source(width, height, num_channels_to_format((uint) channels), GL_UNSIGNED_BYTE,
-                               std::shared_ptr<void>(data));
+                               std::shared_ptr<void>(data), invert_y);
 }
 
 texture_data_source texture_data_source::create_normals_from_height(const texture_data_source &height_map) {
@@ -119,4 +120,21 @@ texture_data_source texture_data_source::create_null_data_source(GLsizei width, 
 
 bool texture_data_source::operator== (const texture_data_source &other) {
 	return data == other.data;
+}
+
+// Flips the texture on its horizontal axis, inverting it on the y axis
+void texture_data_source::invert_y() {
+	int i, j;
+	auto d = (unsigned char*) data.get();
+	for( j = 0; j*2 < height; ++j ) {
+		int index1 = j * width * num_channels;
+		int index2 = (height - 1 - j) * width * num_channels;
+		for( i = width * num_channels; i > 0; --i ) {
+			unsigned char temp = d[index1];
+			d[index1] = d[index2];
+			d[index2] = temp;
+			++index1;
+			++index2;
+		}
+	}
 }

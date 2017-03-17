@@ -17,19 +17,21 @@ struct texture_data_source {
     uint num_channels;
     std::shared_ptr<void> data;
 
-    texture_data_source(GLsizei width, GLsizei height, GLenum format, GLenum type, std::shared_ptr<void> data);
+    texture_data_source(GLsizei width, GLsizei height, GLenum format, GLenum type, std::shared_ptr<void> data, bool invert = true);
 
     static GLenum num_channels_to_format(uint num_channels);
 
     static uint format_to_num_channels(GLenum format);
 
-    static texture_data_source load_from_file(std::string filename);
+    static texture_data_source load_from_file(std::string filename, bool invert_y = true);
 
     static texture_data_source create_normals_from_height(const texture_data_source &height_map);
 
     static texture_data_source create_null_data_source(GLsizei width, GLsizei height);
 
     bool operator==(const texture_data_source &other);
+
+	void invert_y();
 };
 
 

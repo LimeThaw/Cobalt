@@ -9,13 +9,6 @@ texture2d::texture2d(const texture_data_source &source, std::string arg_name, bo
                  GLenum mag_filter, GLenum min_filter) {
     bind();
     if((bool) source.data) {
-        uint flags = SOIL_FLAG_INVERT_Y;
-        if(generate_mipmaps) {
-            flags |= SOIL_FLAG_MIPMAPS;
-        }
-        if(compress) {
-            flags |= SOIL_FLAG_COMPRESS_TO_DXT;
-        }
         //SOIL_create_OGL_texture((const unsigned char *) source.data.get(), source.width,
 		//	source.height, source.num_channels, get_openGL_id(), flags);
 		glTexImage2D(GL_TEXTURE_2D, 0, source.format, source.width, source.height, 0, source.format,

@@ -16,7 +16,7 @@ int main() {
 	// Exit condition
 	bool quit = false;
 
-	node_ptr camera_node = scene.find_node("untitled");
+	node_ptr camera_node = scene.find_node("camera_node");
 
 	// Main loop
 	while(!quit && !win.key_pressed(GLFW_KEY_ESCAPE) && !win.should_close()) {
