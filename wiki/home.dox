@@ -22,7 +22,7 @@
 	We also used JSON for modern C++ by Niels Lohmann (https://github.com/nlohmann/json)
 	which is fully included within the source.
 
-	The engine was developed under Ubuntu 16.04 64 bit with OpenGL 3.3/GLSL 1.30 and has not been tested in other configurations.
+	The engine was developed under Ubuntu 16.04 64 bit with OpenGL 4.3/GLSL 4.30 and has not been tested in other configurations.
 
 	\section Building
 	To compile  the source code of the engine and the main example on Linux
@@ -42,13 +42,13 @@
 	and run
 	\code{.unparsed}doxygen doxy_config\endcode
 	The html version will be available in wiki/html/index.html.
-	
+
 	If you are too lazy to build everything you can execute build_all. Just navigate to
 	the root directory and use one of the following commands:
 	\code{.unparsed}./build_all
 	sh build_all
 	bash build_all\endcode
-	
-	
-	
+
+
+
 */
