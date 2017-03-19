@@ -25,7 +25,7 @@ const glm::vec3 cubemap_ups[6] = {
 std_render_pass::std_render_pass() :
 		render_pass<scene, camera_ptr, std::vector<directional_light_ptr>, std::vector<point_light_ptr>>(shader_ptr()) {
 	std_shader = shader_ptr(shader_dir + "std_shader.vertex", shader_dir + "std_shader.fragment",
-		std::string("#version 130\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"));
+		std::string("#version 430\n#define NUM_DIRECTIONAL_LIGHTS 1\n#define NUM_POINT_LIGHTS 1\n"));
 	depth_shader = shader_ptr(shader_dir + "depthOnlyVertexShader.glsl", shader_dir + "depthOnlyFragmentShader.glsl");
 }
 
