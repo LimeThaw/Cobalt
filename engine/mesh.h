@@ -28,12 +28,16 @@ typedef pointer_wrapper<mesh> mesh_ptr;
 #define MESH_INFO false     //Toggle detailed information output
 //when loading meshes
 
+/**
+ *  Struct used to store vertex information. Keeps the position, uv coordinates, tangent, normal
+ *  and the bone weights for each vertex.
+ */
 struct vertex_data {
 	glm::vec3 position;
 	glm::vec2 uv;
 	glm::vec3 tangent;
 	glm::vec3 normal;
-	std::vector<float> weights; //Bone weights for animation - assumes every vertex has a weight for every bone
+	std::vector<float> weights; ///< Bone weights for animation - assumes every vertex has a weight for every bone
 };
 
 class mesh : public node {

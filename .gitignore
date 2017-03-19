@@ -9,7 +9,6 @@ cobalt.kdev4
 *.trace
 *~
 *.cbp
-wiki/
 .idea/
 *.o
 */CMakeFiles
