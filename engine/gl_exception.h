@@ -5,6 +5,9 @@
 #include <GL/gl.h>
 #include <iostream>
 
+/**
+ *   A little helper class to detect OpenGL errors
+ */
 class gl_exception :
     public std::runtime_error {
         public:
