@@ -8,6 +8,11 @@
 
 #include "framebuffer_attachment.h"
 
+/**
+ *  framebuffer_attachment implementation used for rendering to screen. If you simply want to render
+ *  your stuff, then this is the implementation for you. Attach this to your framebuffer and render
+ *  away!
+ */
 class renderbuffer_framebuffer_attachment :
         public framebuffer_attachment {
     private:

@@ -10,6 +10,11 @@
 #include "framebuffer_attachment.h"
 #include "texture.h"
 
+/**
+ *  framebuffer_attachment implementation meant for rendering to textures. If you a have complex
+ *  render pipeline and need to render something to texture to use it in a later pass, or just want
+ *  to save screenshots, then this is the right implementation for you.
+ */
 class texture_framebuffer_attachment :
     public framebuffer_attachment {
     private:
