@@ -14,6 +14,11 @@
 #include "node.h"
 #include "util.h"
 
+/**
+ *  A general class for a scene to be rendered. This class is supposed to be extended to a more
+ *  useful one with more functionality (like std_scene). Every scene contains a hierarchical scene
+ *  graph made of nodes.
+ */
 class scene {
     public:
         scene();
