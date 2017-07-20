@@ -40,6 +40,12 @@ struct vertex_data {
 	std::vector<float> weights; ///< Bone weights for animation - assumes every vertex has a weight for every bone
 };
 
+/**
+ *  Class representing a mesh object to be rendered. Every mesh is also a node in the scene graph
+ *  and inherits all functionality from the node class. It contains all geometry data like vertices,
+ *  faces, normals and tangents. Once implemented it will also contain all animation data associated
+ *  with the mesh.
+ */
 class mesh : public node {
     public:
         mesh();
