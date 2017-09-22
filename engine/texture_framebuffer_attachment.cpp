@@ -26,7 +26,7 @@ texture_framebuffer_attachment::~texture_framebuffer_attachment() {
  *  Attaches the texture for rendering. The next draw call will render the requested channel to the
  *  texture. Basically implements this call:
  *  https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glFramebufferTexture2D.xml
- *  @param	taget	Which channel you want to render to your texture. Must be GL_COLOR_ATTACHMENT0,
+ *  @param	target	Which channel you want to render to your texture. Must be GL_COLOR_ATTACHMENT0,
  *  					GL_DEPTH_ATTACHMENT, or GL_STENCIL_ATTACHMENT.
  */
 void texture_framebuffer_attachment::attachAs(GLuint target) {

@@ -17,8 +17,12 @@ material::material(std::string arg_name, bool shadow_caster) : named(arg_name), 
 /**
  *  Slightly extended constructor that takes texture_bindings and assigns them to the material, in
  *  addition to the functionality provided by the basic constructor.
- *  @param	textures	texture_bindings containing the textures to be assigned to the material, and
- *  						their bindings.
+ *  @param	textures	texture_bindings containing the textures to be assigned to the material,
+ *  						and their bindings.
+ *  @param	arg_name	The name that you want to give your material. Later you will be able to
+ *  						find and access it under this name.
+ *  @param	shadow_caster	If true, every object with this material will cast a shadow in the
+ *  							scene.
  */
 material::material(const texture_bindings &textures, std::string arg_name, bool shadow_caster) : textures(textures) {
 	material(arg_name, shadow_caster);

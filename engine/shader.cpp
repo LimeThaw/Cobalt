@@ -1,5 +1,13 @@
 #include "shader.h"
 
+/**
+ *  Global function that reads the code for the vertex- and fragment shaders from the given files,
+ *  compiles them into a glsl shader and returns the ID assigned by OpenGL.
+ *  @param	vertex_path		The file path to the code for the vertex shader stage.
+ *  @param	fragment_path	The file path to the code for the fragment shader stage.
+ *  @param	shader_prefix	A string that is prepended to both shader sources before processing
+ *  							or compiling.
+ */
 static GLuint load_shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix) {
     std::clog << indent::get() << "- Loading shader " << filename(vertex_path) << " | " << filename(fragment_path) << "\n";
 	indent::increase();
@@ -95,21 +103,39 @@ static GLuint load_shader(const std::string &vertex_path, const std::string &fra
     return shader_id;
 }
 
+/**
+ *  Constructor calling the load_shader() function and storing the ID returned in the new shader
+ *  object.
+ *  @param	vertex_path		The file path to the code for the vertex shader stage.
+ *  @param	fragment_path	The file path to the code for the fragment shader stage.
+ *  @param	shader_prefix	A string that is prepended to both shader sources before processing
+ *  							or compiling.
+ */
 shader::shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix) {
     shader_id = load_shader(vertex_path, fragment_path, shader_prefix);
 }
 
+/**
+ *  Destructor taking care of removing the shader in OpenGL.
+ */
 shader::~shader() {
     glDeleteProgram(shader_id);
 }
 
+/**
+ *  Makes this shader the active one in OpenGL. This means this shader will be used for the next
+ *  draw call.
+ */
 void shader::use() {
     glUseProgram(shader_id);
 }
 
-// Processes special commands in the shader code.
-// Primarily used for duplicating codes to achieve semantics of for loops, largely made
-// obsolete by migration to core OpenGL
+/**
+ *  Processes special commands in the shader code.
+ *  Primarily used for duplicating codes to achieve semantics of for loops, largely made
+ *  obsolete by migration to core OpenGL.
+ *  @param	source	The source code you want to process - NOT a file path.
+ */
 std::string shader::process_shader(std::string source) {
 
 	std::string term, value;

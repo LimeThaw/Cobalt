@@ -5,8 +5,14 @@
 #include "cubemap.h"
 
 /**
- *  Secondary constructor. Calls the other constructor with format=GL_RGBA. Used to shorten code since
- *  RGBA is the most common format for textures.
+ *  Secondary constructor. Calls the other constructor with format=GL_RGBA. Used to shorten code
+ *  since RGBA is the most common format for textures.
+ *  @param	width			Width of the individual faces in pixels
+ *  @param	height			Height of the individual faces in pixels
+ *  @param	arg_name		The name of the cubemap object. Has nothing to do with OpenGL.
+ *
+ *  For more information on the other arguments see [here](https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml "glTexImage2D")
+ *  and [here](https://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml "glTexParameter").
  */
 cubemap::cubemap(GLsizei width, GLsizei height, std::string arg_name, GLenum internalformat,
                  GLenum wrap_r, GLenum wrap_s, GLenum wrap_t,

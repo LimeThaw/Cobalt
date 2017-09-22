@@ -20,6 +20,12 @@
 #include "indent.h"
 #include "pointer_wrapper.h"
 
+/**
+ *  Class representing rendering algorithms as OpenGL programs.
+ *  (https://www.khronos.org/opengl/wiki/GLSL_Object) Each program is
+ *  loaded from two GLSL source code files representing the vertex and fragment shader stages
+ *  (https://www.khronos.org/opengl/wiki/Shader#Stages).
+ */
 class shader {
     public:
         shader(const std::string &vertex_path, const std::string &fragment_path, const std::string shader_prefix = "");

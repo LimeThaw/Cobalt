@@ -42,8 +42,8 @@ camera::~camera() {
 /**
  *  Similar to the three-argument-constructor, but without projection matrix.
  *  Places the camera at arg_pos and makes it look in the direction of arg_point.
- *  @param	position	The position of the camera in 3D space.
- *  @param	look_point	A point in 3D space. The orientation of the camera will be towards
+ *  @param	arg_pos		The position of the camera in 3D space.
+ *  @param	arg_point	A point in 3D space. The orientation of the camera will be towards
  *  						this point.
  */
 void camera::setup(glm::vec3 arg_pos, glm::vec3 arg_point) {
