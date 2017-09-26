@@ -17,8 +17,8 @@
 #include "pointer_wrapper.h"
 
 /**
- *  Abstract class representing a texture buffered by OpenGL. Holds the OpenGL id, the name and the source path
- *  of the texture.
+ *  Abstract class representing a texture buffered by OpenGL. Holds the OpenGL id, the name and
+ *  the source path of the texture.
  */
 class texture : public named {
 

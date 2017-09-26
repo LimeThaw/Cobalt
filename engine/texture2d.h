@@ -10,6 +10,10 @@
 
 #include "pointer_wrapper.h"
 
+/**
+ *  Class representing a 2D texture. This extends the texture class and adds some useful
+ *  functionality.
+ */
 class texture2d : public texture {
     public:
         texture2d(const texture_data_source &source, std::string arg_name = "", bool generate_mipmaps = true, bool compress = true,
