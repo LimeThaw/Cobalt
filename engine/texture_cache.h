@@ -9,6 +9,10 @@
 #include <string>
 #include "texture_data_source.h"
 
+/**
+ *  Singleton class used to cache textures to save time and memory. Keeps track of what files have
+ *  been loaded and their texture_data_source objects.
+ */
 class texture_cache {
     private:
         std::map<std::string, texture_data_source> entries;

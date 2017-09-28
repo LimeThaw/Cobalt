@@ -6,11 +6,20 @@
 
 #include <algorithm>
 
+/**
+ *  Singleton getter function. Keeps a static instance of the cache and returns it on request.
+ *  This means that there is never more than one cache object in a program.
+ */
 texture_cache &texture_cache::get_instance() {
     static texture_cache cache;
     return cache;
 }
 
+/**
+ *  Returns the data source for a specified file. If the file has been loaded before, the cache
+ *  will look up the data and return it. Otherwise the image is loaded and registered in the cache.
+ *  @param	filename	The path of the file you want to load.
+ */
 texture_data_source texture_cache::get_texture_from_filename(std::string filename) {
     auto i = entries.find(filename);
     if(i != entries.end()) {
@@ -22,6 +31,11 @@ texture_data_source texture_cache::get_texture_from_filename(std::string filenam
     }
 }
 
+/**
+ *  Returns the file path for a loaded texture source. If the source is not present in the cache
+ *  iit will print a warning and return an empty string.
+ *  @param	source	The texture_data_source object that you want to know the file path for.
+ */
 std::string texture_cache::get_path(const texture_data_source &source) {
 	for (auto it = entries.begin(); it != entries.end(); ++it ) {
 		if (it->second == source)
