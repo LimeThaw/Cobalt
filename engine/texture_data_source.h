@@ -10,9 +10,21 @@
 
 #include "indent.h"
 
+/**
+ *  A class representing texture data in memory. It stores the raw image data along with important
+ *  metadata. This allows to buffer loaded texture data and share it among several texture objects.
+ */
 struct texture_data_source {
     GLsizei width, height;
+	/**
+	 *  See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml at the
+	 *  format parameter for options and more info.
+	 */
     GLenum format;
+	/**
+	 *  See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml at the
+	 *  type parameter for options and more info.
+	 */
     GLenum type;
     uint num_channels;
     std::shared_ptr<void> data;

@@ -8,6 +8,10 @@
 #include "texture_data_source.h"
 #include "util.h"
 
+/**
+ *  The class constructor. Takes the raw image data and important metadata and stores it in the
+ *  object.
+ */
 texture_data_source::texture_data_source(GLsizei width, GLsizei height, GLenum format, GLenum type,
                                          std::shared_ptr<void> data, bool invert) :
         width(width), height(height), format(format), type(type), data(data) {
@@ -15,6 +19,9 @@ texture_data_source::texture_data_source(GLsizei width, GLsizei height, GLenum f
 	if(invert) invert_y();
 }
 
+/**
+ *  Converts the number of desired chanels into an OpenGL color format.
+ */
 GLenum texture_data_source::num_channels_to_format(uint num_channels) {
     switch(num_channels) {
         case 1:
@@ -30,6 +37,9 @@ GLenum texture_data_source::num_channels_to_format(uint num_channels) {
     }
 }
 
+/**
+ *  Returns the number of channels in the given OpenGL color format.
+ */
 uint texture_data_source::format_to_num_channels(GLenum format) {
     switch(format) {
         case GL_RED:
@@ -47,6 +57,13 @@ uint texture_data_source::format_to_num_channels(GLenum format) {
     }
 }
 
+/**
+ *  Loads an image from a file and returns the resulting texture_data_source. If loading fails
+ *  this function will throw an std::runtime_error.
+ *  @param	filename	The path of the image file you want to load
+ *  @param	invert_y	If true the pixels of the image will be flipped in the y direction. See
+ *  						texture_data_source::invert_y().
+ */
 texture_data_source texture_data_source::load_from_file(std::string filename, bool invert_y) {
     GLsizei width, height;
     int channels;
@@ -60,6 +77,11 @@ texture_data_source texture_data_source::load_from_file(std::string filename, bo
                                std::shared_ptr<void>(data), invert_y);
 }
 
+/**
+ *  Takes a greyscale heightmap and computes the corresponding normal map. Both input and
+ *  output are given as texture_data_source objects.
+ *  @param	height_map	The heightmap that you want to turn into a normal map.
+ */
 texture_data_source texture_data_source::create_normals_from_height(const texture_data_source &height_map) {
     if(height_map.type != GL_BYTE && height_map.type != GL_UNSIGNED_BYTE) {
         throw std::runtime_error("unsupported input for create_normals_from_height");
@@ -114,15 +136,25 @@ texture_data_source texture_data_source::create_normals_from_height(const textur
     return texture_data_source(width, height, GL_RGB, GL_UNSIGNED_BYTE, std::shared_ptr<void>(rst_data));
 }
 
+/**
+ *  Creates a data source without any data. This means the pointer to the image data will be null.
+ *  The format is GL_RED / GL_UNSIGNED_BYTE.
+ */
 texture_data_source texture_data_source::create_null_data_source(GLsizei width, GLsizei height) {
     return texture_data_source(width, height, GL_RED, GL_UNSIGNED_BYTE, std::shared_ptr<void>());
 }
 
+/**
+ *  Comparison operater. Returns true iff the pointers to the data sets of this and the given
+ *  object are equal.
+ */
 bool texture_data_source::operator== (const texture_data_source &other) {
 	return data == other.data;
 }
 
-// Flips the texture on its horizontal axis, inverting it on the y axis
+/**
+ *  Flips the texture on its horizontal axis, inverting it on the y axis.
+ */
 void texture_data_source::invert_y() {
 	int i, j;
 	auto d = (unsigned char*) data.get();
