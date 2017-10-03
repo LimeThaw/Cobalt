@@ -3,6 +3,7 @@ Cobalt Engine
 Welcome to the Cobalt wiki.
 Cobalt is a 3D graphics engine developed by students for fun and learning. It is currently in early
 development. The current version is v0.3.
+
 Dependencies
 ============
 The engine relies on the following libraries:
@@ -19,6 +20,7 @@ We also used JSON for modern C++ by Niels Lohmann (https://github.com/nlohmann/j
 is fully included within the source.
 The engine was developed under Ubuntu 16.04 64 bit with OpenGL 3.3/GLSL 1.30 and has not been
 tested in other configurations.
+
 Building
 ========
 To compile  the source code of the engine and the main example on Linux
